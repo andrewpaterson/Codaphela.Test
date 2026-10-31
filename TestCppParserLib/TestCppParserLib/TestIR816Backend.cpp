@@ -7,8 +7,8 @@
 #include "BaseLib/PointerFunctions.h"
 #include "MicroprocessorLib/W65C816InstructionFactory.h"
 #include "MicroprocessorLib/65C64InstructionFactory.h"
-#include "Assembler65Lib/Asm816Assembler.h"
-#include "Assembler65Lib/Asm816Lockstep.h"
+#include "Assembler65Lib/Asm65816Assembler.h"
+#include "Assembler65Lib/Asm65816Lockstep.h"
 #include "Assembler65Lib/Asm65Linker.h"
 #include "Assembler65Lib/Asm65Library.h"
 #include "Assembler65Lib/Asm65Memory.h"
@@ -38,9 +38,9 @@ int64 TestIR65Run(const char* szIR, bool bFloat, CChars* pszAssembly);
 //The start up: the reset vector and its jml stub in bank 0, then main's result (A and X, or 8 bytes through the
 //hidden pointer) is stored at Result and the processor stops.
 static const char* gszTestIR816StartUp =
-	"\t\t.section rodata.Vectors, at $FFFC\n"
+	"\t\t.section rodata.Vectors, at 0xFFFC\n"
 	"\t\t.word ResetStub\n"
-	"\t\t.section text.ResetStub, at $FF00\n"
+	"\t\t.section text.ResetStub, at 0xFF00\n"
 	"ResetStub:\n"
 	"\t\tjml Start\n"
 	"\t\t.section text.Start\n"
@@ -48,7 +48,7 @@ static const char* gszTestIR816StartUp =
 	"\t\tclc\n"
 	"\t\txce\n"
 	"\t\trep (m, x)\n"
-	"\t\tlda $EFFF\n"
+	"\t\tlda 0xEFFF\n"
 	"\t\ttcs\n"
 	"\t\tlda 0\n"
 	"\t\ttcd\n"
@@ -67,7 +67,7 @@ static const char* gszTestIR816StartUp =
 //////////////////////////////////////////////////////////////////////////
 static bool TestIR816Assemble(CAsm65Object* pcObject, const char* szName, const char* szSource)
 {
-	CAsm816Assembler	cAssembler;
+	CAsm65816Assembler	cAssembler;
 	bool				bResult;
 
 	pcObject->Init(szName);
@@ -92,7 +92,7 @@ static CAsm65Library* TestIR816MathTables(void)
 	static const char*	aszTables[] = { "MathMult.asm", "MathInvert.asm", NULL };
 	CTextFile			cFile;
 	CChars				szPath;
-	CAsm816Assembler	cAssembler;
+	CAsm65816Assembler	cAssembler;
 	size				i;
 
 	if (gpcTestIR816MathTables)
@@ -141,7 +141,7 @@ int64 TestIR816Run(const char* szIR, bool bLockstep, CChars* pszAssembly = NULL)
 	CAsm65Linker	cLinker;
 	CAsm65Memory	cMemory;
 	CFast65C816		cFast;
-	CAsm816Lockstep	cLockstep;
+	CAsm65816Lockstep	cLockstep;
 	CIRFunction*	pcMain;
 	SIRType			sReturn;
 	int64			iResult;
@@ -179,7 +179,7 @@ int64 TestIR816Run(const char* szIR, bool bLockstep, CChars* pszAssembly = NULL)
 	}
 
 	szStartUp.Init(gszTestIR816StartUp);
-	szStartUp.Replace("\t\tjsl", bWide ? "\t\tpea Result >> 16\n\t\tpea Result & $FFFF\n\t\tjsl" : "\t\tjsl");
+	szStartUp.Replace("\t\tjsl", bWide ? "\t\tpea Result >> 16\n\t\tpea Result & 0xFFFF\n\t\tjsl" : "\t\tjsl");
 	szStartUp.Replace("RESULT", bWide ? "" : "\t\tsta [Result]:24\n\t\ttxa\n\t\tsta [Result + 2]:24\n");
 	lliResult = -1;
 	if (TestIR816Assemble(&acObjects[0], "startup", szStartUp.Text()) &&
@@ -200,7 +200,7 @@ int64 TestIR816Run(const char* szIR, bool bLockstep, CChars* pszAssembly = NULL)
 
 		cMemory.Init(TEST_IR816_MEMORY);
 		cMemory.Load(cLinker.GetOutput());
-		cMemory.InitFast816(&cFast);
+		cMemory.InitFast65816(&cFast);
 		cFast.Reset();
 		if (bLockstep)
 		{
@@ -917,8 +917,42 @@ void TestIR816BackendFused(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Whether the assembly has a lone szStep ("\t\tinc [D + " or "\t\tdec [D + "):
+// a whole line after an instruction other than a bne and before no bne (a
+// 16 bit step; a 32 bit one carries or borrows across its words with a bne
+// round the high word's step, and its low word's dec follows a label).
+//
+//////////////////////////////////////////////////////////////////////////
+static bool TestIR816LoneStep(const char* szAssembly, const char* szStep)
+{
+	const char*	szAt;
+	const char*	szEnd;
+	const char*	szPrevious;
+
+	for (szAt = strstr(szAssembly, szStep); szAt; szAt = strstr(szAt + 1, szStep))
+	{
+		if ((szAt == szAssembly) || (szAt[-1] != '\n'))
+		{
+			continue;
+		}
+		for (szPrevious = szAt - 1; (szPrevious > szAssembly) && (szPrevious[-1] != '\n'); szPrevious--)
+		{
+		}
+		szEnd = strchr(szAt, '\n');
+		if (szEnd && (strncmp(szEnd + 1, "\t\tbne", 5) != 0) && (strncmp(szPrevious, "\t\t", 2) == 0) && (strncmp(szPrevious, "\t\tbne", 5) != 0))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // 32 bit values stepped by 1 and -1 in their own places (StepInPlace): inc
-// and dec on the direct page, carrying across the words.
+// and dec on the direct page, carrying across the words; and 16 bit ones,
+// a lone inc or dec.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestIR816BackendStepInPlace(void)
@@ -943,6 +977,31 @@ void TestIR816BackendStepInPlace(void)
 		"\tret i32 %r\n}\n", true, &szAssembly));
 	AssertTrue(strstr(szAssembly.Text(), "\t\tinc [D + ") != NULL);
 	AssertTrue(strstr(szAssembly.Text(), "\t\tdec [D + ") != NULL);
+	AssertFalse(TestIR816LoneStep(szAssembly.Text(), "\t\tinc [D + "));
+	AssertFalse(TestIR816LoneStep(szAssembly.Text(), "\t\tdec [D + "));
+	szAssembly.Kill();
+
+	//16 bits: a lone inc and dec, with no carry into a high word (the loop counter, in X, steps by inx).
+	szAssembly.Init();
+	AssertLong(400 - 700, TestIR816Run(
+		"function i32 @_main()\n{\n"
+		"e:\n\tjmp l\n"
+		"l:\n"
+		"\t%i = phi i16 [e, 0], [l, %i2]\n"
+		"\t%j = phi i16 [e, 100], [l, %j2]\n"
+		"\t%k = phi i16 [e, 1000], [l, %k2]\n"
+		"\t%i2 = add i16 %i, 1\n"
+		"\t%j2 = add i16 %j, 1\n"
+		"\t%k2 = sub i16 %k, 1\n"
+		"\t%c = ult i16 %i2, 300\n"
+		"\tbrif %c, l, x\n"
+		"x:\n"
+		"\t%a = zext i16 %j2 to i32\n"
+		"\t%b = zext i16 %k2 to i32\n"
+		"\t%r = sub i32 %a, %b\n"
+		"\tret i32 %r\n}\n", true, &szAssembly));
+	AssertTrue(TestIR816LoneStep(szAssembly.Text(), "\t\tinc [D + "));
+	AssertTrue(TestIR816LoneStep(szAssembly.Text(), "\t\tdec [D + "));
 	szAssembly.Kill();
 }
 
@@ -1412,6 +1471,245 @@ void TestIR816BackendPeepholeBranches(void)
 }
 
 
+typedef void (*TestIR816TextPass)(CChars* pszDest, size uiStart);
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The code a text pass makes of szCode: from the start, and from after a
+// function's label that it must leave alone.
+//
+//////////////////////////////////////////////////////////////////////////
+static void AssertIR816Pass(const char* szExpected, const char* szCode, TestIR816TextPass fPass)
+{
+	CChars	sz;
+	CChars	szAll;
+
+	sz.Init(szCode);
+	fPass(&sz, 0);
+	AssertString(szExpected, sz.Text());
+	sz.Kill();
+
+	sz.Init("_F:\n");
+	sz.Append(szCode);
+	fPass(&sz, 4);
+	szAll.Init("_F:\n");
+	szAll.Append(szExpected);
+	AssertString(szAll.Text(), sz.Text());
+	szAll.Kill();
+	sz.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Peephole: in straight line code, a value stored by a store marked " ;A"
+// stays in A for its one lda or pei (IR816KeepsInA: not when N or Z of the
+// lda is read) or as the first operand of a commutative instruction after
+// an lda of something else (IR816SwapsInA); pei of the word A holds is pha;
+// an lda of the word A holds goes (not before a branch on Z or N, nor after
+// the word changes); an ldy of the constant Y holds goes; adc 0 after clc
+// (and an lda) goes; an sta of A to the word it holds goes; and cmp 0 after
+// an instruction that set N and Z from A goes when a branch on Z or N
+// follows and no carry is read after the branch or where it goes.  It ends
+// with RemoveDeadStores.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendPeephole(void)
+{
+	TestIR816TextPass	fPass;
+
+	fPass = CIR816Backend::Peephole;
+
+	//A marked store and its lda both go, the value kept in A.  Not when a branch reads the lda's Z (the mark goes).
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tclc\n\t\tadc 4\n\t\tsta [D + 5]\n\t\trtl\n",
+		"\t\tlda [D + 3]\n\t\tclc\n\t\tadc 4\n\t\tsta [D + 23] ;A\n\t\tlda [D + 23]\n\t\tsta [D + 5]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tclc\n\t\tadc 4\n\t\tsta [D + 23]\n\t\tlda [D + 23]\n\t\tbeq L1\n\t\trtl\nL1:\n\t\trtl\n",
+		"\t\tlda [D + 3]\n\t\tclc\n\t\tadc 4\n\t\tsta [D + 23] ;A\n\t\tlda [D + 23]\n\t\tbeq L1\n\t\trtl\nL1:\n\t\trtl\n", fPass);
+
+	//A marked store pushed by pei: pha.
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tclc\n\t\tadc 4\n\t\tpha\n\t\tjsl _F\n\t\trtl\n",
+		"\t\tlda [D + 3]\n\t\tclc\n\t\tadc 4\n\t\tsta [D + 23] ;A\n\t\tpei [D + 23]\n\t\tjsl _F\n\t\trtl\n", fPass);
+
+	//A marked store kept in A as adc's first operand, the lda's operand its second.  Not for sbc.
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tclc\n\t\tadc 4\n\t\tclc\n\t\tadc [D + 7]\n\t\tsta [D + 9]\n\t\trtl\n",
+		"\t\tlda [D + 3]\n\t\tclc\n\t\tadc 4\n\t\tsta [D + 23] ;A\n\t\tclc\n\t\tlda [D + 7]\n\t\tadc [D + 23]\n\t\tsta [D + 9]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tclc\n\t\tadc 4\n\t\tsta [D + 23]\n\t\tsec\n\t\tlda [D + 7]\n\t\tsbc [D + 23]\n\t\tsta [D + 9]\n\t\trtl\n",
+		"\t\tlda [D + 3]\n\t\tclc\n\t\tadc 4\n\t\tsta [D + 23] ;A\n\t\tsec\n\t\tlda [D + 7]\n\t\tsbc [D + 23]\n\t\tsta [D + 9]\n\t\trtl\n", fPass);
+
+	//pei of the word A holds is pha; of another word it is kept.
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tpha\n\t\tjsl _F\n\t\trtl\n", "\t\tlda [D + 3]\n\t\tpei [D + 3]\n\t\tjsl _F\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tpei [D + 5]\n\t\tjsl _F\n\t\trtl\n", "\t\tlda [D + 3]\n\t\tpei [D + 5]\n\t\tjsl _F\n\t\trtl\n", fPass);
+
+	//An lda of the word A holds goes.  Kept before bne; and after an inc of the word (then the first lda is dead).
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tsta [D + 5]\n\t\tsta [D + 7]\n\t\trtl\n",
+		"\t\tlda [D + 3]\n\t\tsta [D + 5]\n\t\tlda [D + 5]\n\t\tsta [D + 7]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tsta [D + 5]\n\t\tlda [D + 5]\n\t\tbne L1\n\t\trtl\nL1:\n\t\trtl\n",
+		"\t\tlda [D + 3]\n\t\tsta [D + 5]\n\t\tlda [D + 5]\n\t\tbne L1\n\t\trtl\nL1:\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tinc [D + 3]\n\t\tlda [D + 3]\n\t\tsta [D + 7]\n\t\trtl\n",
+		"\t\tlda [D + 3]\n\t\tinc [D + 3]\n\t\tlda [D + 3]\n\t\tsta [D + 7]\n\t\trtl\n", fPass);
+
+	//An ldy of the constant Y holds goes.  Not after an iny.
+	AssertIR816Pass("\t\tldy 2\n\t\tlda [[D + 3]:24 + Y]\n\t\tsta [[D + 7]:24 + Y]\n\t\trtl\n",
+		"\t\tldy 2\n\t\tlda [[D + 3]:24 + Y]\n\t\tldy 2\n\t\tsta [[D + 7]:24 + Y]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tldy 2\n\t\tlda [[D + 3]:24 + Y]\n\t\tiny\n\t\tldy 2\n\t\tsta [[D + 7]:24 + Y]\n\t\trtl\n",
+		"\t\tldy 2\n\t\tlda [[D + 3]:24 + Y]\n\t\tiny\n\t\tldy 2\n\t\tsta [[D + 7]:24 + Y]\n\t\trtl\n", fPass);
+
+	//adc 0 after clc and an lda goes.  Kept after an adc (the high word of an add, the carry from the low).
+	AssertIR816Pass("\t\tclc\n\t\tlda [D + 3]\n\t\tsta [D + 5]\n\t\trtl\n", "\t\tclc\n\t\tlda [D + 3]\n\t\tadc 0\n\t\tsta [D + 5]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tclc\n\t\tlda [D + 3]\n\t\tadc [D + 7]\n\t\tsta [D + 5]\n\t\tlda [D + 9]\n\t\tadc 0\n\t\tsta [D + 11]\n\t\trtl\n",
+		"\t\tclc\n\t\tlda [D + 3]\n\t\tadc [D + 7]\n\t\tsta [D + 5]\n\t\tlda [D + 9]\n\t\tadc 0\n\t\tsta [D + 11]\n\t\trtl\n", fPass);
+
+	//An sta of A back to the word it was loaded from goes.  Kept when the word changed between.
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tldx 2\n\t\trtl\n", "\t\tlda [D + 3]\n\t\tldx 2\n\t\tsta [D + 3]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tinc [D + 3]\n\t\tsta [D + 3]\n\t\trtl\n", "\t\tlda [D + 3]\n\t\tinc [D + 3]\n\t\tsta [D + 3]\n\t\trtl\n", fPass);
+
+	//cmp 0 after and (N and Z from A) before beq goes.  Kept when the carry is read where beq goes, after beq, or
+	//when ldx set N and Z last.
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tand [D + 5]\n\t\tbeq L1\n\t\trtl\nL1:\n\t\tlda 1\n\t\trtl\n",
+		"\t\tlda [D + 3]\n\t\tand [D + 5]\n\t\tcmp 0\n\t\tbeq L1\n\t\trtl\nL1:\n\t\tlda 1\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tand [D + 5]\n\t\tcmp 0\n\t\tbeq L1\n\t\trtl\nL1:\n\t\tbcs L2\n\t\trtl\nL2:\n\t\tlda 1\n\t\trtl\n",
+		"\t\tlda [D + 3]\n\t\tand [D + 5]\n\t\tcmp 0\n\t\tbeq L1\n\t\trtl\nL1:\n\t\tbcs L2\n\t\trtl\nL2:\n\t\tlda 1\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tand [D + 5]\n\t\tcmp 0\n\t\tbeq L1\n\t\tbcs L2\n\t\trtl\nL1:\n\t\trtl\nL2:\n\t\tlda 1\n\t\trtl\n",
+		"\t\tlda [D + 3]\n\t\tand [D + 5]\n\t\tcmp 0\n\t\tbeq L1\n\t\tbcs L2\n\t\trtl\nL1:\n\t\trtl\nL2:\n\t\tlda 1\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tldx 2\n\t\tcmp 0\n\t\tbeq L1\n\t\trtl\nL1:\n\t\trtl\n",
+		"\t\tlda [D + 3]\n\t\tldx 2\n\t\tcmp 0\n\t\tbeq L1\n\t\trtl\nL1:\n\t\trtl\n", fPass);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// RemoveDeadStores: a store to a direct page word goes when, in straight
+// line code, the next instruction naming a byte near it (other than a store
+// to another direct page word) stores to it (IR816DeadStore); an lda of a
+// direct page word or a constant goes when A is loaded again before A or
+// its N and Z are read (IR816DeadLoad).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendRemoveDeadStores(void)
+{
+	TestIR816TextPass	fPass;
+
+	fPass = CIR816Backend::RemoveDeadStores;
+
+	//The first store is overwritten unread, past a store to the word next to it.
+	AssertIR816Pass("\t\tsta [D + 25]\n\t\tstz [D + 23]\n\t\trtl\n", "\t\tsta [D + 23]\n\t\tsta [D + 25]\n\t\tstz [D + 23]\n\t\trtl\n", fPass);
+
+	//Kept: a pointer at [D + 22] read or stored through, a branch or a label before the next store.
+	AssertIR816Pass("\t\tsta [D + 23]\n\t\tlda [[D + 22]:24]\n\t\tstz [D + 23]\n\t\trtl\n", "\t\tsta [D + 23]\n\t\tlda [[D + 22]:24]\n\t\tstz [D + 23]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tsta [D + 23]\n\t\tsta [[D + 22]:24]\n\t\tstz [D + 23]\n\t\trtl\n", "\t\tsta [D + 23]\n\t\tsta [[D + 22]:24]\n\t\tstz [D + 23]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tsta [D + 23]\n\t\tbne L1\n\t\tstz [D + 23]\nL1:\n\t\trtl\n", "\t\tsta [D + 23]\n\t\tbne L1\n\t\tstz [D + 23]\nL1:\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tsta [D + 23]\nL1:\n\t\tstz [D + 23]\n\t\trtl\n", "\t\tsta [D + 23]\nL1:\n\t\tstz [D + 23]\n\t\trtl\n", fPass);
+
+	//An lda loaded over unread goes; kept when tax reads it.
+	AssertIR816Pass("\t\tldx 2\n\t\tlda 5\n\t\tsta [D + 7]\n\t\trtl\n", "\t\tlda [D + 3]\n\t\tldx 2\n\t\tlda 5\n\t\tsta [D + 7]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\ttax\n\t\tlda 5\n\t\tsta [D + 7]\n\t\trtl\n", "\t\tlda [D + 3]\n\t\ttax\n\t\tlda 5\n\t\tsta [D + 7]\n\t\trtl\n", fPass);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// PeepholeMasks: an "and 0xFF" goes when only clc, sec, adc, sbc, ora, eor,
+// and or asl A come before the next "and 0xFF" (A's low byte doesn't depend
+// on the high byte through them), and no carry they leave is read after it
+// (IR816MaskRedone).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendPeepholeMasks(void)
+{
+	TestIR816TextPass	fPass;
+
+	fPass = CIR816Backend::PeepholeMasks;
+
+	//The first mask goes: the clc after the second sets the carry before it is read.  With ora between, no carry.
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tclc\n\t\tadc 3\n\t\tand 0xFF\n\t\tsta [D + 5]\n\t\tclc\n\t\tadc [D + 7]\n\t\trtl\n",
+		"\t\tlda [D + 3]\n\t\tand 0xFF\n\t\tclc\n\t\tadc 3\n\t\tand 0xFF\n\t\tsta [D + 5]\n\t\tclc\n\t\tadc [D + 7]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tora 4\n\t\tand 0xFF\n\t\trtl\n", "\t\tlda [D + 3]\n\t\tand 0xFF\n\t\tora 4\n\t\tand 0xFF\n\t\trtl\n", fPass);
+
+	//Kept: the adc's carry is read after the second mask (bcs; and rtl might), or xba, lsr A or sta comes between.
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tand 0xFF\n\t\tclc\n\t\tadc 3\n\t\tand 0xFF\n\t\tbcs L1\n\t\trtl\nL1:\n\t\trtl\n",
+		"\t\tlda [D + 3]\n\t\tand 0xFF\n\t\tclc\n\t\tadc 3\n\t\tand 0xFF\n\t\tbcs L1\n\t\trtl\nL1:\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tand 0xFF\n\t\tclc\n\t\tadc 3\n\t\tand 0xFF\n\t\trtl\n",
+		"\t\tlda [D + 3]\n\t\tand 0xFF\n\t\tclc\n\t\tadc 3\n\t\tand 0xFF\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tand 0xFF\n\t\txba\n\t\tand 0xFF\n\t\trtl\n", "\t\tlda [D + 3]\n\t\tand 0xFF\n\t\txba\n\t\tand 0xFF\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tand 0xFF\n\t\tlsr A\n\t\tand 0xFF\n\t\trtl\n", "\t\tlda [D + 3]\n\t\tand 0xFF\n\t\tlsr A\n\t\tand 0xFF\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda [D + 3]\n\t\tand 0xFF\n\t\tsta [D + 5]\n\t\tand 0xFF\n\t\trtl\n", "\t\tlda [D + 3]\n\t\tand 0xFF\n\t\tsta [D + 5]\n\t\tand 0xFF\n\t\trtl\n", fPass);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// PeepholeStores: sta w / dec w / lda w is dec A / sta w (inc the same);
+// sta w / ldy w is sta w / tay (ldx: tax); sta w ... ldy w with neither Y
+// nor a byte near w used between (IR816LoadYLater) and no N or Z read after
+// either is sta w / tay ...; and the sta goes too when w is written again
+// before it is read (IR816DeadStore).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendPeepholeStores(void)
+{
+	TestIR816TextPass	fPass;
+
+	fPass = CIR816Backend::PeepholeStores;
+
+	//dec and inc in A; the sta goes too when stz overwrites it.
+	AssertIR816Pass("\t\tdec A\n\t\tsta [D + 5]\n\t\tsta [D + 7]\n\t\trtl\n", "\t\tsta [D + 5]\n\t\tdec [D + 5]\n\t\tlda [D + 5]\n\t\tsta [D + 7]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tinc A\n\t\tsta [D + 7]\n\t\tstz [D + 5]\n\t\trtl\n",
+		"\t\tsta [D + 5]\n\t\tinc [D + 5]\n\t\tlda [D + 5]\n\t\tsta [D + 7]\n\t\tstz [D + 5]\n\t\trtl\n", fPass);
+
+	//Kept: the lda after the dec is of another word.
+	AssertIR816Pass("\t\tsta [D + 5]\n\t\tdec [D + 5]\n\t\tlda [D + 9]\n\t\trtl\n", "\t\tsta [D + 5]\n\t\tdec [D + 5]\n\t\tlda [D + 9]\n\t\trtl\n", fPass);
+
+	//ldy and ldx of the word just stored: tay and tax; the sta goes too when the word is stored again unread.
+	AssertIR816Pass("\t\tsta [D + 5]\n\t\ttay\n\t\tlda [[D + 9]:24 + Y]\n\t\trtl\n", "\t\tsta [D + 5]\n\t\tldy [D + 5]\n\t\tlda [[D + 9]:24 + Y]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\ttay\n\t\tlda [[D + 9]:24 + Y]\n\t\tsta [D + 5]\n\t\trtl\n",
+		"\t\tsta [D + 5]\n\t\tldy [D + 5]\n\t\tlda [[D + 9]:24 + Y]\n\t\tsta [D + 5]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tsta [D + 5]\n\t\ttax\n\t\trtl\n", "\t\tsta [D + 5]\n\t\tldx [D + 5]\n\t\trtl\n", fPass);
+
+	//sta w ... ldy w with only A's work between: tay at once.
+	AssertIR816Pass("\t\tsta [D + 5]\n\t\ttay\n\t\tlda [D + 9]\n\t\tclc\n\t\tadc 2\n\t\tsta [[D + 11]:24 + Y]\n\t\trtl\n",
+		"\t\tsta [D + 5]\n\t\tlda [D + 9]\n\t\tclc\n\t\tadc 2\n\t\tldy [D + 5]\n\t\tsta [[D + 11]:24 + Y]\n\t\trtl\n", fPass);
+
+	//Kept: iny, a Y indexed load, or a mention of [D + 4] or [D + 6] between; or beq reads the ldy's Z.
+	AssertIR816Pass("\t\tsta [D + 5]\n\t\tlda [D + 9]\n\t\tiny\n\t\tldy [D + 5]\n\t\tsta [[D + 11]:24 + Y]\n\t\trtl\n",
+		"\t\tsta [D + 5]\n\t\tlda [D + 9]\n\t\tiny\n\t\tldy [D + 5]\n\t\tsta [[D + 11]:24 + Y]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tsta [D + 5]\n\t\tlda [[D + 9]:24 + Y]\n\t\tldy [D + 5]\n\t\tsta [[D + 11]:24 + Y]\n\t\trtl\n",
+		"\t\tsta [D + 5]\n\t\tlda [[D + 9]:24 + Y]\n\t\tldy [D + 5]\n\t\tsta [[D + 11]:24 + Y]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tsta [D + 5]\n\t\tlda [D + 4]\n\t\tldy [D + 5]\n\t\tsta [[D + 11]:24 + Y]\n\t\trtl\n",
+		"\t\tsta [D + 5]\n\t\tlda [D + 4]\n\t\tldy [D + 5]\n\t\tsta [[D + 11]:24 + Y]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tsta [D + 5]\n\t\tlda [D + 6]\n\t\tldy [D + 5]\n\t\tsta [[D + 11]:24 + Y]\n\t\trtl\n",
+		"\t\tsta [D + 5]\n\t\tlda [D + 6]\n\t\tldy [D + 5]\n\t\tsta [[D + 11]:24 + Y]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tsta [D + 5]\n\t\tlda [D + 9]\n\t\tldy [D + 5]\n\t\tbeq L1\n\t\trtl\nL1:\n\t\trtl\n",
+		"\t\tsta [D + 5]\n\t\tlda [D + 9]\n\t\tldy [D + 5]\n\t\tbeq L1\n\t\trtl\nL1:\n\t\trtl\n", fPass);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// PeepholeTransfers: tax ... txy is tay ... when nothing between uses X or
+// Y or branches, X is written before it is read after the txy
+// (IR816XDeadAfter) and nothing reads the N and Z the txy set.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendPeepholeTransfers(void)
+{
+	TestIR816TextPass	fPass;
+
+	fPass = CIR816Backend::PeepholeTransfers;
+
+	AssertIR816Pass("\t\ttay\n\t\tlda [D + 3]\n\t\tlda [[D + 5]:24 + Y]\n\t\tldx 2\n\t\trtl\n",
+		"\t\ttax\n\t\tlda [D + 3]\n\t\ttxy\n\t\tlda [[D + 5]:24 + Y]\n\t\tldx 2\n\t\trtl\n", fPass);
+
+	//Kept: bne after the txy, an X indexed load between, or stx reading X after.
+	AssertIR816Pass("\t\ttax\n\t\tlda [D + 3]\n\t\ttxy\n\t\tbne L1\n\t\tldx 2\n\t\trtl\nL1:\n\t\trtl\n",
+		"\t\ttax\n\t\tlda [D + 3]\n\t\ttxy\n\t\tbne L1\n\t\tldx 2\n\t\trtl\nL1:\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\ttax\n\t\tlda [D + X]\n\t\ttxy\n\t\tlda [[D + 5]:24 + Y]\n\t\tldx 2\n\t\trtl\n",
+		"\t\ttax\n\t\tlda [D + X]\n\t\ttxy\n\t\tlda [[D + 5]:24 + Y]\n\t\tldx 2\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\ttax\n\t\tlda [D + 3]\n\t\ttxy\n\t\tlda [[D + 5]:24 + Y]\n\t\tstx [D + 7]\n\t\trtl\n",
+		"\t\ttax\n\t\tlda [D + 3]\n\t\ttxy\n\t\tlda [[D + 5]:24 + Y]\n\t\tstx [D + 7]\n\t\trtl\n", fPass);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 // A frame bigger than the direct page's 256 bytes: values past it are reached through X, and an argument past it is
@@ -1488,6 +1786,11 @@ void TestIR816Backend(void)
 	TestIR816BackendIndexed();
 	TestIR816BackendBranches();
 	TestIR816BackendPeepholeBranches();
+	TestIR816BackendPeephole();
+	TestIR816BackendRemoveDeadStores();
+	TestIR816BackendPeepholeMasks();
+	TestIR816BackendPeepholeStores();
+	TestIR816BackendPeepholeTransfers();
 	TestIR816BackendBigFrame();
 
 	SafeKill(gpcTestIR816MathTables);

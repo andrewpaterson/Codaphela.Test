@@ -1,6 +1,6 @@
 #include "BaseLib/Chars.h"
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 #define QUEENS_COUNT	0x0100
@@ -48,7 +48,7 @@ void TestAsm65QueensSolutions(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAsm65Queens(void)
+void TestAsm65C64Queens(void)
 {
 	BeginTests();
 

@@ -1,12 +1,12 @@
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-static int64 Symbol(CAsm65Assembler* pcAssembler, const char* szName)
+static int64 Symbol(CAsm65C64Assembler* pcAssembler, const char* szName)
 {
 	int64	iValue;
 
@@ -24,7 +24,7 @@ static int64 Symbol(CAsm65Assembler* pcAssembler, const char* szName)
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65LabelsForward(void)
 {
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 
 	TestAsm65Assemble(&cAssembler,
 		".org $1000\n"
@@ -68,7 +68,7 @@ void TestAsm65LabelsForward(void)
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65LabelsData(void)
 {
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 	CAsm65Output*	pcOutput;
 	uint8			uiByte;
 
@@ -128,7 +128,7 @@ void TestAsm65LabelsData(void)
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65LabelsOffset(void)
 {
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 
 	TestAsm65Assemble(&cAssembler,
 		".org $FFF0\n"
@@ -157,7 +157,7 @@ void TestAsm65LabelsOffset(void)
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65LabelsCascade(void)
 {
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 
 	TestAsm65Assemble(&cAssembler,
 		".org $3000\n"
@@ -186,7 +186,7 @@ void TestAsm65LabelsCascade(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAsm65Labels(void)
+void TestAsm65C64Labels(void)
 {
 	BeginTests();
 

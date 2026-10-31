@@ -1,4 +1,4 @@
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 #include "BaseLib/FileUtil.h"
 #include "StandardLib/Objects.h"
 #include "SupportLib/Image.h"
@@ -156,7 +156,7 @@ void TestAsm65MandelbrotImage(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAsm65Mandelbrot(void)
+void TestAsm65C64Mandelbrot(void)
 {
 	BeginTests();
 

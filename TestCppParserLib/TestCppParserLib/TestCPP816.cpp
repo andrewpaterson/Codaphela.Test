@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Assembler65Lib/Asm816Profile.h"
+#include "Assembler65Lib/Asm65816Profile.h"
 #include "BaseLib/IntegerHelper.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
@@ -12,7 +12,7 @@
 #include "BaseLib/FileBasic.h"
 #include "BaseLib/DiskFile.h"
 #include "MicroprocessorLib/W65C816InstructionFactory.h"
-#include "Assembler65Lib/Asm816Lockstep.h"
+#include "Assembler65Lib/Asm65816Lockstep.h"
 #include "Assembler65Lib/Asm65Memory.h"
 #include "CppParserLib/CPP65Builder.h"
 #include "TestLib/Assert.h"
@@ -70,17 +70,17 @@ size TestCPP816Profile(CCPP65Builder* pcBuilder, CFast65C816* pcFast, size uiMax
 	int32					iTotal;
 	int						iShown;
 
-	//The map's functions in address order: "  $00012345 G Name (object)".
+	//The map's functions in address order: "  0x00012345 G Name (object)".
 	auiAddresses.Init();
 	aszNames.Init();
 	aiCounts.Init();
 	iZero = 0;
 	for (szLine = strstr(pcBuilder->GetMap(), "Symbols\n"); szLine; szLine = strchr(szLine + 1, '\n'))
 	{
-		if ((szLine[1] == ' ') && (szLine[3] == '$') && ((szLine[13] == 'G') || ((szLine[13] == 'L') && !((szLine[15] == 'L') && (szLine[16] >= '0') && (szLine[16] <= '9')))))
+		if ((szLine[1] == ' ') && (szLine[3] == '0') && (szLine[4] == 'x') && ((szLine[14] == 'G') || ((szLine[14] == 'L') && !((szLine[16] == 'L') && (szLine[17] >= '0') && (szLine[17] <= '9')))))
 		{
-			uiAddress = (uint32)strtoul(&szLine[4], NULL, 16);
-			szName = &szLine[15];
+			uiAddress = (uint32)strtoul(&szLine[3], NULL, 16);
+			szName = &szLine[16];
 			auiAddresses.Add(&uiAddress);
 			aszNames.Add(szName, 0, (size)(strchr(szName, ' ') - szName));
 			aiCounts.Add(&iZero);
@@ -164,7 +164,7 @@ int32 TestCPP816RunProject(const char** aszUnits, const char* szStubs, const cha
 	CCPP65Builder	cBuilder;
 	CAsm65Memory	cMemory;
 	CFast65C816		cFast;
-	CAsm816Lockstep	cLockstep;
+	CAsm65816Lockstep	cLockstep;
 	CChars			szMissing;
 	CChars			szProject;
 	CFileUtil		cFileUtil;
@@ -223,7 +223,7 @@ int32 TestCPP816RunProject(const char** aszUnits, const char* szStubs, const cha
 		{
 			cMemory.SetByte(psMemory->uiLoadAddress + (uint32)i, psMemory->puiLoad[i]);
 		}
-		cMemory.InitFast816(&cFast);
+		cMemory.InitFast65816(&cFast);
 		cFast.Reset();
 		if (bLockstep)
 		{
@@ -1580,7 +1580,7 @@ void TestCPP816DestructorCalls(void)
 // program's map in pszMap (when not NULL).
 //
 //////////////////////////////////////////////////////////////////////////
-int32 TestCPP816RunProfiled(const char* szSource, CAsm816Profile* pcProfile, CAsm816Profile* pcMeasure, uint64* puiCycles, CChars* pszMap = NULL)
+int32 TestCPP816RunProfiled(const char* szSource, CAsm65816Profile* pcProfile, CAsm65816Profile* pcMeasure, uint64* puiCycles, CChars* pszMap = NULL)
 {
 	static const char*	aszUnits[] = { "Libc65/string816.asm", NULL };
 	CCPP65Builder		cBuilder;
@@ -1612,7 +1612,7 @@ int32 TestCPP816RunProfiled(const char* szSource, CAsm816Profile* pcProfile, CAs
 
 	cMemory.Init(ASM65_MEMORY_LOW_SIZE);
 	cMemory.Load(cBuilder.GetOutput());
-	cMemory.InitFast816(&cFast);
+	cMemory.InitFast65816(&cFast);
 	cFast.Reset();
 	if (pcMeasure)
 	{
@@ -1666,10 +1666,12 @@ void TestCPP816ProfileGuidedInlining(void)
 		"\tr += Mix(r, 3);\n"
 		"\treturn r;\n"
 		"}\n";
-	CAsm816Profile			cProfile;
-	CAsm816Profile			cGuided;
-	SAsm816FunctionProfile*	psMix;
-	SAsm816FunctionProfile*	psMain;
+	CAsm65816Profile			cProfile;
+	CAsm65816Profile			cGuided;
+	CAsm65816Profile			cAgain;
+	CChars					szChanged;
+	SAsm65816FunctionProfile*	psMix;
+	SAsm65816FunctionProfile*	psMain;
 	int32					iResult;
 	uint64					uiPlain;
 	uint64					uiGuided;
@@ -1691,6 +1693,25 @@ void TestCPP816ProfileGuidedInlining(void)
 	psMix = cGuided.Get("_Mix__Fss");
 	AssertLong(1, psMix ? (int64)psMix->ulliCalls : 0);
 	AssertTrue(uiGuided < uiPlain);
+
+	//A profile of the guided build (the call's line has no code left: the callee's lines ran in main instead) still
+	//inlines it (CCPP65IRFrontEnd::InlinedEntries).
+	cAgain.Init();
+	AssertInt(iResult, TestCPP816RunProfiled(szSource, &cGuided, &cAgain, &uiGuided));
+	psMix = cAgain.Get("_Mix__Fss");
+	AssertLong(1, psMix ? (int64)psMix->ulliCalls : 0);
+	cAgain.Kill();
+
+	//main compiled from other code since (another fingerprint): its old profile doesn't guide it.
+	szChanged.Init(szSource);
+	szChanged.Replace("\tr += Mix(r, 3);\n", "\tr += Mix(r, 3);\n\tr ^= 1;\n");
+	cAgain.Init();
+	TestCPP816RunProfiled(szChanged.Text(), &cProfile, &cAgain, &uiGuided);
+	psMix = cAgain.Get("_Mix__Fss");
+	AssertLong(2001, psMix ? (int64)psMix->ulliCalls : 0);
+	cAgain.Kill();
+	szChanged.Kill();
+
 	cGuided.Kill();
 	cProfile.Kill();
 }
@@ -1730,7 +1751,7 @@ void TestCPP816ProfileGuidedDivisionTables(void)
 		"\t}\n"
 		"\treturn (int)(short)h;\n"
 		"}\n";
-	CAsm816Profile	cProfile;
+	CAsm65816Profile	cProfile;
 	CChars			szPlainMap;
 	CChars			szGuidedMap;
 	uint64			uiPlain;
@@ -1771,6 +1792,38 @@ void TestCPP816ProfileGuidedDivisionTables(void)
 	szGuidedMap.Kill();
 	szPlainMap.Kill();
 	cProfile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The type traits: __is_enum of an enum, __is_abstract of a class with a
+// pure virtual function (not of one overriding it), __is_pod of a plain
+// struct (not of one with a copy constructor or a vtable).  And the l
+// builtins take an unsigned long (32 bits) on the W65C816.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816TypeTraits(void)
+{
+	static const char*	szSource =
+		"enum E { eA };\n"
+		"struct A { virtual int F(void) = 0; };\n"
+		"struct B : A { int F(void) { return 1; } };\n"
+		"struct P { int i; };\n"
+		"struct Q { Q(const Q& q) { i = q.i; } int i; };\n"
+		"struct V { virtual int G(void) { return 2; } };\n"
+		"int main()\n"
+		"{\n"
+		"\treturn __is_enum(E) + __is_enum(P) * 2 + __is_abstract(A) * 4 + __is_abstract(B) * 8 + __is_pod(P) * 16 + __is_pod(Q) * 32 + __is_pod(V) * 64 + __is_polymorphic(B) * 128;\n"
+		"}\n";
+	uint64	uiCycles;
+
+	//1 (enum E) + 4 (abstract A) + 16 (pod P) + 128 (polymorphic B).
+	AssertInt(149, TestCPP816RunProfiled(szSource, NULL, NULL, &uiCycles));
+	AssertInt(17 + 31 * 100, TestCPP816RunProfiled("int main() { return __builtin_ctzl(0x20000UL) + __builtin_clzl(1UL) * 100; }", NULL, NULL, &uiCycles));
+
+	//Of 0: the width in bits.
+	AssertInt(32 + 64 * 100, TestCPP816RunProfiled("int main() { return __builtin_ctzl(0UL) + __builtin_clzll(0ULL) * 100; }", NULL, NULL, &uiCycles));
 }
 
 
@@ -2838,8 +2891,8 @@ void TestCPP816InlineObjectParameters(void)
 		"\t}\n"
 		"\treturn (p.a == 1) ? r : -1;\n"
 		"}\n";
-	CAsm816Profile			cProfile;
-	SAsm816FunctionProfile*	psWeigh;
+	CAsm65816Profile			cProfile;
+	SAsm65816FunctionProfile*	psWeigh;
 	uint64					uiCycles;
 
 	cProfile.Init();
@@ -2935,9 +2988,9 @@ bool TestCPP816IsAligned(CCPP65Builder* pcBuilder, CAsm65Memory* pcMemory, const
 
 	for (szLine = strstr(pcBuilder->GetMap(), "Symbols\n"); szLine; szLine = strchr(szLine + 1, '\n'))
 	{
-		if ((szLine[1] == ' ') && (szLine[3] == '$') && (strncmp(&szLine[15], szPrefix, strlen(szPrefix)) == 0))
+		if ((szLine[1] == ' ') && (szLine[3] == '0') && (szLine[4] == 'x') && (strncmp(&szLine[16], szPrefix, strlen(szPrefix)) == 0))
 		{
-			uiAddress = (uint32)strtoul(&szLine[4], NULL, 16);
+			uiAddress = (uint32)strtoul(&szLine[3], NULL, 16);
 			return (pcMemory->GetByte(uiAddress) == 0x0B) && (pcMemory->GetByte(uiAddress + 1) == 0x3B) && (pcMemory->GetByte(uiAddress + 2) == 0xAA);
 		}
 	}
@@ -2954,7 +3007,7 @@ bool TestCPP816IsAligned(CCPP65Builder* pcBuilder, CAsm65Memory* pcMemory, const
 // of the aszPrefixes' functions) whether it has an aligned frame.
 //
 //////////////////////////////////////////////////////////////////////////
-int32 TestCPP816RunFrames(const char* szSource, CAsm816Profile* pcProfile, CAsm816Profile* pcMeasure, uint64* puiCycles, const char** aszPrefixes, bool* abAligned)
+int32 TestCPP816RunFrames(const char* szSource, CAsm65816Profile* pcProfile, CAsm65816Profile* pcMeasure, uint64* puiCycles, const char** aszPrefixes, bool* abAligned)
 {
 	static const char*	aszUnits[] = { "Libc65/string816.asm", NULL };
 	CCPP65Builder		cBuilder;
@@ -2986,7 +3039,7 @@ int32 TestCPP816RunFrames(const char* szSource, CAsm816Profile* pcProfile, CAsm8
 	{
 		abAligned[i] = TestCPP816IsAligned(&cBuilder, &cMemory, aszPrefixes[i]);
 	}
-	cMemory.InitFast816(&cFast);
+	cMemory.InitFast65816(&cFast);
 	cFast.Reset();
 	if (pcMeasure)
 	{
@@ -3014,7 +3067,7 @@ int32 TestCPP816RunFrames(const char* szSource, CAsm816Profile* pcProfile, CAsm8
 //
 // A function gets D on a page (a cycle less each direct page access) when
 // it's worth it and it can't recurse: by default when its loops' accesses
-// are estimated to be well past the cost; with a profile (CAsm816Profile,
+// are estimated to be well past the cost; with a profile (CAsm65816Profile,
 // CCPP65Builder::SetFrameProfile) when they were measured to be.  Its
 // arguments are copied up to the aligned frame (stored, or pushed when the
 // frame passes the page) and S as it was is kept for the epilogue.  (The
@@ -3044,7 +3097,7 @@ void TestCPP816AlignedFrames(void)
 		"	return ((r == 24750) && (w == 436020L) && (c == 2) && (b == 122412L)) ? 7 : 1;\n"
 		"}\n";
 	static const char*	aszPrefixes[] = { "_Sum", "_Wide", "_Cold", "_Big", NULL };
-	CAsm816Profile		cProfile;
+	CAsm65816Profile		cProfile;
 	uint64				uiEstimated;
 	uint64				uiMeasured;
 	bool				abAligned[4];
@@ -3182,6 +3235,13 @@ void TestCPP816RangeWarnings(void)
 	AssertInt(1, TestCPP816CountWarnings("int F(unsigned u) { return u != 0xFFFFFFFFUL; }\n", "Comparison is always true"));
 	AssertInt(1, TestCPP816CountWarnings("int F(unsigned u) { if (u == 0xFFFFFFFFUL) return 1; return 0; }\n", "Comparison is always false"));
 	AssertInt(0, TestCPP816CountWarnings("int F(unsigned u) { return u == 0xFFFFFFFFUL; }\n", "Comparison", CPPT_65C64));
+
+	//At a type's limit: the smallest value of a signed char.
+	AssertInt(1, TestCPP816CountWarnings("int F(signed char c) { return c >= -128; }\n", "Comparison is always true: the constant -128 is the smallest"));
+
+	//A 16 bit product (it may have wrapped) widened afterwards; none when an operand is widened first.
+	AssertInt(1, TestCPP816CountWarnings("long long F(unsigned u) { return u * 0x39e7; }\n", "Integer arithmetic widened"));
+	AssertInt(0, TestCPP816CountWarnings("long long F(unsigned u) { return (long long)u * 0x39e7; }\n", "Integer arithmetic widened"));
 
 	//Relational comparisons, the constant on either side.
 	AssertInt(1, TestCPP816CountWarnings("int F(int i) { return i < 40000L; }\n", "Comparison is always true"));
@@ -3426,6 +3486,7 @@ void TestCPP816(void)
 	TestCPP816BiasedIndices();
 	TestCPP816BCDBuiltins();
 	TestCPP816ShiftedWordIndices();
+	TestCPP816TypeTraits();
 	TestCPP816MergedAddressPhis();
 	TestCPP816InlineObjectParameters();
 	TestCPP816ConstantDivisions();

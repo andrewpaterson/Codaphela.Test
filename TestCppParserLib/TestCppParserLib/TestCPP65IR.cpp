@@ -20,10 +20,7 @@ int32 TestCPP65IRMain(const char* szSource, size uiWritten, bool bFloat = false)
 {
 	size	uiBefore;
 	int32	iResult;
-	bool	bDefault;
 
-	bDefault = CCPP65Generator::GetDefaultUseIR();
-	CCPP65Generator::SetDefaultUseIR(true);
 	CCPP65IRFrontEnd::sbPrint = getenv("CPP65_PRINT_IR") != NULL;
 	uiBefore = CCPP65IRFrontEnd::suiWritten;
 	iResult = bFloat ? TestCPP65MainFloat(szSource) : TestCPP65Main(szSource);
@@ -35,7 +32,6 @@ int32 TestCPP65IRMain(const char* szSource, size uiWritten, bool bFloat = false)
 		}
 		AssertSize(uiWritten, CCPP65IRFrontEnd::suiWritten - uiBefore);
 	}
-	CCPP65Generator::SetDefaultUseIR(bDefault);
 	return iResult;
 }
 
@@ -414,7 +410,6 @@ void TestCPP65IRDevirtualise(void)
 	CChars		szAssembly;
 	CChars		szErrors;
 	CChars		szUse;
-	bool		bDefault;
 
 	szSource =
 		"struct CShape { virtual int Area() { return 1; } };\n"
@@ -423,8 +418,6 @@ void TestCPP65IRDevirtualise(void)
 		"int main() { return Use(5); }\n";
 	AssertInt(25, TestCPP65IRMain(szSource, 6));
 
-	bDefault = CCPP65Generator::GetDefaultUseIR();
-	CCPP65Generator::SetDefaultUseIR(true);
 	szAssembly.Init();
 	szErrors.Init();
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, szSource, true));
@@ -435,7 +428,6 @@ void TestCPP65IRDevirtualise(void)
 	szUse.Kill();
 	szErrors.Kill();
 	szAssembly.Kill();
-	CCPP65Generator::SetDefaultUseIR(bDefault);
 }
 
 
@@ -451,7 +443,6 @@ void TestCPP65IRInlineConstants(void)
 	CChars		szAssembly;
 	CChars		szErrors;
 	CChars		szMain;
-	bool		bDefault;
 
 	szSource =
 		"int ga = 7; int gb = 3;\n"
@@ -465,8 +456,6 @@ void TestCPP65IRInlineConstants(void)
 		"int main() { return Pick(2, ga, gb) + Pick(8, ga, gb); }\n";
 	AssertInt(22, TestCPP65IRMain(szSource, 2));
 
-	bDefault = CCPP65Generator::GetDefaultUseIR();
-	CCPP65Generator::SetDefaultUseIR(true);
 	szAssembly.Init();
 	szErrors.Init();
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, szSource, true));
@@ -477,7 +466,6 @@ void TestCPP65IRInlineConstants(void)
 	szMain.Kill();
 	szErrors.Kill();
 	szAssembly.Kill();
-	CCPP65Generator::SetDefaultUseIR(bDefault);
 }
 
 

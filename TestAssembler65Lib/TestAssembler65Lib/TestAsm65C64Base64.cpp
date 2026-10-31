@@ -1,7 +1,7 @@
 #include <string.h>
 #include "BaseLib/Chars.h"
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 #define BASE64_ENCODED	0x4000
@@ -86,7 +86,7 @@ void TestAsm65Base64Binary(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAsm65Base64(void)
+void TestAsm65C64Base64(void)
 {
 	BeginTests();
 

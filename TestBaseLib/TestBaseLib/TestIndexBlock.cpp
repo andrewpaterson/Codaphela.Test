@@ -9,6 +9,7 @@
 #include "BaseLib/LogString.h"
 #include "BaseLib/LocalMallocatorConstructors.h"
 #include "BaseLib/DataOrderers.h"
+#include "BaseLib/IndexPrimitiveTemplate.h"
 #include "TestLib/Words.h"
 #include "TestLib/Assert.h"
 #include "WordKey.h"
@@ -625,6 +626,55 @@ void TestIndexBlockDataFree(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// CIndexPrimitiveTemplate's Put(key), Get(key, ppsData), DataSize and
+// HasKey didn't compile (the key's address wasn't cast to uint8*), its
+// iterators copied no key (a maximum key size of 0), and
+// CIndexBlock::DataSize gave the size of the index's node, not the data's.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexBlockPrimitiveTemplate(void)
+{
+	CIndexPrimitiveTemplate<int64, int32>	cIndex;
+	int32*									piData;
+	int32									iData;
+	SIndexTreeMemoryUnsafeIterator			sIter;
+	int64									lliKey;
+	bool									bExists;
+	int64									lliSum;
+
+	cIndex.Init();
+	piData = cIndex.Put(7LL);
+	AssertNotNull(piData);
+	*piData = 70;
+	iData = 30;
+	AssertTrue(cIndex.Put(3LL, &iData));
+	AssertSize(2, cIndex.NumElements());
+
+	AssertInt(70, *cIndex.Get(7LL));
+	AssertTrue(cIndex.Get(3LL, &piData));
+	AssertInt(30, *piData);
+	AssertNull(cIndex.Get(5LL));
+	AssertTrue(cIndex.HasKey(7LL));
+	AssertSize(sizeof(int32), cIndex.DataSize(7LL));
+
+	lliSum = 0;
+	bExists = cIndex.StartIteration(&sIter, &piData, &lliKey);
+	while (bExists)
+	{
+		lliSum += lliKey * *piData;
+		bExists = cIndex.Iterate(&sIter, &piData, &lliKey);
+	}
+	AssertLong(7 * 70 + 3 * 30, lliSum);
+
+	AssertTrue(cIndex.Remove(7LL));
+	AssertFalse(cIndex.HasKey(7LL));
+	AssertSize(1, cIndex.NumElements());
+	cIndex.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestIndexBlock(void)
@@ -642,6 +692,7 @@ void TestIndexBlock(void)
 	TestIndexBlockRemoveHalf();
 	TestIndexBlockDataFree();
 	TestIndexBlockIterate();
+	TestIndexBlockPrimitiveTemplate();
 
 	DataOrderersKill();
 	MemoryKill();

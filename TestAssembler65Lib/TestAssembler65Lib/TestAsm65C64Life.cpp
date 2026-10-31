@@ -1,7 +1,7 @@
 #include <string.h>
 #include "BaseLib/Chars.h"
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 #define LIFE_SIZE	16
@@ -144,7 +144,7 @@ void TestAsm65LifeGenerations(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAsm65Life(void)
+void TestAsm65C64Life(void)
 {
 	BeginTests();
 

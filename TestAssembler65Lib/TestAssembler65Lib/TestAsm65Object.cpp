@@ -3,7 +3,7 @@
 #include "BaseLib/DiskFile.h"
 #include "BaseLib/FileUtil.h"
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ static void AssembleObject(CChars* pszDump, const char* szSource)
 //////////////////////////////////////////////////////////////////////////
 static void AssertObjectError(const char* szExpected, const char* szSource)
 {
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 	CAsm65Object	cObject;
 
 	cObject.Init("test");
@@ -76,13 +76,13 @@ void TestAsm65ObjectRelocations(void)
 
 	AssertString(
 		"section 0 text align 2 size 32\n"
-		"  $10 $24 $00 $00 $00 $00 $20 $10 $00 $00 $00 $00 $aa $20 $00 $00\n"
-		"  $00 $00 $1c $66 $00 $00 $00 $00 $1c $cd $10 $c1 $1e $00 $3b $00\n"
+		"  0x10 0x24 0x00 0x00 0x00 0x00 0x20 0x10 0x00 0x00 0x00 0x00 0xaa 0x20 0x00 0x00\n"
+		"  0x00 0x00 0x1c 0x66 0x00 0x00 0x00 0x00 0x1c 0xcd 0x10 0xc1 0x1e 0x00 0x3b 0x00\n"
 		"section 1 rodata align 1 size 12\n"
-		"  $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00\n"
+		"  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00\n"
 		"section 2 bss align 1 size 6\n"
 		"section 3 text.other align 2 size 2\n"
-		"  $3b $00\n"
+		"  0x3b 0x00\n"
 		"symbol 0 Helper global undefined\n"
 		"symbol 1 Start global section 0 + 0\n"
 		"symbol 2 End local section 0 + 30\n"
@@ -124,10 +124,10 @@ void TestAsm65ObjectWidths(void)
 
 	AssertString(
 		"section 0 text align 2 size 22\n"
-		"  $60 $10 $00 $00 $10 $22 $00 $00 $10 $2a $00 $00 $10 $27 $00 $00\n"
-		"  $00 $00 $00 $00 $00 $00\n"
+		"  0x60 0x10 0x00 0x00 0x10 0x22 0x00 0x00 0x10 0x2a 0x00 0x00 0x10 0x27 0x00 0x00\n"
+		"  0x00 0x00 0x00 0x00 0x00 0x00\n"
 		"section 1 data align 1 size 3\n"
-		"  $00 $00 $00\n"
+		"  0x00 0x00 0x00\n"
 		"symbol 0 Low local section 1 + 2\n"
 		"symbol 1 Value local section 1 + 0\n"
 		"relocation section 0 + 2 absolute 2 bytes = section 1 + 0\n"
@@ -165,9 +165,9 @@ void TestAsm65ObjectSectionsAndBindings(void)
 	AssertString(
 		"section 0 text align 1 size 0\n"
 		"section 1 text.Inline comdat text.Inline align 2 size 2\n"
-		"  $0b $01\n"
+		"  0x0b 0x01\n"
 		"section 2 rodata.Inline comdat Inline align 8 size 8\n"
-		"  $00 $00 $00 $00 $00 $00 $00 $00\n"
+		"  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00\n"
 		"symbol 0 Outside global undefined\n"
 		"symbol 1 Optional weak undefined\n"
 		"symbol 2 Hook weak section 2 + 0\n"
@@ -202,13 +202,13 @@ void TestAsm65ObjectSectionOptions(void)
 	AssertString(
 		"section 0 text align 1 size 0\n"
 		"section 1 text.Start keep align 2 size 2\n"
-		"  $3b $00\n"
+		"  0x3b 0x00\n"
 		"section 2 init.Make associated 4 align 1 size 4\n"
-		"  $00 $00 $00 $00\n"
+		"  0x00 0x00 0x00 0x00\n"
 		"section 3 text.Shared comdat Group keep align 2 size 2\n"
-		"  $0b $01\n"
+		"  0x0b 0x01\n"
 		"section 4 data.gThing align 1 size 4\n"
-		"  $00 $00 $00 $00\n",
+		"  0x00 0x00 0x00 0x00\n",
 		szDump.Text());
 	szDump.Kill();
 
@@ -219,7 +219,7 @@ void TestAsm65ObjectSectionOptions(void)
 	AssertString(
 		"section 0 text align 1 size 0\n"
 		"section 1 text.Fixed comdat text.Fixed resident align 2 size 2\n"
-		"  $3b $00\n",
+		"  0x3b 0x00\n",
 		szDump.Text());
 	szDump.Kill();
 }
@@ -231,7 +231,7 @@ void TestAsm65ObjectSectionOptions(void)
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65ObjectErrors(void)
 {
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 
 	AssertObjectError("1:6: .org is only allowed in absolute mode; use .section '$1000'\n", ".org $1000\n");
 	AssertObjectError("2:12: A section address can only have a constant added or subtracted '*'\n", "L:\n	cpy A, L2 * 2\nL2:\n");

@@ -1,5 +1,5 @@
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 #define RELOCATE_DESTINATION	0x8000

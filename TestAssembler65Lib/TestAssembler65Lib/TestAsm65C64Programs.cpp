@@ -1,5 +1,5 @@
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -277,7 +277,7 @@ void TestAsm65ProgramsSubroutine(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAsm65Programs(void)
+void TestAsm65C64Programs(void)
 {
 	BeginTests();
 

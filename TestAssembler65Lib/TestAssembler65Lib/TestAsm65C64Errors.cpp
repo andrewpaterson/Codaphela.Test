@@ -1,5 +1,5 @@
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -9,7 +9,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65ErrorsStatements(void)
 {
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 
 	cAssembler.Init();
 	AssertFalse(cAssembler.Assemble(
@@ -47,7 +47,7 @@ void TestAsm65ErrorsStatements(void)
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65ErrorsRanges(void)
 {
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 
 	cAssembler.Init();
 	AssertFalse(cAssembler.Assemble(
@@ -129,7 +129,7 @@ void TestAsm65ErrorsRanges(void)
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65ErrorsCopyExtendBranchEqual(void)
 {
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 
 	cAssembler.Init();
 	AssertFalse(cAssembler.Assemble(
@@ -175,7 +175,7 @@ void TestAsm65ErrorsCopyExtendBranchEqual(void)
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65ErrorsTokens(void)
 {
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 
 	cAssembler.Init();
 	AssertFalse(cAssembler.Assemble("	cpy A, 0x\n	cpy A, @\n	cpy A, 4:16s\n"));
@@ -194,7 +194,7 @@ void TestAsm65ErrorsTokens(void)
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65ErrorsWarnings(void)
 {
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 
 	cAssembler.Init();
 	AssertTrue(cAssembler.Assemble(
@@ -229,7 +229,7 @@ void TestAsm65ErrorsWarnings(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAsm65Errors(void)
+void TestAsm65C64Errors(void)
 {
 	BeginTests();
 

@@ -325,11 +325,11 @@ void TestCPP65GeneratorAssembly(void)
 		"\t\t.section text._Add__Fii\n"
 		"\t\t.global _Add__Fii\n"
 		"_Add__Fii:\n"
-		"L2:\n"
+		"L1:\n"
 		"\t\tcpy A, [5 + S]\n"
 		"\t\tcpy B, [9 + S]\n"
 		"\t\tadd A, B\n"
-		"L3:\n"
+		"L2:\n"
 		"\t\tret\n"
 		"\n", szAssembly.Text());
 	szErrors.Kill();
@@ -368,7 +368,7 @@ void TestCPP65GeneratorConvention(void)
 	AssertTrue(szAssembly.StartsWith(
 		"\t\t.section text, keep, resident\n"
 		"Start:\n"
-		"\t\tcpy S, $1fffff\n"
+		"\t\tcpy S, 0x1fffff\n"
 		"\t\tcpy W, 0\n"
 		"\t\twtth (A, B), 32\n"
 		"\t\twtth (X, Y), 32\n"
@@ -2949,15 +2949,16 @@ static void AssertCPP65Error(const char* szExpected, const char* szSource)
 void TestCPP65GeneratorErrors(void)
 {
 	AssertCPP65Error("Generated.cpp (1, 27): The operands must be integers [f]\n", "float f; int g() { return f % 2; }");
-	AssertCPP65Error("Generated.cpp (1, 1): This declaration is not supported by the 65C64 generator yet [namespace]\n", "namespace N { int x; }");
-	AssertCPP65Error("Generated.cpp (1, 19): Only new Type[count] (one dimension, no initialiser list) is supported by the 65C64 generator yet [new]\n", "int* f() { return new int[2]{1, 2}; }");
+	AssertCPP65Error("Generated.cpp (1, 1): This declaration is not supported by the compiler yet [namespace]\n", "namespace N { int x; }");
+	AssertCPP65Error("Generated.cpp (1, 19): Only new Type[count] (one dimension, no initialiser list) is supported by the compiler yet [new]\n", "int* f() { return new int[2]{1, 2}; }");
 	AssertCPP65Error("Generated.cpp (1, 44): The object has no conversion to the type it is used as [p]\n", "struct P { int x; }; int f() { P p; return p; }");
 	AssertCPP65Error("Generated.cpp (1, 32): No function matches the arguments (): it takes (long) [f]\n", "int f(int a); int g() { return f(); }");
 	AssertCPP65Error("Generated.cpp (1, 16): break outside a loop or switch [break]\n", "void f(void) { break; }");
 	AssertCPP65Error("Generated.cpp (1, 33): __builtin_alloca is not supported [__builtin_alloca]\n", "int f(int n) { char* p = (char*)__builtin_alloca(n); return p[0]; }");
-	AssertCPP65Error("Generated.cpp (1, 31): A static local variable needs a constant initialiser in the 65C64 generator yet [a]\n", "int f(int a) { static int s = a; return s; }");
+	AssertCPP65Error("Generated.cpp (1, 31): A static local variable needs a constant initialiser in the compiler yet [a]\n", "int f(int a) { static int s = a; return s; }");
 	AssertCPP65Error("Generated.cpp (1, 149): More than one specialisation of the class template matches equally [s]\n", "template<class A, class B> struct S {}; template<class A, class B> struct S<A*, B> {}; template<class A, class B> struct S<A, B*> {}; S<int*, int*> s; int main() { return 0; }");
 	AssertCPP65Error("Generated.cpp (1, 70): The member template has not been defined [c]\n", "struct C { template<class T> int F(T t); }; int main() { C c; return c.F(1); }");
+	AssertCPP65Error("Generated.cpp (1, 35): __builtin_bcd_add and __builtin_bcd_subtract are the W65C816's decimal mode: use BaseLib's BCDAdd and BCDSubtract [__builtin_bcd_add]\n", "int f(unsigned short* p) { return __builtin_bcd_add(p, p, 1, 0); }");
 }
 
 
@@ -3087,6 +3088,18 @@ void TestCPP65GeneratorListing(void)
 	cFile.Init();
 	AssertTrue(cFile.Read("Output" _FS_ "CPP65Listing" _FS_ "Listed.lst"));
 	AssertTrue(strstr(cFile.Text(), "\t\t; Listed.cpp(6): t += p[i];\n") != NULL);
+	cFile.Kill();
+	cBuilder.Kill();
+
+	//LinkWith's unit is listed too.
+	cFileUtil.RemoveDir("Output" _FS_ "CPP65Listing");
+	cBuilder.Init();
+	TestCPP65AddIncludeDirectories(&cBuilder);
+	cBuilder.SetListingDirectory("Output" _FS_ "CPP65Listing");
+	cBuilder.LinkWith("Linked.cpp", szSource);
+	cFile.Init();
+	AssertTrue(cFile.Read("Output" _FS_ "CPP65Listing" _FS_ "Linked.lst"));
+	AssertTrue((cFile.Text() != NULL) && (strstr(cFile.Text(), "\t\t; Linked.cpp(6): t += p[i];\n") != NULL));
 	cFile.Kill();
 	cBuilder.Kill();
 }

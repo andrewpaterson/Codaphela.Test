@@ -1,7 +1,7 @@
 #include "BaseLib/Chars.h"
 #include "MicroprocessorLib/65C64Decoded.h"
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ static void AppendWord(CChars* psz, uint16 uiWord)
 //////////////////////////////////////////////////////////////////////////
 static void Asm65Words(CChars* psz, const char* szLine)
 {
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 	CChars			szSource;
 	S65C64Decoded	sDecoded;
 	size			uiBytes;
@@ -282,7 +282,7 @@ void TestAsm65EncodingDecode(void)
 	static const char*	aszLines[] = { "cpy A, [[$1234] + Y]", "add A, [V + X]", "shl [$10 + X], 3", "shr [V + Y], B", "jsr [V + X]", "brsr X", "vpxor W, V, +1, A, 32", "bpcpy Y, V, -1, A, !z", "fccr A, X", "scb (X, Y), (A, 63), B", "brae (c, z), 8", "brane (c, z), 100", "cpyx A, [$10]:32" };
 	static const E65Instruction	aeInstructions[] = { I65_Cpy, I65_Add, I65_Shl, I65_Shr, I65_Jsr, I65_Brsr, I65_Vpxor, I65_Bpcpy, I65_Fccr, I65_Scb, I65_Brae, I65_Brane, I65_Cpyx };
 	size				i;
-	CAsm65Assembler		cAssembler;
+	CAsm65C64Assembler		cAssembler;
 	CChars				szSource;
 	S65C64Decoded		sDecoded;
 
@@ -322,7 +322,7 @@ void TestAsm65EncodingDecode(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAsm65Encoding(void)
+void TestAsm65C64Encoding(void)
 {
 	BeginTests();
 

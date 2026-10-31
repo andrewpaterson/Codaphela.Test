@@ -1,6 +1,6 @@
 #include "BaseLib/Chars.h"
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ void TestAsm65StringsRoutines(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAsm65Strings(void)
+void TestAsm65C64Strings(void)
 {
 	BeginTests();
 

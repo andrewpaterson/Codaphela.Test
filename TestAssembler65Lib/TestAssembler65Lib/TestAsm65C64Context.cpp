@@ -4,7 +4,7 @@
 #include "BaseLib/ConstructorCall.h"
 #include "BaseLib/TextFile.h"
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -12,7 +12,7 @@
 // Prints the errors when assembling fails.
 //
 //////////////////////////////////////////////////////////////////////////
-bool TestAsm65Assemble(CAsm65Assembler* pcAssembler, const char* szSource)
+bool TestAsm65Assemble(CAsm65C64Assembler* pcAssembler, const char* szSource)
 {
 	bool	bResult;
 
@@ -30,7 +30,7 @@ bool TestAsm65Assemble(CAsm65Assembler* pcAssembler, const char* szSource)
 //////////////////////////////////////////////////////////////////////////
 bool TestAsm65AssembleObject(CAsm65Object* pcObject, const char* szSource)
 {
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 	bool			bResult;
 
 	cAssembler.Init();
@@ -45,7 +45,7 @@ bool TestAsm65AssembleObject(CAsm65Object* pcObject, const char* szSource)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-uint16 TestAsm65Word(CAsm65Assembler* pcAssembler, uint32 uiAddress)
+uint16 TestAsm65Word(CAsm65C64Assembler* pcAssembler, uint32 uiAddress)
 {
 	return pcAssembler->GetOutput()->GetWord(uiAddress);
 }
@@ -85,7 +85,7 @@ bool TestAsm65ReadSource(CChars* pszSource, const char* szFilename)
 //////////////////////////////////////////////////////////////////////////
 bool TestAsm65Begin(STestAsm65Run* psRun, const char* szSource, uint32 uiResetAddress)
 {
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 	bool			bResult;
 
 	bResult = TestAsm65Assemble(&cAssembler, szSource);
@@ -107,7 +107,7 @@ void TestAsm65BeginOutput(STestAsm65Run* psRun, CAsm65Output* pcOutput, uint32 u
 	psRun->uiInstructions = 0;
 	psRun->pcContext->LoadProgram(pcOutput, uiResetAddress);
 
-	psRun->pcContext->InitFast(&psRun->cMPU);
+	psRun->pcContext->InitFast65C64(&psRun->cMPU);
 	psRun->cMPU.Reset();
 }
 

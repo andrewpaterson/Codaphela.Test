@@ -2,6 +2,7 @@
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/FileUtil.h"
+#include "CppParserLib/DirectiveMap.h"
 #include "CppParserLib/Preprocessor.h"
 #include "CppParserLib/HeaderFileMap.h"
 #include "TestLib/Assert.h"
@@ -1162,6 +1163,48 @@ void TestPreprocessorConditionalArithmetic(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Universal character names are escape sequences in #if character
+// literals too.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorConditionalUniversalCharacterNames(void)
+{
+	CChars	szDest;
+
+	szDest.Init();
+	CPreprocessor::Preprocess(
+		"#if '\\u0041' == 65 && '\\U00000042' == 66 && u'\\u00E9' == 0xE9\n"
+		"good\n"
+		"#endif\n", &szDest);
+
+	AssertString("good\n", szDest.Text());
+	szDest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// #if takes the same integer suffixes as the C++ tokeniser, Microsoft's
+// i64 and friends included.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorConditionalIntegerSuffixes(void)
+{
+	CChars	szDest;
+
+	szDest.Init();
+	CPreprocessor::Preprocess(
+		"#if 7i64 == 7 && 0x10ui64 == 16 && 3i32 == 3 && 2i8 == 2 && 5LLU == 5\n"
+		"good\n"
+		"#endif\n", &szDest);
+
+	AssertString("good\n", szDest.Text());
+	szDest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorSkippedConditionals(void)
@@ -1356,7 +1399,7 @@ void TestPreprocessorLocations(void)
 // The preprocessor's errors for szSource, one a line.
 //
 //////////////////////////////////////////////////////////////////////////
-static bool PreprocessErrors(char* szSource, CChars* pszErrors)
+static bool PreprocessErrors(char* szSource, CChars* pszErrors, CChars* pszWarnings = NULL)
 {
 	CTranslationUnit	cFile;
 	CPreprocessor		cPreprocessor;
@@ -1367,6 +1410,10 @@ static bool PreprocessErrors(char* szSource, CChars* pszErrors)
 	cPreprocessor.Init(NULL);
 	bResult = cPreprocessor.PreprocessTranslationUnit(&cFile);
 	pszErrors->Append(cPreprocessor.GetErrors()->Text());
+	if (pszWarnings)
+	{
+		pszWarnings->Append(cPreprocessor.GetWarnings()->Text());
+	}
 	cPreprocessor.Kill();
 	cFile.Kill();
 	return bResult;
@@ -1380,6 +1427,7 @@ static bool PreprocessErrors(char* szSource, CChars* pszErrors)
 void TestPreprocessorErrors(void)
 {
 	CChars	szErrors;
+	CChars	szWarnings;
 
 	szErrors.Init();
 	AssertTrue(PreprocessErrors("int x;\n", &szErrors));
@@ -1405,6 +1453,437 @@ void TestPreprocessorErrors(void)
 	PreprocessErrors("#if 1\nint x;\n", &szErrors);
 	AssertString("Errors.cpp: Unterminated conditional directive.\n", szErrors.Text());
 	szErrors.Kill();
+
+	//#error is an error in the list; #warning is a warning, and preprocessing goes on.
+	szErrors.Init();
+	AssertFalse(PreprocessErrors("int x;\n#error Not this way\n", &szErrors));
+	AssertString("Errors.cpp (2, 7): #error Not this way\n", szErrors.Text());
+	szErrors.Kill();
+	szErrors.Init();
+	szWarnings.Init();
+	AssertTrue(PreprocessErrors("int x;\n#warning Look out\nint y;\n", &szErrors, &szWarnings));
+	AssertString("", szErrors.Text());
+	AssertString("Errors.cpp (2, 9): #warning Look out\n", szWarnings.Text());
+	szWarnings.Kill();
+	szErrors.Kill();
+	szErrors.Init();
+	AssertTrue(PreprocessErrors("#if 0\n#error Skipped\n#warning Skipped\n#endif\n", &szErrors));
+	AssertString("", szErrors.Text());
+	szErrors.Kill();
+
+	//A conditional has one #else, after every #elif.
+	szErrors.Init();
+	PreprocessErrors("#if 0\n#else\n#else\n#endif\n", &szErrors);
+	AssertString("Errors.cpp (3, 6): #elif or #else after #else.\n", szErrors.Text());
+	szErrors.Kill();
+	szErrors.Init();
+	PreprocessErrors("#if 0\n#else\n#elif 1\n#endif\n", &szErrors);
+	AssertString("Errors.cpp (3, 6): #elif or #else after #else.\n", szErrors.Text());
+	szErrors.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A directive removed from the map is gone; the others are still there.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorDirectiveMap(void)
+{
+	CDirectiveMap	cMap;
+
+	cMap.Init();
+	cMap.AddDirective("define", PPD_define);
+	cMap.AddDirective("undef", PPD_undef);
+	AssertNotNull(cMap.GetDirective("define", true));
+	cMap.RemoveDirective("define");
+	AssertNull(cMap.GetDirective("define", true));
+	AssertNotNull(cMap.GetDirective("undef", true));
+	cMap.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A backslash and a new line join two lines anywhere, even in the middle
+// of an identifier or a string.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorLineContinuation(void)
+{
+	CChars	szDest;
+
+	szDest.Init();
+	CPreprocessor::Preprocess("int ab\\\ncd = 1;", &szDest);
+	AssertString("int abcd = 1;\n", szDest.Text());
+	szDest.Kill();
+
+	szDest.Init();
+	CPreprocessor::Preprocess("char* sz = \"x\\\ny\";", &szDest);
+	AssertString("char* sz = \"xy\";\n", szDest.Text());
+	szDest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// szSource preprocessed as szFileName with pcConfig (which can be NULL),
+// searching the include directories pcFirst then pcSecond (either can be
+// NULL).  The include log goes in pszLog if it is not NULL.
+//
+//////////////////////////////////////////////////////////////////////////
+static bool PreprocessFile(char* szFileName, char* szSource, CConfig* pcConfig, CHeaderFiles* pcFirst, CHeaderFiles* pcSecond, CChars* pszDest, CChars* pszLog)
+{
+	CTranslationUnit	cFile;
+	CPreprocessor		cPreprocessor;
+	bool				bResult;
+
+	cFile.Init(szFileName, NULL, false);
+	cFile.SetContents(szSource);
+	cPreprocessor.Init(pcConfig);
+	cPreprocessor.LogIncludes(pszLog);
+	if (pcFirst)
+	{
+		cPreprocessor.AddIncludeDirectory(pcFirst);
+	}
+	if (pcSecond)
+	{
+		cPreprocessor.AddIncludeDirectory(pcSecond);
+	}
+	bResult = cPreprocessor.PreprocessTranslationUnit(&cFile);
+	cFile.Print(pszDest);
+	cPreprocessor.Kill();
+	cFile.Kill();
+	return bResult;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// __LINE__ is the line of the outermost macro name written in the source,
+// __FILE__ the translation unit's name and __COUNTER__ counts up from 0.
+// __cplusplus is C++14.  [cpp.predefined]
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorPredefinedMacros(void)
+{
+	CChars	szDest;
+	char*	sz;
+
+	szDest.Init();
+	AssertTrue(PreprocessFile("Predefined.cpp", "\
+int a = __LINE__;\n\
+\n\
+#define L __LINE__\n\
+#define M(x) x + L\n\
+int b = L;\n\
+int c = M(\n\
+\n\
+1);\n\
+int d = __LINE__;\n", NULL, NULL, NULL, &szDest, NULL));
+	AssertString("\
+int a = 1;\n\
+int b = 5;\n\
+int c = 1 + 6;\n\
+int d = 9;\n", szDest.Text());
+	szDest.Kill();
+
+	szDest.Init();
+	AssertTrue(PreprocessFile("Predefined.cpp", "\
+char* f = __FILE__;\n\
+int c0 = __COUNTER__;\n\
+int c1 = __COUNTER__;\n\
+long v = __cplusplus;\n\
+int h = __STDC_HOSTED__;\n", NULL, NULL, NULL, &szDest, NULL));
+	AssertString("\
+char* f = \"Predefined.cpp\";\n\
+int c0 = 0;\n\
+int c1 = 1;\n\
+long v = 201402L;\n\
+int h = 1;\n", szDest.Text());
+	szDest.Kill();
+
+	//__DATE__ is "Mmm dd yyyy" and __TIME__ is "hh:mm:ss".
+	szDest.Init();
+	AssertTrue(PreprocessFile("Predefined.cpp", "__DATE__ __TIME__", NULL, NULL, NULL, &szDest, NULL));
+	sz = szDest.Text();
+	AssertInt(25, (int)szDest.Length());
+	AssertChar('"', sz[0]);
+	AssertTrue((strncmp(&sz[1], "Jan", 3) == 0) || (strncmp(&sz[1], "Feb", 3) == 0) || (strncmp(&sz[1], "Mar", 3) == 0) || (strncmp(&sz[1], "Apr", 3) == 0) ||
+			   (strncmp(&sz[1], "May", 3) == 0) || (strncmp(&sz[1], "Jun", 3) == 0) || (strncmp(&sz[1], "Jul", 3) == 0) || (strncmp(&sz[1], "Aug", 3) == 0) ||
+			   (strncmp(&sz[1], "Sep", 3) == 0) || (strncmp(&sz[1], "Oct", 3) == 0) || (strncmp(&sz[1], "Nov", 3) == 0) || (strncmp(&sz[1], "Dec", 3) == 0));
+	AssertChar(' ', sz[4]);
+	AssertTrue((sz[5] == ' ') || ((sz[5] >= '1') && (sz[5] <= '3')));
+	AssertTrue((sz[6] >= '0') && (sz[6] <= '9'));
+	AssertChar(' ', sz[7]);
+	AssertTrue((sz[8] >= '1') && (sz[8] <= '9'));
+	AssertTrue((sz[9] >= '0') && (sz[9] <= '9'));
+	AssertTrue((sz[10] >= '0') && (sz[10] <= '9'));
+	AssertTrue((sz[11] >= '0') && (sz[11] <= '9'));
+	AssertChar('"', sz[12]);
+	AssertChar(' ', sz[13]);
+	AssertChar('"', sz[14]);
+	AssertTrue((sz[15] >= '0') && (sz[15] <= '2'));
+	AssertTrue((sz[16] >= '0') && (sz[16] <= '9'));
+	AssertChar(':', sz[17]);
+	AssertTrue((sz[18] >= '0') && (sz[18] <= '5'));
+	AssertTrue((sz[19] >= '0') && (sz[19] <= '9'));
+	AssertChar(':', sz[20]);
+	AssertTrue((sz[21] >= '0') && (sz[21] <= '6'));
+	AssertTrue((sz[22] >= '0') && (sz[22] <= '9'));
+	AssertChar('"', sz[23]);
+	AssertChar('\n', sz[24]);
+	szDest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// __has_builtin, __has_feature, __has_extension and __has_attribute are
+// defined, but know nothing: they are always 0.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorHasOperators(void)
+{
+	CChars	szDest;
+
+	szDest.Init();
+	CPreprocessor::Preprocess("\
+#if __has_builtin(__builtin_expect)\n\
+builtin\n\
+#endif\n\
+#if __has_feature(cxx_rvalue_references)\n\
+feature\n\
+#endif\n\
+#if __has_extension(cxx_rvalue_references)\n\
+extension\n\
+#endif\n\
+#if __has_attribute(noreturn)\n\
+attribute\n\
+#endif\n\
+#if defined(__has_builtin) && defined(__has_feature) && defined __has_extension && defined(__has_attribute)\n\
+defined\n\
+#endif\n\
+#if !__has_builtin(x) && !__has_feature(x) && !__has_attribute(x)\n\
+none\n\
+#endif\n", &szDest);
+	AssertString("defined\nnone\n", szDest.Text());
+	szDest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A configuration define is NAME or NAME=VALUE.  It replaces a predefined
+// macro of the same name.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorConfigDefines(void)
+{
+	CConfig	cConfig;
+	CChars	szDest;
+
+	cConfig.Init("Release");
+	cConfig.mbHostDefines = false;
+	cConfig.AddDefines("WIDTH=16;FLAG;__cplusplus=201703L;EMPTY=");
+
+	szDest.Init();
+	AssertTrue(PreprocessFile("Config.cpp", "\
+int w = WIDTH;\n\
+#ifdef FLAG\n\
+int f;\n\
+#endif\n\
+long v = __cplusplus;\n\
+int e = EMPTY 1;\n", &cConfig, NULL, NULL, &szDest, NULL));
+	AssertString("\
+int w = 16;\n\
+int f;\n\
+long v = 201703L;\n\
+int e = 1;\n", szDest.Text());
+	szDest.Kill();
+
+	cConfig.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A configuration define without a value is 1, as -D NAME and /D NAME
+// are.  NAME= is empty.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorConfigDefineWithoutValue(void)
+{
+	CConfig	cConfig;
+	CChars	szDest;
+
+	cConfig.Init("Release");
+	cConfig.mbHostDefines = false;
+	cConfig.AddDefines("FLAG;EMPTY=");
+
+	szDest.Init();
+	AssertTrue(PreprocessFile("Config.cpp", "\
+int f = FLAG;\n\
+#if FLAG\n\
+int g;\n\
+#endif\n\
+#if FLAG == 1\n\
+int h;\n\
+#endif\n\
+int e = EMPTY 2;\n", &cConfig, NULL, NULL, &szDest, NULL));
+	AssertString("\
+int f = 1;\n\
+int g;\n\
+int h;\n\
+int e = 2;\n", szDest.Text());
+	szDest.Kill();
+
+	cConfig.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Headers made in memory, in two include directories: Input/SFT (which has
+// no headers on disk) and then Input (which has Header.h).
+//
+//////////////////////////////////////////////////////////////////////////
+static void InitMemoryHeaders(CHeaderFileMap* pcHeaderFiles, CHeaderFiles* pcFirst, CHeaderFiles* pcSecond)
+{
+	CFileUtil	cFileUtil;
+	CChars		szFirst;
+	CChars		szSecond;
+
+	szSecond.Init();
+	cFileUtil.CurrentDirectory(&szSecond);
+	cFileUtil.AppendToPath(&szSecond, "Input");
+	szFirst.Init(szSecond);
+	cFileUtil.AppendToPath(&szFirst, "SFT");
+
+	pcHeaderFiles->Init();
+	pcFirst->Init(szFirst.Text(), pcHeaderFiles, false, false);
+	pcSecond->Init(szSecond.Text(), pcHeaderFiles, false, true);
+
+	pcFirst->AddFile("Once.h")->SetContents("#pragma once\nint giOnce;\n");
+	pcFirst->AddFile("Twice.h")->SetContents("int giTwice;\n");
+	pcFirst->AddFile("Next.h")->SetContents("\
+int giFirst;\n\
+#if __has_include_next(<Next.h>)\n\
+#include_next <Next.h>\n\
+#endif\n\
+#if __has_include_next(<Header.h>)\n\
+int giHeaderIsNext;\n\
+#endif\n\
+#if __has_include_next(<Once.h>)\n\
+int giOnceIsNext;\n\
+#endif\n");
+	pcSecond->AddFile("Next.h")->SetContents("\
+int giSecond;\n\
+#if __has_include_next(<Next.h>)\n\
+int giThird;\n\
+#endif\n");
+
+	szFirst.Kill();
+	szSecond.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+static void KillMemoryHeaders(CHeaderFileMap* pcHeaderFiles, CHeaderFiles* pcFirst, CHeaderFiles* pcSecond)
+{
+	pcFirst->Kill();
+	pcSecond->Kill();
+	pcHeaderFiles->Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A header with #pragma once is only read the first time it is included;
+// a header without it every time.  Both are logged every time.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorPragmaOnce(void)
+{
+	CHeaderFileMap	cHeaderFiles;
+	CHeaderFiles	cFirst;
+	CHeaderFiles	cSecond;
+	CChars			szDest;
+	CChars			szLog;
+
+	InitMemoryHeaders(&cHeaderFiles, &cFirst, &cSecond);
+
+	szDest.Init();
+	szLog.Init();
+	AssertTrue(PreprocessFile("Once.cpp", "\
+#include \"Once.h\"\n\
+#include \"Once.h\"\n\
+#include <Twice.h>\n\
+#include <Twice.h>\n\
+int x;\n", NULL, &cFirst, &cSecond, &szDest, &szLog));
+	AssertString("\
+int giOnce;\n\
+int giTwice;\n\
+int giTwice;\n\
+int x;\n", szDest.Text());
+	AssertString("\
+     Once.cpp (Included)\n\
+         Once.h (Included)\n\
+         Once.h (Included)\n\
+         Twice.h (Included)\n\
+         Twice.h (Included)\n", szLog.Text());
+	szLog.Kill();
+	szDest.Kill();
+
+	KillMemoryHeaders(&cHeaderFiles, &cFirst, &cSecond);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// #include_next and __has_include_next search the include directories
+// after the one the current header was found in.  In the source file
+// they search them all, like #include.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorIncludeNext(void)
+{
+	CHeaderFileMap	cHeaderFiles;
+	CHeaderFiles	cFirst;
+	CHeaderFiles	cSecond;
+	CChars			szDest;
+	CChars			szLog;
+
+	InitMemoryHeaders(&cHeaderFiles, &cFirst, &cSecond);
+
+	szDest.Init();
+	szLog.Init();
+	AssertTrue(PreprocessFile("Next.cpp", "#include <Next.h>\nint x;\n", NULL, &cFirst, &cSecond, &szDest, &szLog));
+	AssertString("\
+int giFirst;\n\
+int giSecond;\n\
+int giHeaderIsNext;\n\
+int x;\n", szDest.Text());
+	AssertString("\
+     Next.cpp (Included)\n\
+         Next.h (Included)\n\
+             Next.h (Included)\n", szLog.Text());
+	szLog.Kill();
+	szDest.Kill();
+
+	szDest.Init();
+	AssertTrue(PreprocessFile("Next.cpp", "#include_next <Next.h>\n#if __has_include_next(<Once.h>)\nint y;\n#endif\n", NULL, &cFirst, &cSecond, &szDest, NULL));
+	AssertString("\
+int giFirst;\n\
+int giSecond;\n\
+int giHeaderIsNext;\n\
+int y;\n", szDest.Text());
+	szDest.Kill();
+
+	KillMemoryHeaders(&cHeaderFiles, &cFirst, &cSecond);
 }
 
 
@@ -1446,11 +1925,22 @@ void TestPreprocessor(void)
 	TestPreprocessorStandardExample5();
 	TestPreprocessorStandardExample7();
 	TestPreprocessorConditionalArithmetic();
+	TestPreprocessorConditionalUniversalCharacterNames();
+	TestPreprocessorConditionalIntegerSuffixes();
 	TestPreprocessorSkippedConditionals();
 	TestPreprocessorNumbersAndPunctuators();
 	TestPreprocessorMultiLineArguments();
 	TestPreprocessorLocations();
 	TestPreprocessorErrors();
+	TestPreprocessorLineContinuation();
+	TestPreprocessorDirectiveMap();
+	TestPreprocessorParentheses();
+	TestPreprocessorPredefinedMacros();
+	TestPreprocessorHasOperators();
+	TestPreprocessorConfigDefines();
+	TestPreprocessorConfigDefineWithoutValue();
+	TestPreprocessorPragmaOnce();
+	TestPreprocessorIncludeNext();
 
 	NumberKill();
 	TypeConverterKill();

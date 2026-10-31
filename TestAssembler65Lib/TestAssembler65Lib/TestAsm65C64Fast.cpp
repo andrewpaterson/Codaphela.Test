@@ -1,9 +1,9 @@
 #include "BaseLib/Chars.h"
 #include "BaseLib/ConstructorCall.h"
 #include "BaseLib/PointerFunctions.h"
-#include "Assembler65Lib/Asm65Lockstep.h"
+#include "Assembler65Lib/Asm65C64Lockstep.h"
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -26,13 +26,13 @@ static size TestAsm65FastLockstep(CAsm65Output* pcOutput, uint32 uiResetAddress,
 {
 	CAsm65Memory*	pcMemory;
 	CFast65C64		cFast;
-	CAsm65Lockstep	cLockstep;
+	CAsm65C64Lockstep	cLockstep;
 	size			uiSteps;
 
 	pcMemory = NewMalloc<CAsm65Memory>();
 	pcMemory->Init();
 	pcMemory->LoadProgram(pcOutput, uiResetAddress);
-	pcMemory->InitFast(&cFast);
+	pcMemory->InitFast65C64(&cFast);
 	cFast.Reset();
 
 	cLockstep.Init(pcMemory, &cFast);
@@ -53,7 +53,7 @@ static size TestAsm65FastLockstep(CAsm65Output* pcOutput, uint32 uiResetAddress,
 static size TestAsm65FastFile(const char* szFilename, uint32 uiResetAddress, size uiMaxSteps)
 {
 	CChars			szSource;
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 	size			uiSteps;
 
 	szSource.Init();
@@ -85,7 +85,7 @@ void TestAsm65FastPrograms(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAsm65Fast(void)
+void TestAsm65C64Fast(void)
 {
 	BeginTests();
 

@@ -1,8 +1,8 @@
 #include <string.h>
 #include <stdlib.h>
-#include "Assembler65Lib/Asm65Lockstep.h"
+#include "Assembler65Lib/Asm65C64Lockstep.h"
 #include "TestCPP65Context.h"
-#include "Assembler65Lib/Asm65Assembler.h"
+#include "Assembler65Lib/Asm65C64Assembler.h"
 #include "BaseLib/TextFile.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/ConstructorCall.h"
@@ -111,7 +111,7 @@ bool TestCPP65BeginBuilt(STestCPP65Run* psRun, CCPP65Builder* pcBuilder)
 		psRun->pcContext->SetDrive(psRun->pcDrive);
 	}
 
-	psRun->pcContext->InitFast(&psRun->cMPU);
+	psRun->pcContext->InitFast65C64(&psRun->cMPU);
 	psRun->cMPU.Reset();
 	return true;
 }
@@ -207,7 +207,7 @@ int TestCPP65Assemble(const char* szSource, bool bProgram)
 	CChars				szAssembly;
 	CChars				szErrors;
 	CArrayChars			aszExternals;
-	CAsm65Assembler		cAssembler;
+	CAsm65C64Assembler		cAssembler;
 	CAsm65Object		cObject;
 	int					iExternals;
 
@@ -481,7 +481,7 @@ int32 TestCPP65RunProject(const char** aszUnits, const char* szStubs, size uiMax
 int32 TestCPP65RunProjectLockstep(const char** aszUnits, const char* szStubs, size uiMaxInstructions, size* puiInstructions)
 {
 	STestCPP65Run	sRun;
-	CAsm65Lockstep	cLockstep;
+	CAsm65C64Lockstep	cLockstep;
 	int32			iResult;
 
 	*puiInstructions = 0;

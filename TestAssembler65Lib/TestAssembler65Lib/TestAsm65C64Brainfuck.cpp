@@ -1,6 +1,6 @@
 #include "BaseLib/Chars.h"
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 #define BRAINFUCK_OUTPUT	0x40000
@@ -67,7 +67,7 @@ void TestAsm65BrainfuckPrograms(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAsm65Brainfuck(void)
+void TestAsm65C64Brainfuck(void)
 {
 	BeginTests();
 

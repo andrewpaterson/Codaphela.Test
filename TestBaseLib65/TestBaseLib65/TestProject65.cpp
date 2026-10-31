@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Assembler65Lib/Asm816Profile.h"
+#include "Assembler65Lib/Asm65816Profile.h"
 #include "BaseLib/TextFile.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/ArrayChars.h"
@@ -50,7 +50,7 @@
 
 
 ECPPTarget	geTestProject65Target = CPPT_65C64;
-static CAsm816Profile*	gpcTestProject65Measure = NULL;
+static CAsm65816Profile*	gpcTestProject65Measure = NULL;
 
 #define TEST_PROJECT65_REPORT_LINES		60		//The most lines and functions a profile report lists.
 
@@ -445,18 +445,18 @@ static void TestProject65AppendSymbol(CCPP65Builder* pcBuilder, uint32 uiAddress
 	uiBest = 0;
 	for (szLine = szMap; szLine; szLine = strchr(szLine + 1, '\n'))
 	{
-		//  $00012345 G Name (object), or L for a local (but not a block's label, L and digits).
-		if ((szLine[1] == ' ') && (szLine[3] == '$') && ((szLine[13] == 'G') || ((szLine[13] == 'L') && !((szLine[15] == 'L') && (szLine[16] >= '0') && (szLine[16] <= '9')))))
+		//  0x00012345 G Name (object), or L for a local (but not a block's label, L and digits).
+		if ((szLine[1] == ' ') && (szLine[3] == '0') && (szLine[4] == 'x') && ((szLine[14] == 'G') || ((szLine[14] == 'L') && !((szLine[16] == 'L') && (szLine[17] >= '0') && (szLine[17] <= '9')))))
 		{
-			uiValue = (uint32)strtoul(&szLine[4], NULL, 16);
+			uiValue = (uint32)strtoul(&szLine[3], NULL, 16);
 			if ((uiValue <= uiAddress) && (uiValue >= uiBest))
 			{
 				uiBest = uiValue;
-				szBest = &szLine[15];
+				szBest = &szLine[16];
 			}
 		}
 	}
-	pszDest->Append("$");
+	pszDest->Append("0x");
 	pszDest->AppendHexHiLo(&uiAddress, sizeof(uint32));
 	if (szBest)
 	{
@@ -485,7 +485,7 @@ static void TestProject65AppendStop(CCPP65Builder* pcBuilder, uint32 uiAddress, 
 
 	pszDest->Append("Stopped at ");
 	TestProject65AppendSymbol(pcBuilder, uiAddress, pszDest);
-	pszDest->Append(", S $");
+	pszDest->Append(", S 0x");
 	pszDest->AppendHexHiLo(&uiS, sizeof(uint32));
 	pszDest->Append(", after ");
 	pszDest->Append((int64)uiSteps);
@@ -552,12 +552,12 @@ static bool TestProject65Run(STestProject65* psProject, CCPP65Builder* pcBuilder
 	//Run takes a size, which is 32 bits in a 32 bit build.
 	if (bW65C816)
 	{
-		pcMemory->InitFast816(&cMPU816);
+		pcMemory->InitFast65816(&cMPU816);
 		cMPU816.Reset();
 		if (gpcTestProject65Measure)
 		{
 			//TEST_PROJECT65_PROFILE: each function's direct page accesses, calls and recursion, and its lines' cycles
-			//(CAsm816Profile).
+			//(CAsm65816Profile).
 			uiSteps = gpcTestProject65Measure->Run(pcMemory, &cMPU816, pcBuilder->GetMap(), uiMaxSteps, pcBuilder->GetLineTable());
 		}
 		else
@@ -581,7 +581,7 @@ static bool TestProject65Run(STestProject65* psProject, CCPP65Builder* pcBuilder
 	}
 	else
 	{
-		pcMemory->InitFast(&cMPU);
+		pcMemory->InitFast65C64(&cMPU);
 		cMPU.Reset();
 		if (getenv("TEST_PROJECT65_TRACE"))
 		{
@@ -604,7 +604,7 @@ static bool TestProject65Run(STestProject65* psProject, CCPP65Builder* pcBuilder
 			{
 				pszConsole->Append("  ");
 				TestProject65AppendSymbol(pcBuilder, auiTrace[ui % 64], pszConsole);
-				pszConsole->Append(" S $");
+				pszConsole->Append(" S 0x");
 				pszConsole->AppendHexHiLo(&auiTraceS[ui % 64], sizeof(uint32));
 				pszConsole->AppendNewLine();
 			}
@@ -641,8 +641,8 @@ static bool TestProject65Run(STestProject65* psProject, CCPP65Builder* pcBuilder
 void TestProject65RunTests(STestProject65* psProject)
 {
 	CCPP65Builder	cBuilder;
-	CAsm816Profile	cFrameProfile;
-	CAsm816Profile	cMeasure;
+	CAsm65816Profile	cFrameProfile;
+	CAsm65816Profile	cMeasure;
 	CTextFile		cFile;
 	CArrayChars		aszLines;
 	CArrayChars		aszTests;

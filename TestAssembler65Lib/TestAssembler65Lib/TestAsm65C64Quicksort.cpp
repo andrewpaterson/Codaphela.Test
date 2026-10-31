@@ -1,7 +1,7 @@
 #include "BaseLib/Chars.h"
 #include "BaseLib/QuickSort.h"
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 #define QUICKSORT_DATA	0x4000
@@ -89,7 +89,7 @@ void TestAsm65QuicksortValues(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAsm65Quicksort(void)
+void TestAsm65C64Quicksort(void)
 {
 	BeginTests();
 

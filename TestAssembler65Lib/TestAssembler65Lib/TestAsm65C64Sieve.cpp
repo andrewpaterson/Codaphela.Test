@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 #define SIEVE_N			10000
@@ -83,7 +83,7 @@ void TestAsm65SievePrimes(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAsm65Sieve(void)
+void TestAsm65C64Sieve(void)
 {
 	BeginTests();
 

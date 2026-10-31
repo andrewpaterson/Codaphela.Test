@@ -148,13 +148,13 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 		if (geTestLibc65Target == CPPT_W65C816)
 		{
 			psRun->pcMemory->Load(cBuilder.GetOutput());
-			psRun->pcMemory->InitFast816(&psRun->cMPU816);
+			psRun->pcMemory->InitFast65816(&psRun->cMPU816);
 			psRun->cMPU816.Reset();
 		}
 		else
 		{
 			psRun->pcMemory->LoadProgram(cBuilder.GetOutput(), CPP65_PROGRAM_ADDRESS);
-			psRun->pcMemory->InitFast(&psRun->cMPU);
+			psRun->pcMemory->InitFast65C64(&psRun->cMPU);
 			psRun->cMPU.Reset();
 		}
 	}

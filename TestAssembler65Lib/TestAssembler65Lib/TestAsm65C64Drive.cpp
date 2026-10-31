@@ -1,6 +1,6 @@
 #include "BaseLib/MemoryDrive.h"
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 #define DRIVE_SECTORS		16
@@ -174,7 +174,7 @@ void TestAsm65DriveErrors(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAsm65Drive(void)
+void TestAsm65C64Drive(void)
 {
 	BeginTests();
 

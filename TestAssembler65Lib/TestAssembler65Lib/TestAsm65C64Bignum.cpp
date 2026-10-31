@@ -1,6 +1,6 @@
 #include "BaseLib/Chars.h"
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 #define BIGNUM_FACTORIAL_TEXT	0x0120
@@ -52,7 +52,7 @@ void TestAsm65BignumFactorialFibonacci(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAsm65Bignum(void)
+void TestAsm65C64Bignum(void)
 {
 	BeginTests();
 

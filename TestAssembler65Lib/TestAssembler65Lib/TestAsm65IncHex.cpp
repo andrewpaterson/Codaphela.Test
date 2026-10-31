@@ -1,8 +1,8 @@
 #include "BaseLib/TextFile.h"
-#include "Assembler65Lib/Asm816Assembler.h"
+#include "Assembler65Lib/Asm65816Assembler.h"
 #include "Assembler65Lib/Asm65Linker.h"
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 #define TEST_ASM65_MATH_TABLES	".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "Libc65" _FS_ "MathTbls"
@@ -16,7 +16,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65IncHexAbsolute(void)
 {
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 	CAsm65Output*	pcOutput;
 	int64			iEnd;
 	uint8			uiByte;
@@ -69,7 +69,7 @@ void TestAsm65IncHexAbsolute(void)
 //////////////////////////////////////////////////////////////////////////
 static void AssertIncHexError(const char* szExpected, const char* szSource, bool bObject)
 {
-	CAsm65Assembler	cAssembler;
+	CAsm65C64Assembler	cAssembler;
 	CAsm65Object	cObject;
 
 	cAssembler.Init();
@@ -112,7 +112,7 @@ void TestAsm65IncHexErrors(void)
 void TestAsm65IncHexMathTable(void)
 {
 	CTextFile			cFile;
-	CAsm816Assembler	cAssembler;
+	CAsm65816Assembler	cAssembler;
 	CAsm65Object		acObjects[2];
 	CAsm65Linker		cLinker;
 	SAsm65Section*		psSection;

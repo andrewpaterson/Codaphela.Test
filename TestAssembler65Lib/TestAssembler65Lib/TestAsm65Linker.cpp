@@ -1,7 +1,7 @@
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/PointerFunctions.h"
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 #define LINKER_MAX_OBJECTS	4
@@ -140,28 +140,28 @@ void TestAsm65LinkerCall(void)
 	AssertLong(107, LinkAndRun(&sTest, &sRun));
 	AssertString(
 		"Sections\n"
-		"  $00010000 $00000014 text (a)\n"
-		"  $00010014 $00000006 text.done (a)\n"
-		"  $0001001a $00000006 text (b)\n"
-		"  $00010020 $00000004 rodata (a)\n"
+		"  0x00010000 0x00000014 text (a)\n"
+		"  0x00010014 0x00000006 text.done (a)\n"
+		"  0x0001001a 0x00000006 text (b)\n"
+		"  0x00010020 0x00000004 rodata (a)\n"
 		"Symbols\n"
-		"  $00010000 L Start (a)\n"
-		"  $00010000 G __text_start (linker)\n"
-		"  $00010014 L Done (a)\n"
-		"  $0001001a G AddThree (b)\n"
-		"  $00010020 L Four (a)\n"
-		"  $00010020 G __rodata_start (linker)\n"
-		"  $00010020 G __text_end (linker)\n"
-		"  $00010024 G __bss_end (linker)\n"
-		"  $00010024 G __bss_start (linker)\n"
-		"  $00010024 G __data_end (linker)\n"
-		"  $00010024 G __data_start (linker)\n"
-		"  $00010024 G __end (linker)\n"
-		"  $00010024 G __fini_end (linker)\n"
-		"  $00010024 G __fini_start (linker)\n"
-		"  $00010024 G __init_end (linker)\n"
-		"  $00010024 G __init_start (linker)\n"
-		"  $00010024 G __rodata_end (linker)\n",
+		"  0x00010000 L Start (a)\n"
+		"  0x00010000 G __text_start (linker)\n"
+		"  0x00010014 L Done (a)\n"
+		"  0x0001001a G AddThree (b)\n"
+		"  0x00010020 L Four (a)\n"
+		"  0x00010020 G __rodata_start (linker)\n"
+		"  0x00010020 G __text_end (linker)\n"
+		"  0x00010024 G __bss_end (linker)\n"
+		"  0x00010024 G __bss_start (linker)\n"
+		"  0x00010024 G __data_end (linker)\n"
+		"  0x00010024 G __data_start (linker)\n"
+		"  0x00010024 G __end (linker)\n"
+		"  0x00010024 G __fini_end (linker)\n"
+		"  0x00010024 G __fini_start (linker)\n"
+		"  0x00010024 G __init_end (linker)\n"
+		"  0x00010024 G __init_start (linker)\n"
+		"  0x00010024 G __rodata_end (linker)\n",
 		sTest.cLinker.GetMap());
 	AssertLongLongIntHex(0x10000, LinkedSymbol(&sTest, "__text_start"));
 	AssertLongLongIntHex(0x1001A, LinkedSymbol(&sTest, "AddThree"));
@@ -497,8 +497,8 @@ void TestAsm65LinkerErrors(void)
 	AssertFalse(sTest.cLinker.Link());
 	AssertString(
 		"link: Sections overlap: text and data\n"
-		"link: Sections end past the limit $00010004 'text'\n"
-		"link: Sections end past the limit $00010004 'data'\n",
+		"link: Sections end past the limit 0x00010004 'text'\n"
+		"link: Sections end past the limit 0x00010004 'data'\n",
 		sTest.cLinker.GetErrors());
 	LinkTestKill(&sTest);
 }
@@ -586,10 +586,10 @@ void TestAsm65LinkerRemoveUnused(void)
 	AssertFalse(sTest.cLinker.GetSymbol("Unused", &iValue));
 	AssertTrue(strstr(sTest.cLinker.GetMap(),
 		"Removed unused sections\n"
-		"  $0000000e text.Unused (a)\n"
-		"  $00000004 data.gUnused (a)\n"
-		"  $00000006 text.InitUnused (a)\n"
-		"  $00000004 init.InitUnused (a)\n") != NULL);
+		"  0x0000000e text.Unused (a)\n"
+		"  0x00000004 data.gUnused (a)\n"
+		"  0x00000006 text.InitUnused (a)\n"
+		"  0x00000004 init.InitUnused (a)\n") != NULL);
 	TestAsm65End(&sRun);
 	LinkTestKill(&sTest);
 }

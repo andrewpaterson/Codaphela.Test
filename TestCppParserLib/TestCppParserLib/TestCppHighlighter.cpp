@@ -217,6 +217,108 @@ const char* gsz = \"a\\\nb\";\n", &sz));
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Namespaces, typedefs, type parameters, built-in types with identifier
+// names and identifiers the parser does not look up (attribute names).
+// override and final are keywords where they are specifiers, and names
+// elsewhere.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCppHighlighterNames(void)
+{
+	CChars	sz;
+
+	sz.Init();
+	AssertString("\
+1:1 9 keyword\n\
+1:11 2 namespace declaration\n\
+1:14 1 operator\n\
+1:16 7 keyword\n\
+1:24 3 keyword\n\
+1:28 3 typedef declaration\n\
+1:31 1 operator\n\
+1:33 1 operator\n\
+2:1 8 keyword\n\
+2:9 1 operator\n\
+2:10 5 keyword\n\
+2:16 1 type parameter declaration\n\
+2:17 1 operator\n\
+2:19 1 type parameter\n\
+2:21 3 function declaration\n\
+2:24 1 operator\n\
+2:25 1 type parameter\n\
+2:27 1 parameter declaration\n\
+2:28 1 operator\n\
+2:30 1 operator\n\
+2:32 6 keyword\n\
+2:39 1 parameter\n\
+2:40 1 operator\n\
+2:42 1 operator\n\
+3:1 8 builtin type\n\
+3:10 6 variable declaration\n\
+3:16 1 operator\n\
+4:1 2 namespace\n\
+4:3 2 operator\n\
+4:5 3 typedef\n\
+4:9 7 variable declaration\n\
+4:16 1 operator\n\
+5:1 6 keyword\n\
+5:8 5 class declaration\n\
+5:14 1 operator\n\
+5:16 7 keyword\n\
+5:24 4 keyword\n\
+5:29 3 function declaration\n\
+5:32 1 operator\n\
+5:33 4 keyword\n\
+5:37 1 operator\n\
+5:38 1 operator\n\
+5:40 1 operator\n\
+5:41 1 operator\n\
+6:1 6 keyword\n\
+6:8 5 class declaration\n\
+6:14 5 keyword\n\
+6:20 1 operator\n\
+6:22 5 class\n\
+6:28 1 operator\n\
+6:30 4 keyword\n\
+6:35 3 function declaration\n\
+6:38 1 operator\n\
+6:39 4 keyword\n\
+6:43 1 operator\n\
+6:45 8 keyword\n\
+6:54 5 keyword\n\
+6:59 1 operator\n\
+6:61 1 operator\n\
+6:62 1 operator\n\
+7:1 1 operator\n\
+7:2 1 operator\n\
+7:3 9 identifier\n\
+7:12 1 operator\n\
+7:13 1 operator\n\
+7:15 3 keyword\n\
+7:19 3 function declaration\n\
+7:22 1 operator\n\
+7:23 4 keyword\n\
+7:27 1 operator\n\
+7:28 1 operator\n\
+8:1 3 keyword\n\
+8:5 8 variable declaration\n\
+8:14 1 operator\n\
+8:16 1 number\n\
+8:17 1 operator\n", HighlightText("\
+namespace NS { typedef int INT; }\n\
+template<class M> M Max(M a) { return a; }\n\
+__int128 giWide;\n\
+NS::INT giValue;\n\
+struct CBase { virtual void Run(void); };\n\
+struct CLeaf final : CBase { void Run(void) override final; };\n\
+[[nodiscard]] int Get(void);\n\
+int override = 1;\n", &sz));
+	sz.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCppHighlighter(void)
@@ -229,6 +331,7 @@ void TestCppHighlighter(void)
 
 	TestCppHighlighterSource();
 	TestCppHighlighterSplices();
+	TestCppHighlighterNames();
 
 	NumberKill();
 	TypeConverterKill();

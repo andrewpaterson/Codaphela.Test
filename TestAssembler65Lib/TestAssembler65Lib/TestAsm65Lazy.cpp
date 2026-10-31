@@ -1,7 +1,7 @@
 #include <string.h>
 #include "BaseLib/MemoryDrive.h"
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 #define LAZY_SECTOR_SIZE	512

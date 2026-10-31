@@ -12,64 +12,64 @@
     <ClCompile Include="TestAssembler65Lib.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Context.cpp">
+    <ClCompile Include="TestAsm65C64Context.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="TestAsm65Tokeniser.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Encoding.cpp">
+    <ClCompile Include="TestAsm65C64Encoding.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Fast.cpp">
+    <ClCompile Include="TestAsm65C64Fast.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="TestAsm65IncHex.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm816.cpp">
+    <ClCompile Include="TestAsm65816.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Labels.cpp">
+    <ClCompile Include="TestAsm65C64Labels.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Errors.cpp">
+    <ClCompile Include="TestAsm65C64Errors.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Programs.cpp">
+    <ClCompile Include="TestAsm65C64Programs.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Mandelbrot.cpp">
+    <ClCompile Include="TestAsm65C64Mandelbrot.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Sieve.cpp">
+    <ClCompile Include="TestAsm65C64Sieve.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="TestAsm65Relocate.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Brainfuck.cpp">
+    <ClCompile Include="TestAsm65C64Brainfuck.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Queens.cpp">
+    <ClCompile Include="TestAsm65C64Queens.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Base64.cpp">
+    <ClCompile Include="TestAsm65C64Base64.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Bignum.cpp">
+    <ClCompile Include="TestAsm65C64Bignum.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Strings.cpp">
+    <ClCompile Include="TestAsm65C64Strings.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Sha256.cpp">
+    <ClCompile Include="TestAsm65C64Sha256.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Life.cpp">
+    <ClCompile Include="TestAsm65C64Life.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Quicksort.cpp">
+    <ClCompile Include="TestAsm65C64Quicksort.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="TestAsm65Object.cpp">
@@ -78,7 +78,7 @@
     <ClCompile Include="TestAsm65Linker.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestAsm65Drive.cpp">
+    <ClCompile Include="TestAsm65C64Drive.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="TestAsm65Lazy.cpp">
@@ -86,7 +86,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TestAsm65Context.h">
+    <ClInclude Include="TestAsm65C64Context.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

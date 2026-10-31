@@ -5,6 +5,8 @@
 #include "CppParserLib/IRLoops.h"
 #include "CppParserLib/IRImports.h"
 #include "CppParserLib/IRInliner.h"
+#include "CppParserLib/IRSSAUpdater.h"
+#include "CppParserLib/IRLiveness.h"
 #include "TestLib/Assert.h"
 
 
@@ -752,15 +754,21 @@ void TestIRLoops(void)
 }
 
 
+#define IR_TEST_INDEXED_ADDRESSES	0x01	//SetIndexedAddresses (the 65C64's [R1 + R2]).
+#define IR_TEST_LIBRARY				0x02	//SetLibraryInt(i16): loops made memset and memmove calls.
+#define IR_TEST_NARROW_MULTIPLIES	0x04	//SetNarrowMultiplies (the W65C816's).
+#define IR_TEST_NARROW_COUNTERS		0x08	//SetNarrowCounters (the W65C816's).
+#define IR_TEST_BIASED_INDICES		0x10	//SetBiasedIndices (the W65C816's [p],Y).
+#define IR_TEST_CONSTANT_DIVISIONS	0x20	//SetConstantDivisions (the W65C816's).
+
+
 //////////////////////////////////////////////////////////////////////////
 //
-// szText, optimised (for a target whose loads and stores add an index for
-// nothing, unless bIndexedAddresses is false; with loops made memset and
-// memmove calls, a 16 bit int, if bLibrary; with multiplies made narrow if
-// bNarrowMultiplies), must verify and print as szExpected.
+// szText, optimised with the IR_TEST_ options in uiOptions, must verify and
+// print as szExpected.
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertIROptimised(const char* szExpected, const char* szText, bool bIndexedAddresses = true, bool bLibrary = false, bool bNarrowMultiplies = false)
+void AssertIROptimisedOptions(const char* szExpected, const char* szText, uint32 uiOptions)
 {
 	CIRModule		cModule;
 	CCPPErrors		cErrors;
@@ -770,16 +778,26 @@ void AssertIROptimised(const char* szExpected, const char* szText, bool bIndexed
 	CIRPrinter		cPrinter;
 	CChars			szPrinted;
 	size			ui;
+	size			uj;
+	size			uk;
+	CIRBlock*		pcBlock;
+	bool			bSources;
 
+	//Every instruction parsed is from line 7: the ones optimising makes must have a line too (7, or 0 for none).
 	cModule.Init();
 	cErrors.Init();
 	cParser.Init(&cModule, &cErrors);
+	CIRBlock::suiSource = 7;
 	AssertTrue(cParser.Parse(szText));
+	CIRBlock::suiSource = 0;
 	cParser.Kill();
 	cOptimiser.Init(&cModule);
-	cOptimiser.SetIndexedAddresses(bIndexedAddresses);
-	cOptimiser.SetNarrowMultiplies(bNarrowMultiplies);
-	if (bLibrary)
+	cOptimiser.SetIndexedAddresses((uiOptions & IR_TEST_INDEXED_ADDRESSES) != 0);
+	cOptimiser.SetNarrowMultiplies((uiOptions & IR_TEST_NARROW_MULTIPLIES) != 0);
+	cOptimiser.SetNarrowCounters((uiOptions & IR_TEST_NARROW_COUNTERS) != 0);
+	cOptimiser.SetBiasedIndices((uiOptions & IR_TEST_BIASED_INDICES) != 0);
+	cOptimiser.SetConstantDivisions((uiOptions & IR_TEST_CONSTANT_DIVISIONS) != 0);
+	if (uiOptions & IR_TEST_LIBRARY)
 	{
 		cOptimiser.SetLibraryInt(IRType(IRTK_I16));
 	}
@@ -788,6 +806,19 @@ void AssertIROptimised(const char* szExpected, const char* szText, bool bIndexed
 		cOptimiser.Optimise(cModule.GetFunction(ui));
 	}
 	cOptimiser.Kill();
+	bSources = true;
+	for (ui = 0; ui < cModule.NumFunctions(); ui++)
+	{
+		for (uj = 0; uj < cModule.GetFunction(ui)->NumBlocks(); uj++)
+		{
+			pcBlock = cModule.GetFunction(ui)->GetBlock(uj);
+			for (uk = 0; uk < pcBlock->masInstructions.NumElements(); uk++)
+			{
+				bSources &= (pcBlock->masInstructions.Get(uk)->uiSource == 0) || (pcBlock->masInstructions.Get(uk)->uiSource == 7);
+			}
+		}
+	}
+	AssertTrue(bSources);
 	cVerifier.Init(&cModule, &cErrors);
 	AssertTrue(cVerifier.Verify());
 	cVerifier.Kill();
@@ -800,6 +831,26 @@ void AssertIROptimised(const char* szExpected, const char* szText, bool bIndexed
 	szPrinted.Kill();
 	cErrors.Kill();
 	cModule.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// szText, optimised (for a target whose loads and stores add an index for
+// nothing, unless bIndexedAddresses is false; with loops made memset and
+// memmove calls, a 16 bit int, if bLibrary; with multiplies made narrow if
+// bNarrowMultiplies), must verify and print as szExpected.
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertIROptimised(const char* szExpected, const char* szText, bool bIndexedAddresses = true, bool bLibrary = false, bool bNarrowMultiplies = false)
+{
+	uint32	uiOptions;
+
+	uiOptions = 0;
+	uiOptions |= bIndexedAddresses ? IR_TEST_INDEXED_ADDRESSES : 0;
+	uiOptions |= bLibrary ? IR_TEST_LIBRARY : 0;
+	uiOptions |= bNarrowMultiplies ? IR_TEST_NARROW_MULTIPLIES : 0;
+	AssertIROptimisedOptions(szExpected, szText, uiOptions);
 }
 
 
@@ -1261,6 +1312,90 @@ void TestIROptimiserZeroExtendedCounters(void)
 		"\t%i = phi i16 [b, 0], [l, %j]\n"
 		"\t%s = phi i32 [b, 0], [l, %s2]\n"
 		"\t%c = ult i16 %i, 1000\n"
+		"\tbrif %c, l, x\n"
+		"l:\n"
+		"\t%e = zext i16 %i to i32\n"
+		"\t%o = shl i32 %e, 2\n"
+		"\t%a = ptradd ptr %p, %o\n"
+		"\t%v = load i32 %a\n"
+		"\t%s2 = add i32 %s, %v\n"
+		"\t%j = add i16 %i, 2\n"
+		"\tjmp t\n"
+		"x:\n"
+		"\tret i32 %s\n"
+		"}\n", false, true);
+
+	//i stepping by 2 while i <= 1000 doesn't wrap either (UnsignedMaximum missed ule).
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i32 @_S(ptr %p)\n"
+		"{\n"
+		"b:\n"
+		"\tjmp l\n"
+		"l:\n"
+		"\t%0 = phi i16 [l, %j], [b, 0]\n"
+		"\t%1 = phi i32 [l, %s2], [b, 0]\n"
+		"\t%2 = phi ptr [l, %3], [b, %p]\n"
+		"\t%v = load i32 %2\n"
+		"\t%s2 = add i32 %1, %v\n"
+		"\t%j = add i16 %0, 2\n"
+		"\t%3 = ptradd ptr %2, 8\n"
+		"\t%4 = ule i16 %j, 1000\n"
+		"\tbrif %4, l, x\n"
+		"x:\n"
+		"\tret i32 %s2\n"
+		"}\n",
+		"function i32 @_S(ptr %p)\n"
+		"{\n"
+		"b:\n"
+		"\tjmp t\n"
+		"t:\n"
+		"\t%i = phi i16 [b, 0], [l, %j]\n"
+		"\t%s = phi i32 [b, 0], [l, %s2]\n"
+		"\t%c = ule i16 %i, 1000\n"
+		"\tbrif %c, l, x\n"
+		"l:\n"
+		"\t%e = zext i16 %i to i32\n"
+		"\t%o = shl i32 %e, 2\n"
+		"\t%a = ptradd ptr %p, %o\n"
+		"\t%v = load i32 %a\n"
+		"\t%s2 = add i32 %s, %v\n"
+		"\t%j = add i16 %i, 2\n"
+		"\tjmp t\n"
+		"x:\n"
+		"\tret i32 %s\n"
+		"}\n", false, true);
+
+	//i stepping by 2 while 1000 >= i: the same, the operands the other way round.
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i32 @_S(ptr %p)\n"
+		"{\n"
+		"b:\n"
+		"\tjmp l\n"
+		"l:\n"
+		"\t%0 = phi i16 [l, %j], [b, 0]\n"
+		"\t%1 = phi i32 [l, %s2], [b, 0]\n"
+		"\t%2 = phi ptr [l, %3], [b, %p]\n"
+		"\t%v = load i32 %2\n"
+		"\t%s2 = add i32 %1, %v\n"
+		"\t%j = add i16 %0, 2\n"
+		"\t%3 = ptradd ptr %2, 8\n"
+		"\t%4 = uge i16 1000, %j\n"
+		"\tbrif %4, l, x\n"
+		"x:\n"
+		"\tret i32 %s2\n"
+		"}\n",
+		"function i32 @_S(ptr %p)\n"
+		"{\n"
+		"b:\n"
+		"\tjmp t\n"
+		"t:\n"
+		"\t%i = phi i16 [b, 0], [l, %j]\n"
+		"\t%s = phi i32 [b, 0], [l, %s2]\n"
+		"\t%c = uge i16 1000, %i\n"
 		"\tbrif %c, l, x\n"
 		"l:\n"
 		"\t%e = zext i16 %i to i32\n"
@@ -2946,6 +3081,893 @@ void TestIROptimiser(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The W65C816's NarrowCounters: an i32 counter from 0 up to a bound that
+// is an i16 sign extended counts in an i16 phi, compared with the i16
+// bound; its other use (the address) gets it sign extended.  Without the
+// option the counter stays 32 bits (and strength reduction steps the
+// address instead).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserNarrowCounters(void)
+{
+	static const char*	szText =
+		"function i32 @_S__FPis(ptr %p, i16 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\t%w = sext i16 %n to i32\n"
+		"\tjmp loop\n"
+		"loop:\n"
+		"\t%i = phi i32 [entry, 0], [body, %i2]\n"
+		"\t%c = slt i32 %i, %w\n"
+		"\tbrif %c, body, exit\n"
+		"body:\n"
+		"\t%o = shl i32 %i, 2\n"
+		"\t%a = ptradd ptr %p, %o\n"
+		"\tstore i32 7, %a\n"
+		"\t%i2 = add i32 %i, 1\n"
+		"\tjmp loop\n"
+		"exit:\n"
+		"\tret i32 0\n"
+		"}\n";
+
+	AssertIROptimisedOptions(
+		"space default 4\n"
+		"\n"
+		"function i32 @_S__FPis(ptr %p, i16 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\t%0 = slt i16 0, %n\n"
+		"\tbrif %0, body, exit\n"
+		"body:\n"
+		"\t%1 = phi i16 [entry, 0], [body, %3]\n"
+		"\t%2 = sext i16 %1 to i32\n"
+		"\t%o = shl i32 %2, 2\n"
+		"\t%a = ptradd ptr %p, %o\n"
+		"\tstore i32 7, %a\n"
+		"\t%3 = add i16 %1, 1\n"
+		"\t%4 = slt i16 %3, %n\n"
+		"\tbrif %4, body, exit\n"
+		"exit:\n"
+		"\tret i32 0\n"
+		"}\n", szText, IR_TEST_INDEXED_ADDRESSES | IR_TEST_NARROW_COUNTERS);
+
+	AssertIROptimisedOptions(
+		"space default 4\n"
+		"\n"
+		"function i32 @_S__FPis(ptr %p, i16 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\t%w = sext i16 %n to i32\n"
+		"\t%0 = slt i16 0, %n\n"
+		"\tbrif %0, body, exit\n"
+		"body:\n"
+		"\t%1 = phi i32 [body, %i2], [entry, 0]\n"
+		"\t%2 = phi ptr [body, %3], [entry, %p]\n"
+		"\tstore i32 7, %2\n"
+		"\t%i2 = add i32 %1, 1\n"
+		"\t%3 = ptradd ptr %2, 4\n"
+		"\t%4 = slt i32 %i2, %w\n"
+		"\tbrif %4, body, exit\n"
+		"exit:\n"
+		"\tret i32 0\n"
+		"}\n", szText, IR_TEST_INDEXED_ADDRESSES);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The W65C816's BiasSignedIndices.  p + sext(i) used only as a load's
+// address is (p - 32768) + zext(i ^ 32768).  A scaled index p + sext(h) * 2
+// with h = x >> 2 (so -8192 to 8191) is the bounded form: (p - 16384) +
+// zext(h * 2 + 16384).  A scaled index of any i16 doesn't fit 16 bits and
+// stays as it is.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserBiasSignedIndices(void)
+{
+	AssertIROptimisedOptions(
+		"space default 4\n"
+		"\n"
+		"function i16 @_L__FPss(ptr %p, i16 %i)\n"
+		"{\n"
+		"entry:\n"
+		"\t%0 = ptradd ptr %p, -32768\n"
+		"\t%1 = xor i16 %i, -32768\n"
+		"\t%2 = zext i16 %1 to i32\n"
+		"\t%a = ptradd ptr %0, %2\n"
+		"\t%v = load i16 %a\n"
+		"\tret i16 %v\n"
+		"}\n",
+		"function i16 @_L__FPss(ptr %p, i16 %i)\n"
+		"{\n"
+		"entry:\n"
+		"\t%w = sext i16 %i to i32\n"
+		"\t%a = ptradd ptr %p, %w\n"
+		"\t%v = load i16 %a\n"
+		"\tret i16 %v\n"
+		"}\n", IR_TEST_INDEXED_ADDRESSES | IR_TEST_BIASED_INDICES);
+
+	AssertIROptimisedOptions(
+		"space default 4\n"
+		"\n"
+		"function i16 @_L__FPss(ptr %p, i16 %x)\n"
+		"{\n"
+		"entry:\n"
+		"\t%h = ashr i16 %x, 2\n"
+		"\t%0 = ptradd ptr %p, -16384\n"
+		"\t%1 = shl i16 %h, 1\n"
+		"\t%2 = add i16 %1, 16384\n"
+		"\t%3 = zext i16 %2 to i32\n"
+		"\t%a = ptradd ptr %0, %3\n"
+		"\t%v = load i16 %a\n"
+		"\tret i16 %v\n"
+		"}\n",
+		"function i16 @_L__FPss(ptr %p, i16 %x)\n"
+		"{\n"
+		"entry:\n"
+		"\t%h = ashr i16 %x, 2\n"
+		"\t%w = sext i16 %h to i32\n"
+		"\t%o = shl i32 %w, 1\n"
+		"\t%a = ptradd ptr %p, %o\n"
+		"\t%v = load i16 %a\n"
+		"\tret i16 %v\n"
+		"}\n", IR_TEST_INDEXED_ADDRESSES | IR_TEST_BIASED_INDICES);
+
+	AssertIROptimisedOptions(
+		"space default 4\n"
+		"\n"
+		"function i16 @_L__FPss(ptr %p, i16 %x)\n"
+		"{\n"
+		"entry:\n"
+		"\t%w = sext i16 %x to i32\n"
+		"\t%o = shl i32 %w, 1\n"
+		"\t%a = ptradd ptr %p, %o\n"
+		"\t%v = load i16 %a\n"
+		"\tret i16 %v\n"
+		"}\n",
+		"function i16 @_L__FPss(ptr %p, i16 %x)\n"
+		"{\n"
+		"entry:\n"
+		"\t%w = sext i16 %x to i32\n"
+		"\t%o = shl i32 %w, 1\n"
+		"\t%a = ptradd ptr %p, %o\n"
+		"\t%v = load i16 %a\n"
+		"\tret i16 %v\n"
+		"}\n", IR_TEST_INDEXED_ADDRESSES | IR_TEST_BIASED_INDICES);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The W65C816's MergeAddressPhis: p = phi(b + sext(x), b + sext(y)) used
+// only as a store's address is b + sext(phi(x, y)), which BiasSignedIndices
+// then biases.  A phi that is also returned stays a phi of pointers (and
+// isn't biased).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserMergeAddressPhis(void)
+{
+	static const char*	szText =
+		"function RESULT @_M__FPcbss(ptr %b, i1 %c, i16 %x, i16 %y)\n"
+		"{\n"
+		"entry:\n"
+		"\tbrif %c, left, right\n"
+		"left:\n"
+		"\t%wx = sext i16 %x to i32\n"
+		"\t%px = ptradd ptr %b, %wx\n"
+		"\tjmp join\n"
+		"right:\n"
+		"\t%wy = sext i16 %y to i32\n"
+		"\t%py = ptradd ptr %b, %wy\n"
+		"\tjmp join\n"
+		"join:\n"
+		"\t%p = phi ptr [left, %px], [right, %py]\n"
+		"\tstore i8 7, %p\n"
+		"\tRETURN\n"
+		"}\n";
+	CChars				szInput;
+
+	szInput.Init(szText);
+	szInput.Replace("RESULT", "void");
+	szInput.Replace("RETURN", "ret");
+	AssertIROptimisedOptions(
+		"space default 4\n"
+		"\n"
+		"function void @_M__FPcbss(ptr %b, i1 %c, i16 %x, i16 %y)\n"
+		"{\n"
+		"entry:\n"
+		"\tbrif %c, join, right\n"
+		"right:\n"
+		"\tjmp join\n"
+		"join:\n"
+		"\t%0 = phi i16 [right, %y], [entry, %x]\n"
+		"\t%1 = ptradd ptr %b, -32768\n"
+		"\t%2 = xor i16 %0, -32768\n"
+		"\t%3 = zext i16 %2 to i32\n"
+		"\t%4 = ptradd ptr %1, %3\n"
+		"\tstore i8 7, %4\n"
+		"\tret\n"
+		"}\n", szInput.Text(), IR_TEST_INDEXED_ADDRESSES | IR_TEST_BIASED_INDICES);
+	szInput.Kill();
+
+	szInput.Init(szText);
+	szInput.Replace("RESULT", "ptr");
+	szInput.Replace("RETURN", "ret ptr %p");
+	AssertIROptimisedOptions(
+		"space default 4\n"
+		"\n"
+		"function ptr @_M__FPcbss(ptr %b, i1 %c, i16 %x, i16 %y)\n"
+		"{\n"
+		"entry:\n"
+		"\tbrif %c, left, right\n"
+		"left:\n"
+		"\t%wx = sext i16 %x to i32\n"
+		"\t%px = ptradd ptr %b, %wx\n"
+		"\tjmp join\n"
+		"right:\n"
+		"\t%wy = sext i16 %y to i32\n"
+		"\t%py = ptradd ptr %b, %wy\n"
+		"\tjmp join\n"
+		"join:\n"
+		"\t%p = phi ptr [left, %px], [right, %py]\n"
+		"\tstore i8 7, %p\n"
+		"\tret ptr %p\n"
+		"}\n", szInput.Text(), IR_TEST_INDEXED_ADDRESSES | IR_TEST_BIASED_INDICES);
+	szInput.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The W65C816's ConstantDivisions: (x & 255) / 7 is (x & 255) * 293 >> 11
+// (exact for 0 to 255).  x / 7 with x's range unknown stays a udiv.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserConstantDivisions(void)
+{
+	AssertIROptimisedOptions(
+		"function i32 @_D__Fi(i32 %x)\n"
+		"{\n"
+		"entry:\n"
+		"\t%a = and i32 %x, 255\n"
+		"\t%0 = mul i32 %a, 293\n"
+		"\t%1 = lshr i32 %0, 11\n"
+		"\tret i32 %1\n"
+		"}\n",
+		"function i32 @_D__Fi(i32 %x)\n"
+		"{\n"
+		"entry:\n"
+		"\t%a = and i32 %x, 255\n"
+		"\t%d = udiv i32 %a, 7\n"
+		"\tret i32 %d\n"
+		"}\n", IR_TEST_INDEXED_ADDRESSES | IR_TEST_CONSTANT_DIVISIONS);
+
+	AssertIROptimisedOptions(
+		"function i32 @_D__Fi(i32 %x)\n"
+		"{\n"
+		"entry:\n"
+		"\t%d = udiv i32 %x, 7\n"
+		"\tret i32 %d\n"
+		"}\n",
+		"function i32 @_D__Fi(i32 %x)\n"
+		"{\n"
+		"entry:\n"
+		"\t%d = udiv i32 %x, 7\n"
+		"\tret i32 %d\n"
+		"}\n", IR_TEST_INDEXED_ADDRESSES | IR_TEST_CONSTANT_DIVISIONS);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// FoldNullTests: p + 4 on the way where p was tested not null isn't null;
+// a slot's address isn't null.  A phi of p (tested) and q (not tested) may
+// be null, so its test stays.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserFoldNullTests(void)
+{
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i1 @_N__FPi(ptr %p)\n"
+		"{\n"
+		"entry:\n"
+		"\t%c = eq ptr %p, 0\n"
+		"\tbrif %c, null, nonnull\n"
+		"null:\n"
+		"\tret i1 0\n"
+		"nonnull:\n"
+		"\tret i1 1\n"
+		"}\n",
+		"space default 4\n"
+		"\n"
+		"function i1 @_N__FPi(ptr %p)\n"
+		"{\n"
+		"entry:\n"
+		"\t%c = eq ptr %p, 0\n"
+		"\tbrif %c, null, nonnull\n"
+		"null:\n"
+		"\tret i1 0\n"
+		"nonnull:\n"
+		"\t%q = ptradd ptr %p, 4\n"
+		"\t%d = ne ptr %q, 0\n"
+		"\tret i1 %d\n"
+		"}\n");
+
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i1 @_N__Fv()\n"
+		"{\n"
+		"entry:\n"
+		"\t%s = slot ptr 4, 4\n"
+		"\tcall void @_Use__FPi(ptr %s)\n"
+		"\tret i1 0\n"
+		"}\n",
+		"space default 4\n"
+		"\n"
+		"function i1 @_N__Fv()\n"
+		"{\n"
+		"entry:\n"
+		"\t%s = slot ptr 4, 4\n"
+		"\tcall void @_Use__FPi(ptr %s)\n"
+		"\t%d = eq ptr %s, 0\n"
+		"\tret i1 %d\n"
+		"}\n");
+
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i1 @_N__FPiPib(ptr %p, ptr %q, i1 %b)\n"
+		"{\n"
+		"entry:\n"
+		"\t%c = ne ptr %p, 0\n"
+		"\tbrif %c, test, join\n"
+		"test:\n"
+		"\tbrif %b, join, other\n"
+		"other:\n"
+		"\tjmp join\n"
+		"join:\n"
+		"\t%r = phi ptr [test, %p], [other, %q], [entry, %q]\n"
+		"\t%d = ne ptr %r, 0\n"
+		"\tret i1 %d\n"
+		"}\n",
+		"space default 4\n"
+		"\n"
+		"function i1 @_N__FPiPib(ptr %p, ptr %q, i1 %b)\n"
+		"{\n"
+		"entry:\n"
+		"\t%c = ne ptr %p, 0\n"
+		"\tbrif %c, test, other\n"
+		"test:\n"
+		"\tbrif %b, join, other\n"
+		"other:\n"
+		"\tjmp join\n"
+		"join:\n"
+		"\t%r = phi ptr [test, %p], [other, %q]\n"
+		"\t%d = ne ptr %r, 0\n"
+		"\tret i1 %d\n"
+		"}\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// NarrowTruncations: trunc(zext(a) + zext(b)) to i8 is an i8 add.  Not when
+// the i32 add is also stored.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserNarrowTruncations(void)
+{
+	AssertIROptimised(
+		"function i8 @_T__Fcc(i8 %a, i8 %b)\n"
+		"{\n"
+		"entry:\n"
+		"\t%t = add i8 %a, %b\n"
+		"\tret i8 %t\n"
+		"}\n",
+		"function i8 @_T__Fcc(i8 %a, i8 %b)\n"
+		"{\n"
+		"entry:\n"
+		"\t%x = zext i8 %a to i32\n"
+		"\t%y = zext i8 %b to i32\n"
+		"\t%s = add i32 %x, %y\n"
+		"\t%t = trunc i32 %s to i8\n"
+		"\tret i8 %t\n"
+		"}\n");
+
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i8 @_T__FccPi(i8 %a, i8 %b, ptr %p)\n"
+		"{\n"
+		"entry:\n"
+		"\t%x = zext i8 %a to i32\n"
+		"\t%y = zext i8 %b to i32\n"
+		"\t%s = add i32 %x, %y\n"
+		"\tstore i32 %s, %p\n"
+		"\t%t = trunc i32 %s to i8\n"
+		"\tret i8 %t\n"
+		"}\n",
+		"space default 4\n"
+		"\n"
+		"function i8 @_T__FccPi(i8 %a, i8 %b, ptr %p)\n"
+		"{\n"
+		"entry:\n"
+		"\t%x = zext i8 %a to i32\n"
+		"\t%y = zext i8 %b to i32\n"
+		"\t%s = add i32 %x, %y\n"
+		"\tstore i32 %s, %p\n"
+		"\t%t = trunc i32 %s to i8\n"
+		"\tret i8 %t\n"
+		"}\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// UnifySlotTypes: a slot stored as a pointer and loaded as an i32 (a
+// pointer's size) is loaded as a pointer and converted, so it is promoted:
+// what is left is the ptrtoi of the pointer stored.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserUnifySlotTypes(void)
+{
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i32 @_U__FPv(ptr %p)\n"
+		"{\n"
+		"entry:\n"
+		"\t%x = ptrtoi ptr %p to i32\n"
+		"\tret i32 %x\n"
+		"}\n",
+		"space default 4\n"
+		"\n"
+		"function i32 @_U__FPv(ptr %p)\n"
+		"{\n"
+		"entry:\n"
+		"\t%s = slot ptr 4, 4\n"
+		"\tstore ptr %p, %s\n"
+		"\t%x = load i32 %s\n"
+		"\tret i32 %x\n"
+		"}\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// RotateLoops: a loop testing at its head tests once on the way in (0 < n)
+// and at the bottom of the body after that; the head goes.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserRotateLoops(void)
+{
+	AssertIROptimised(
+		"function void @_R__Fi(i32 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\t%0 = slt i32 0, %n\n"
+		"\tbrif %0, body, exit\n"
+		"body:\n"
+		"\t%1 = phi i32 [entry, 0], [body, %i2]\n"
+		"\tcall void @_F__Fi(i32 %1)\n"
+		"\t%i2 = add i32 %1, 1\n"
+		"\t%2 = slt i32 %i2, %n\n"
+		"\tbrif %2, body, exit\n"
+		"exit:\n"
+		"\tret\n"
+		"}\n",
+		"function void @_R__Fi(i32 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\tjmp loop\n"
+		"loop:\n"
+		"\t%i = phi i32 [entry, 0], [body, %i2]\n"
+		"\t%c = slt i32 %i, %n\n"
+		"\tbrif %c, body, exit\n"
+		"body:\n"
+		"\tcall void @_F__Fi(i32 %i)\n"
+		"\t%i2 = add i32 %i, 1\n"
+		"\tjmp loop\n"
+		"exit:\n"
+		"\tret\n"
+		"}\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Parses szText (which must parse) into pcModule, then numbers its first
+// function's blocks and finds their predecessors.
+//
+//////////////////////////////////////////////////////////////////////////
+CIRFunction* TestIRParseFunction(CIRModule* pcModule, const char* szText)
+{
+	CCPPErrors		cErrors;
+	CIRParser		cParser;
+	CIRFunction*	pcFunction;
+
+	cErrors.Init();
+	cParser.Init(pcModule, &cErrors);
+	AssertTrue(cParser.Parse(szText));
+	cParser.Kill();
+	AssertString("", cErrors.Text());
+	cErrors.Kill();
+
+	pcFunction = pcModule->GetFunction(0);
+	pcFunction->Renumber();
+	pcFunction->ComputePredecessors();
+	return pcFunction;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Prints pcFunction and checks it is szExpected.
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertIRFunction(const char* szExpected, CIRModule* pcModule, CIRFunction* pcFunction)
+{
+	CIRPrinter	cPrinter;
+	CChars		szPrinted;
+
+	szPrinted.Init();
+	cPrinter.Init(pcModule, &szPrinted);
+	cPrinter.PrintFunction(pcFunction);
+	cPrinter.Kill();
+	AssertString(szExpected, szPrinted.Text());
+	szPrinted.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// CIRSSAUpdater.  A diamond a -> l, r -> j defining the value in l and r:
+// at j's start it is a new phi of both, at l's start (nothing defined
+// before it) 0, and at l's end what l defines.  A loop s -> h -> b -> h,
+// defined in s and b: at h's start a phi of both (found while it looks
+// round the loop back to h), and at the exit's start (one predecessor, h)
+// that phi.
+//
+// A block whose only predecessor is itself (an unreachable self loop)
+// starts with 0, as a block nothing reaches does (it used to make
+// ValueAtStart and ValueAtEnd call each other for ever).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIRSSAUpdater(void)
+{
+	CIRModule		cModule;
+	CIRFunction*	pcFunction;
+	CIRSSAUpdater	cUpdater;
+	SIRReference	sValue;
+	SIRReference	sOther;
+
+	cModule.Init();
+	pcFunction = TestIRParseFunction(&cModule,
+		"function i32 @f(i1 %c, i32 %p)\n"
+		"{\n"
+		"a:\n\tbrif %c, l, r\n"
+		"l:\n\t%x = add i32 %p, 1\n\tjmp j\n"
+		"r:\n\t%y = add i32 %p, 2\n\tjmp j\n"
+		"j:\n\tret i32 %p\n"
+		"}\n");
+
+	cUpdater.Init(pcFunction);
+	cUpdater.Begin(IRType(IRTK_I32));
+	cUpdater.Define(pcFunction->FindBlock("l"), pcFunction->FindTemporary("x"));
+	cUpdater.Define(pcFunction->FindBlock("r"), pcFunction->FindTemporary("y"));
+	sValue = cUpdater.ValueAtStart(pcFunction->FindBlock("j"));
+	AssertTrue(sValue.IsTemporary());
+	AssertTrue(sValue.Equals(cUpdater.ValueAtEnd(pcFunction->FindBlock("j"))));
+	AssertTrue(sValue.Equals(cUpdater.ValueAtStart(pcFunction->FindBlock("j"))));
+	AssertTrue(pcFunction->FindTemporary("x").Equals(cUpdater.ValueAtEnd(pcFunction->FindBlock("l"))));
+	sOther = cUpdater.ValueAtStart(pcFunction->FindBlock("l"));
+	AssertTrue(sOther.IsConstant());
+	AssertLong(0, pcFunction->GetSigned(sOther));
+	cUpdater.Kill();
+	AssertIRFunction(
+		"function i32 @f(i1 %c, i32 %p)\n"
+		"{\n"
+		"a:\n"
+		"\tbrif %c, l, r\n"
+		"l:\n"
+		"\t%x = add i32 %p, 1\n"
+		"\tjmp j\n"
+		"r:\n"
+		"\t%y = add i32 %p, 2\n"
+		"\tjmp j\n"
+		"j:\n"
+		"\t%0 = phi i32 [l, %x], [r, %y]\n"
+		"\tret i32 %p\n"
+		"}\n", &cModule, pcFunction);
+	cModule.Kill();
+
+	cModule.Init();
+	pcFunction = TestIRParseFunction(&cModule,
+		"function i32 @f(i1 %c, i32 %p)\n"
+		"{\n"
+		"s:\n\t%x = add i32 %p, 1\n\tjmp h\n"
+		"h:\n\tbrif %c, b, e\n"
+		"b:\n\t%y = add i32 %p, 2\n\tjmp h\n"
+		"e:\n\tret i32 %p\n"
+		"}\n");
+
+	cUpdater.Init(pcFunction);
+	cUpdater.Begin(IRType(IRTK_I32));
+	cUpdater.Define(pcFunction->FindBlock("s"), pcFunction->FindTemporary("x"));
+	cUpdater.Define(pcFunction->FindBlock("b"), pcFunction->FindTemporary("y"));
+	sValue = cUpdater.ValueAtStart(pcFunction->FindBlock("e"));
+	AssertTrue(sValue.IsTemporary());
+	AssertTrue(sValue.Equals(cUpdater.ValueAtStart(pcFunction->FindBlock("h"))));
+	AssertTrue(sValue.Equals(cUpdater.ValueAtStart(pcFunction->FindBlock("b"))));
+	cUpdater.Kill();
+	AssertIRFunction(
+		"function i32 @f(i1 %c, i32 %p)\n"
+		"{\n"
+		"s:\n"
+		"\t%x = add i32 %p, 1\n"
+		"\tjmp h\n"
+		"h:\n"
+		"\t%0 = phi i32 [s, %x], [b, %y]\n"
+		"\tbrif %c, b, e\n"
+		"b:\n"
+		"\t%y = add i32 %p, 2\n"
+		"\tjmp h\n"
+		"e:\n"
+		"\tret i32 %p\n"
+		"}\n", &cModule, pcFunction);
+	cModule.Kill();
+
+	//A block in a loop with one predecessor (b, between the head and the latch) sees the head's phi.
+	cModule.Init();
+	pcFunction = TestIRParseFunction(&cModule,
+		"function i32 @f(i1 %c, i32 %p)\n"
+		"{\n"
+		"s:\n\t%x = add i32 %p, 1\n\tjmp h\n"
+		"h:\n\tbrif %c, b, e\n"
+		"b:\n\tjmp l\n"
+		"l:\n\t%y = add i32 %p, 2\n\tjmp h\n"
+		"e:\n\tret i32 %p\n"
+		"}\n");
+	cUpdater.Init(pcFunction);
+	cUpdater.Begin(IRType(IRTK_I32));
+	cUpdater.Define(pcFunction->FindBlock("s"), pcFunction->FindTemporary("x"));
+	cUpdater.Define(pcFunction->FindBlock("l"), pcFunction->FindTemporary("y"));
+	sValue = cUpdater.ValueAtStart(pcFunction->FindBlock("b"));
+	AssertTrue(sValue.IsTemporary());
+	AssertTrue(sValue.Equals(cUpdater.ValueAtStart(pcFunction->FindBlock("h"))));
+	cUpdater.Kill();
+	cModule.Kill();
+
+	cModule.Init();
+	pcFunction = TestIRParseFunction(&cModule,
+		"function i32 @f(i32 %p)\n"
+		"{\n"
+		"s:\n\t%x = add i32 %p, 1\n\tret i32 %x\n"
+		"z:\n\tjmp z\n"
+		"}\n");
+	cUpdater.Init(pcFunction);
+	cUpdater.Begin(IRType(IRTK_I32));
+	cUpdater.Define(pcFunction->FindBlock("s"), pcFunction->FindTemporary("x"));
+	sValue = cUpdater.ValueAtStart(pcFunction->FindBlock("z"));
+	AssertTrue(sValue.IsConstant());
+	AssertLong(0, pcFunction->GetSigned(sValue));
+	cUpdater.Kill();
+	cModule.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// CIRLiveness of a loop.  Blocks take 4 positions and 2 per instruction:
+// entry 0 (its add at 2, its jmp at 4), loop 6 (8, 10, jmp 12), exit 14
+// (ret 16).  %k (defined in entry, used in the loop) and %n are live across
+// the back edge, so to the loop's end; %i lives from the loop's start to
+// its use; %i2 from its definition through exit's ret.  Weights are 1 per
+// definition or use, 8 in a loop.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIRLiveness(void)
+{
+	CIRModule		cModule;
+	CIRFunction*	pcFunction;
+	CIRDominators	cDominators;
+	CIRLiveness		cLiveness;
+	CIRBlock*		pcEntry;
+	CIRBlock*		pcLoop;
+	CIRBlock*		pcExit;
+	SIRReference	sK;
+	SIRReference	sN;
+	SIRReference	sI;
+	SIRReference	sI2;
+	SIRRange*		psRanges;
+
+	cModule.Init();
+	pcFunction = TestIRParseFunction(&cModule,
+		"function i32 @f(i32 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\t%k = add i32 %n, 1\n"
+		"\tjmp loop\n"
+		"loop:\n"
+		"\t%i = phi i32 [entry, 0], [loop, %i2]\n"
+		"\t%i2 = add i32 %i, %k\n"
+		"\t%c = slt i32 %i2, %n\n"
+		"\tbrif %c, loop, exit\n"
+		"exit:\n"
+		"\tret i32 %i2\n"
+		"}\n");
+	pcEntry = pcFunction->FindBlock("entry");
+	pcLoop = pcFunction->FindBlock("loop");
+	pcExit = pcFunction->FindBlock("exit");
+	sK = pcFunction->FindTemporary("k");
+	sN = pcFunction->FindTemporary("n");
+	sI = pcFunction->FindTemporary("i");
+	sI2 = pcFunction->FindTemporary("i2");
+
+	cDominators.Init();
+	cDominators.Compute(pcFunction);
+	cLiveness.Init();
+	cLiveness.Compute(pcFunction, &cDominators);
+
+	AssertInt(0, cLiveness.Start(pcEntry));
+	AssertInt(2, cLiveness.Position(pcEntry, 0));
+	AssertInt(4, cLiveness.Jump(pcEntry));
+	AssertInt(6, cLiveness.Start(pcLoop));
+	AssertInt(10, cLiveness.Position(pcLoop, 1));
+	AssertInt(12, cLiveness.Jump(pcLoop));
+	AssertInt(14, cLiveness.Start(pcExit));
+	AssertInt(0, cLiveness.LoopDepth(pcEntry));
+	AssertInt(1, cLiveness.LoopDepth(pcLoop));
+	AssertInt(0, cLiveness.LoopDepth(pcExit));
+
+	AssertSize(1, cLiveness.NumRanges(sK));
+	psRanges = cLiveness.GetRanges(sK);
+	AssertInt(3, psRanges[0].iFrom);
+	AssertInt(14, psRanges[0].iTo);
+	AssertInt(1 + 8, cLiveness.GetWeight(sK));
+
+	AssertSize(1, cLiveness.NumRanges(sN));
+	psRanges = cLiveness.GetRanges(sN);
+	AssertInt(0, psRanges[0].iFrom);
+	AssertInt(14, psRanges[0].iTo);
+	AssertInt(1 + 1 + 8, cLiveness.GetWeight(sN));
+
+	AssertSize(1, cLiveness.NumRanges(sI));
+	psRanges = cLiveness.GetRanges(sI);
+	AssertInt(6, psRanges[0].iFrom);
+	AssertInt(9, psRanges[0].iTo);
+	AssertInt(8 + 8, cLiveness.GetWeight(sI));
+
+	AssertSize(1, cLiveness.NumRanges(sI2));
+	psRanges = cLiveness.GetRanges(sI2);
+	AssertInt(9, psRanges[0].iFrom);
+	AssertInt(17, psRanges[0].iTo);
+	AssertInt(8 + 8 + 1, cLiveness.GetWeight(sI2));
+
+	AssertFalse(CIRLiveness::Intersect(cLiveness.GetRanges(sI), 1, cLiveness.GetRanges(sI2), 1));
+	AssertTrue(CIRLiveness::Intersect(cLiveness.GetRanges(sI), 1, cLiveness.GetRanges(sK), 1));
+	AssertInt(1, CIRLiveness::LoopWeight(0));
+	AssertInt(64, CIRLiveness::LoopWeight(2));
+	AssertInt(32768, CIRLiveness::LoopWeight(5));
+	AssertInt(32768, CIRLiveness::LoopWeight(9));
+
+	cLiveness.Kill();
+	cDominators.Kill();
+	cModule.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Dominance frontiers: s -> a; a -> b, c (a diamond) -> d; d -> a (the
+// latch), e.  b's and c's frontier is d (the join); d's (the latch's) is a
+// (the head), and so is a's own.  s, e and the unreachable x have none.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIRDominanceFrontiers(void)
+{
+	CIRModule		cModule;
+	CIRFunction*	pcFunction;
+	CIRDominators	cDominators;
+	CIRBlock*		pcA;
+	CIRBlock*		pcD;
+
+	cModule.Init();
+	pcFunction = TestIRParseFunction(&cModule,
+		"function void @f(i1 %c)\n"
+		"{\n"
+		"s:\n\tjmp a\n"
+		"a:\n\tbrif %c, b, c\n"
+		"b:\n\tjmp d\n"
+		"c:\n\tjmp d\n"
+		"x:\n\tjmp d\n"
+		"d:\n\tbrif %c, e, a\n"
+		"e:\n\tret\n"
+		"}\n");
+	pcA = pcFunction->FindBlock("a");
+	pcD = pcFunction->FindBlock("d");
+
+	cDominators.Init();
+	cDominators.Compute(pcFunction);
+	cDominators.ComputeFrontiers();
+	AssertSize(1, cDominators.NumFrontiers(pcFunction->FindBlock("b")));
+	AssertPointer(pcD, cDominators.GetFrontier(pcFunction->FindBlock("b"), 0));
+	AssertSize(1, cDominators.NumFrontiers(pcFunction->FindBlock("c")));
+	AssertPointer(pcD, cDominators.GetFrontier(pcFunction->FindBlock("c"), 0));
+	AssertSize(1, cDominators.NumFrontiers(pcD));
+	AssertPointer(pcA, cDominators.GetFrontier(pcD, 0));
+	AssertSize(1, cDominators.NumFrontiers(pcA));
+	AssertPointer(pcA, cDominators.GetFrontier(pcA, 0));
+	AssertSize(0, cDominators.NumFrontiers(pcFunction->FindBlock("s")));
+	AssertSize(0, cDominators.NumFrontiers(pcFunction->FindBlock("e")));
+	AssertSize(0, cDominators.NumFrontiers(pcFunction->FindBlock("x")));
+	cDominators.Kill();
+	cModule.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The flags hot (on sdiv, udiv, srem and urem), inbank (ptradd) and
+// thiscall (call), and the float comparisons not in
+// TestIRRoundTripEverything, print back as they were parsed.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIRRoundTripFlags(void)
+{
+	AssertIRRoundTrip(
+		"space default 4\n"
+		"\n"
+		"function i32 @_Flags__FPvif(ptr %p, i32 %x, f32 %f)\n"
+		"{\n"
+		"entry:\n"
+		"\t%a = sdiv hot i32 %x, 3\n"
+		"\t%b = udiv hot i32 %a, 5\n"
+		"\t%c = srem hot i32 %b, 7\n"
+		"\t%d = urem hot i32 %c, 9\n"
+		"\t%q = ptradd inbank ptr %p, %d\n"
+		"\t%r = call thiscall i32 @_Get__1AFv(ptr %q)\n"
+		"\tcall thiscall void @_Set__1AFi(ptr %q, i32 %r)\n"
+		"\t%c1 = fne f32 %f, 0x3F800000\n"
+		"\t%c2 = flt f32 %f, 0x3F800000\n"
+		"\t%c3 = fle f32 %f, 0x3F800000\n"
+		"\t%c4 = fgt f32 %f, 0x3F800000\n"
+		"\t%c5 = fge f32 %f, 0x3F800000\n"
+		"\t%c6 = fordered f32 %f, %f\n"
+		"\tbrif %c6, yes, no\n"
+		"yes:\n"
+		"\tret i32 %r\n"
+		"no:\n"
+		"\tret i32 0\n"
+		"}\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A flag on an opcode that doesn't allow it.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIRVerifierFlagErrors(void)
+{
+	AssertIRErrors("@f b: Flag not allowed on the opcode. [add]\n",
+		"function void @f()\n{\nb:\n\t%x = add hot i32 1, 2\n\tret\n}\n");
+	AssertIRErrors("@f b: Flag not allowed on the opcode. [mul]\n",
+		"function void @f()\n{\nb:\n\t%x = mul thiscall i32 1, 2\n\tret\n}\n");
+	AssertIRErrors("@f b: Flag not allowed on the opcode. [ptradd]\n",
+		"space default 4\n\nfunction void @f(ptr %p)\n{\nb:\n\t%q = ptradd volatile ptr %p, 1\n\tret\n}\n");
+	AssertIRErrors("@f b: Flag not allowed on the opcode. [load]\n",
+		"space default 4\n\nfunction void @f(ptr %p)\n{\nb:\n\t%x = load inbank i32 %p\n\tret\n}\n");
+	AssertIRErrors("@f b: Flag not allowed on the opcode. [sdiv]\n",
+		"function void @f()\n{\nb:\n\t%x = sdiv inbank i32 1, 2\n\tret\n}\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestIR(void)
@@ -2977,6 +3999,19 @@ void TestIR(void)
 	TestIROptimiserSinkAndHoist();
 	TestIROptimiserReduceMultiplies();
 	TestIROptimiserTimesZero();
+	TestIROptimiserNarrowCounters();
+	TestIROptimiserBiasSignedIndices();
+	TestIROptimiserMergeAddressPhis();
+	TestIROptimiserConstantDivisions();
+	TestIROptimiserFoldNullTests();
+	TestIROptimiserNarrowTruncations();
+	TestIROptimiserUnifySlotTypes();
+	TestIROptimiserRotateLoops();
+	TestIRSSAUpdater();
+	TestIRLiveness();
+	TestIRDominanceFrontiers();
+	TestIRRoundTripFlags();
+	TestIRVerifierFlagErrors();
 
 	TestStatistics();
 }

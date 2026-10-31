@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "BaseLib/Chars.h"
 #include "TestLib/Assert.h"
-#include "TestAsm65Context.h"
+#include "TestAsm65C64Context.h"
 
 
 #define SHA256_HASH		0x0200
@@ -58,7 +58,7 @@ void TestAsm65Sha256Digests(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAsm65Sha256(void)
+void TestAsm65C64Sha256(void)
 {
 	BeginTests();
 
