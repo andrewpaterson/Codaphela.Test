@@ -294,6 +294,93 @@ void TestInputChordsHeldAndEvicted(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A tapped key and then another, each chord with its own eviction age: a
+// partial chord waits as long as the longest of the chords that could
+// still match it, which can be shorter than the chords' 300ms.
+//
+//////////////////////////////////////////////////////////////////////////
+void AddTapChord(CInput* pcInput, CPlayer* pcPlayer, CInputVirtualDevice* pcVirtual, CInputDevice* pcDevice, char* szName, char* szTapped, char* szNext, uint32 uiEvictionAge)
+{
+	CInputChord*				pcChord;
+	COrderedInputChordCriteria*	pcOrdered;
+
+	pcChord = pcVirtual->AddChordAction(pcInput->GetActions()->AddActionWithListener(szName, &CPlayerListener::Up, (CPlayerListener*)pcPlayer));
+	pcOrdered = pcChord->AsOrdered();
+	pcOrdered->AddActiveAction(pcChord->AddEvaluatorSpecificSource(pcDevice, pcDevice->GetSource(szTapped), ICT_Toggle));
+	pcOrdered->AddInactiveAction(pcChord->AddEvaluatorSpecificSource(pcDevice, pcDevice->GetSource(szTapped), ICT_Toggle));
+	pcOrdered->AddActiveAction(pcChord->AddEvaluatorSpecificSource(pcDevice, pcDevice->GetSource(szNext), ICT_Toggle));
+	pcChord->SetEvictionAge(uiEvictionAge);
+	AssertBool(true, pcChord->Done());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestInputChordsEvictionAge(void)
+{
+	CInput						cInput;
+	CPlayer						cPlayer;
+	CProgramDeviceDetail*		pcDetail;
+	CInputVirtualDevice*		pcVirtual;
+	CInputDevice*				pcDevice;
+
+	cInput.Init(NULL);
+	pcDetail = AddProgrammaticDevice(cInput.GetProgramInput());
+	cInput.AddProgramInput();
+	cPlayer.Init();
+
+	pcDevice = cInput.GetDevices()->GetFirstVirtualDeviceInCategoryKeyboard(cInput.GetProgramInput()->GetCategoryName(), false)->GetDefaultDevice();
+	pcVirtual = cInput.GetDevices()->CreateVirtualDevice("Ages");
+	AssertBool(true, pcVirtual->AddSources(pcDevice, "W", "B", "Left Control", "Space", NULL));
+	AddTapChord(&cInput, &cPlayer, pcVirtual, pcDevice, "Slow", "Left Control", "Space", 500);
+	AddTapChord(&cInput, &cPlayer, pcVirtual, pcDevice, "Usual", "Left Control", "W", 0);
+	AddTapChord(&cInput, &cPlayer, pcVirtual, pcDevice, "Quick", "B", "W", 100);
+	AddTapChord(&cInput, &cPlayer, pcVirtual, pcDevice, "Default", "Space", "W", 0);
+	pcVirtual->Enable();
+
+	//Control could start Slow or Usual, so it waits Slow's 500ms; Slow still matches after 300ms.
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, "Left Control", 1.0f, 1000, "");
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, "Left Control", 0.0f, 1010, "");
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, NULL, 0.0f, 1400, "");
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, "Space", 1.0f, 1450, "[Slow]");
+	cPlayer.GetEvents()->ReInit();
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, "Space", 0.0f, 1460, "Space 0");
+
+	//Usual completes after 300ms too, while Slow could still match.
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, "Left Control", 1.0f, 2000, "");
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, "Left Control", 0.0f, 2010, "");
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, "W", 1.0f, 2400, "[Usual]");
+	cPlayer.GetEvents()->ReInit();
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, "W", 0.0f, 2410, "W 0");
+
+	//500ms after the release Control is let through.
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, "Left Control", 1.0f, 3000, "");
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, "Left Control", 0.0f, 3010, "");
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, NULL, 0.0f, 3510, "");
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, NULL, 0.0f, 3511, "Left Control 1, Left Control 0");
+
+	//Quick waits only 100ms.
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, "B", 1.0f, 4000, "");
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, "B", 0.0f, 4010, "");
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, NULL, 0.0f, 4110, "");
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, NULL, 0.0f, 4111, "B 1, B 0");
+
+	//A chord without its own age waits the chords' 300ms.
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, "Space", 1.0f, 5000, "");
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, "Space", 0.0f, 5010, "");
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, NULL, 0.0f, 5310, "");
+	AssertChordsEvents(&cInput, pcDetail, pcVirtual, NULL, 0.0f, 5311, "Space 1, Space 0");
+	AssertSize(0, cPlayer.GetEvents()->NumElements());
+
+	cPlayer.Kill();
+	cInput.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Both controls down in either order, then A down, then szLast down if
 // it isn't NULL.  There are no releases in the chord.
 //
@@ -785,6 +872,7 @@ void TestInputChords(void)
 	cInput.Kill();
 
 	TestInputChordsHeldAndEvicted();
+	TestInputChordsEvictionAge();
 	TestInputChordsPrefix();
 	TestInputChordsCommonStart();
 

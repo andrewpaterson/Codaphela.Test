@@ -14,6 +14,7 @@
 #include "LogicimLib/OrGateView.h"
 #include "LogicimLib/BufferView.h"
 #include "LogicimLib/PowerSourceView.h"
+#include "LogicimLib/SplitterView.h"
 #include "LogicimLib/CircuitView.h"
 #include "TestLib/Assert.h"
 #include "TestLogicimRender.h"
@@ -51,7 +52,8 @@ void AssertGridPosition(int32 x, int32 y, CPortView* pcPortView)
 //
 // Rotating right (clockwise) goes North, East, South, West.  East leaves
 // a point as it is: a component is drawn facing East.  North turns its
-// front (+x) up (-y), South down and West to the left.
+// front (+x) up (-y), South down and West to the left.  Mirroring flips
+// the point top to bottom before it's turned.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestRotation(void)
@@ -96,6 +98,28 @@ void TestRotation(void)
 	RotatePoint(ROT_North, &sFloat);
 	AssertDouble(0.5, sFloat.x, 3);
 	AssertDouble(-1.5, sFloat.y, 3);
+
+	sPoint.Init(2, 1);
+	TransformPoint(ROT_East, false, &sPoint);
+	AssertInt(2, sPoint.x);
+	AssertInt(1, sPoint.y);
+	sPoint.Init(2, 1);
+	TransformPoint(ROT_East, true, &sPoint);
+	AssertInt(2, sPoint.x);
+	AssertInt(-1, sPoint.y);
+	sPoint.Init(2, 1);
+	TransformPoint(ROT_North, true, &sPoint);
+	AssertInt(-1, sPoint.x);
+	AssertInt(-2, sPoint.y);
+	sPoint.Init(2, 1);
+	TransformPoint(ROT_West, true, &sPoint);
+	AssertInt(-2, sPoint.x);
+	AssertInt(1, sPoint.y);
+
+	sFloat.Init(1.5, 0.5);
+	TransformPoint(ROT_South, true, &sFloat);
+	AssertDouble(0.5, sFloat.x, 3);
+	AssertDouble(1.5, sFloat.y, 3);
 }
 
 
@@ -262,6 +286,52 @@ void TestLogicGateViewGeometry(void)
 	AssertGridPosition(-2, 1, pcInverter->GetPortView("Output 0"));
 	AssertGridPosition(-2, -1, pcInverter->GetPortView("Output 1"));
 	SafeKill(pcInverter);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A mirrored gate's inputs swap sides about the way it faces; its output
+// stays in front.  A mirrored bounding box is the unmirrored local box
+// flipped top to bottom and then turned.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMirroredViewGeometry(void)
+{
+	CAndGateView*	pcAnd;
+	CSplitterView*	pcSplitter;
+	SFloat64Vec2	sLocalMinimum;
+	SFloat64Vec2	sLocalMaximum;
+	SFloat64Vec2	sMinimum;
+	SFloat64Vec2	sMaximum;
+
+	pcAnd = NewMalloc<CAndGateView>();
+	pcAnd->Init(10, 20, ROT_East, "U1", "LVC", false, 2, 1);
+	AssertFalse(pcAnd->IsMirrored());
+	pcAnd->SetMirrored(true);
+	AssertTrue(pcAnd->IsMirrored());
+	AssertGridPosition(9, 21, pcAnd->GetPortView("Input 0"));
+	AssertGridPosition(9, 19, pcAnd->GetPortView("Input 1"));
+	AssertGridPosition(12, 20, pcAnd->GetPortView("Output"));
+
+	pcAnd->SetRotation(ROT_North);
+	AssertGridPosition(11, 21, pcAnd->GetPortView("Input 0"));
+	AssertGridPosition(9, 21, pcAnd->GetPortView("Input 1"));
+	AssertGridPosition(10, 18, pcAnd->GetPortView("Output"));
+	SafeKill(pcAnd);
+
+	pcSplitter = NewMalloc<CSplitterView>();
+	pcSplitter->Init(5, 7, ROT_East, "", 8, 2, 2, SA_LeftHanded, -1);
+	AssertTrue(pcSplitter->GetLocalBounds(&sLocalMinimum, &sLocalMaximum));
+	AssertTrue(sLocalMinimum.y != -sLocalMaximum.y);
+	pcSplitter->SetMirrored(true);
+	AssertTrue(pcSplitter->GetBoundingBox(&sMinimum, &sMaximum));
+	AssertBounds(5 + sLocalMinimum.x, 7 - sLocalMaximum.y, 5 + sLocalMaximum.x, 7 - sLocalMinimum.y, &sMinimum, &sMaximum);
+
+	pcSplitter->SetRotation(ROT_South);
+	AssertTrue(pcSplitter->GetBoundingBox(&sMinimum, &sMaximum));
+	AssertBounds(5 + sLocalMinimum.y, 7 + sLocalMinimum.x, 5 + sLocalMaximum.y, 7 + sLocalMaximum.x, &sMinimum, &sMaximum);
+	SafeKill(pcSplitter);
 }
 
 
@@ -692,6 +762,7 @@ void TestGateViews(void)
 	TestCircuitViewport();
 	TestLogicGatePortOffsets();
 	TestLogicGateViewGeometry();
+	TestMirroredViewGeometry();
 	TestLogicGateViewExplicitPower();
 	TestCircuitViewJunctions();
 	TestGateViewsRender();

@@ -39,6 +39,7 @@
 
 void LoadTestCircuitFonts(CCircuitFonts* pcFonts);
 void KillTestCircuitFonts(CCircuitFonts* pcFonts);
+void AssertGridPosition(int32 x, int32 y, CPortView* pcPortView);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -568,8 +569,100 @@ void TestCircuitEditorRotateAndDelete(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Flipping the inverter under the pointer mirrors it about the pointer,
+// its wires following so it still drives its output: left to right turns
+// it to face the other way, top to bottom mirrors it facing the same way.
+// Later placements are flipped too, and flipping one while it's placed
+// flips it.  Undo takes a flip back, with new components' flip.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorFlip(void)
+{
+	SEditorTest			sTest;
+	CCircuitEditor*		pcEditor;
+	CCircuitView*		pcMain;
+	CInverterView*		pcInverter;
+	CComponentView*		pcPlaced;
+	SInt32Vec2			sOutput;
+
+	sTest.Init();
+	pcEditor = &sTest.cEditor;
+	pcMain = pcEditor->AddCircuit("Main");
+	AddGroundAndOutput(pcMain);
+	pcInverter = AddTestInverter(pcMain, -3, -2);
+	AssertTrue(pcEditor->Simulate("Main"));
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(6, -2));
+	AssertFalse(pcEditor->IsCreationMirrored());
+
+	sTest.PointAt(-3, -2);
+	AssertPointer(pcInverter, pcEditor->GetHover());
+	pcEditor->FlipHorizontally();
+	AssertInt(ROT_West, pcInverter->GetRotation());
+	AssertTrue(pcInverter->IsMirrored());
+	AssertInt(-3, pcInverter->GetPosition().x);
+	AssertInt(-2, pcInverter->GetPosition().y);
+	AssertInt(ROT_West, pcEditor->GetCreationRotation());
+	AssertTrue(pcEditor->IsCreationMirrored());
+	AssertGridPosition(-2, -2, pcInverter->GetPortView("Input"));
+	sOutput = pcInverter->GetPortView("Output")->GetGridPosition();
+	AssertInt(-5, sOutput.x);
+	AssertInt(-2, sOutput.y);
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(sOutput.x, sOutput.y));
+
+	//Flipping back puts it as it was.
+	pcEditor->FlipHorizontally();
+	AssertInt(ROT_East, pcInverter->GetRotation());
+	AssertFalse(pcInverter->IsMirrored());
+	AssertInt(ROT_East, pcEditor->GetCreationRotation());
+	AssertFalse(pcEditor->IsCreationMirrored());
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(6, -2));
+
+	pcEditor->FlipVertically();
+	AssertInt(ROT_East, pcInverter->GetRotation());
+	AssertTrue(pcInverter->IsMirrored());
+	AssertInt(-3, pcInverter->GetPosition().x);
+	AssertInt(-2, pcInverter->GetPosition().y);
+	AssertInt(ROT_East, pcEditor->GetCreationRotation());
+	AssertTrue(pcEditor->IsCreationMirrored());
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(6, -2));
+
+	//Placed mirrored; turned while placed, then flipped top to bottom, it faces North.
+	sTest.PointAt(10, 10);
+	AssertTrue(pcEditor->StartPlaceComponent("Inverter"));
+	pcEditor->RotateRight();
+	pcEditor->FlipVertically();
+	sTest.Click(10, 10);
+	AssertSize(3, pcMain->NumComponents());
+	pcPlaced = pcMain->GetComponent(2);
+	AssertInt(ROT_North, pcPlaced->GetRotation());
+	AssertFalse(pcPlaced->IsMirrored());
+	AssertInt(ROT_North, pcEditor->GetCreationRotation());
+	AssertFalse(pcEditor->IsCreationMirrored());
+
+	//Undoing the placement and then the flip.
+	AssertTrue(pcEditor->Undo());
+	AssertSize(2, pcEditor->GetCircuit()->NumComponents());
+	AssertInt(ROT_East, pcEditor->GetCreationRotation());
+	AssertTrue(pcEditor->IsCreationMirrored());
+	AssertTrue(pcEditor->GetCircuit()->GetComponent(1)->IsMirrored());
+	AssertTrue(pcEditor->Undo());
+	AssertFalse(pcEditor->GetCircuit()->GetComponent(1)->IsMirrored());
+	AssertTrue(pcEditor->Redo());
+	AssertTrue(pcEditor->GetCircuit()->GetComponent(1)->IsMirrored());
+	AssertInt(ROT_East, pcEditor->GetCircuit()->GetComponent(1)->GetRotation());
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // A saved project loads with the same circuits, the same circuit being
-// edited, the placement rotation and its simulation as it was.
+// edited, the placement rotation and flip and its simulation as it was.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCircuitEditorSaveLoad(void)
@@ -601,6 +694,7 @@ void TestCircuitEditorSaveLoad(void)
 	AssertInt(ROT_East, sSaved.cEditor.GetCreationRotation());
 	sSaved.PointAt(30, 30);
 	sSaved.cEditor.RotateRight();
+	sSaved.cEditor.FlipVertically();
 
 	cFileUtil.MakeDir("Output");
 	AssertTrue(sSaved.cEditor.Save("Output" _FS_ "Editor.xml"));
@@ -609,7 +703,8 @@ void TestCircuitEditorSaveLoad(void)
 	AssertTrue(cLoaded.Load("Output" _FS_ "Editor.xml"));
 	AssertString("Main", cLoaded.GetCircuit()->GetTypeName());
 	AssertSize(2, cLoaded.GetCircuits()->NumCircuits());
-	AssertInt(ROT_South, cLoaded.GetCreationRotation());
+	AssertInt(ROT_North, cLoaded.GetCreationRotation());
+	AssertTrue(cLoaded.IsCreationMirrored());
 	AssertInt(TV_High, SEditorTest::GetEditorLevel(&cLoaded, &sSaved.cFamilies, 3, -2));
 	AssertLong(sSaved.cEditor.GetSimulation()->GetTime(), cLoaded.GetSimulation()->GetTime());
 
@@ -1664,7 +1759,7 @@ void TestCircuitEditorPropertiesRoundTrip(void)
 		sTest.cEditor.GetProperties(pcView, &cProperties);
 		AssertTrue(cProperties.NumProperties() > 0);
 		AssertString("name", cProperties.Get(StringCompare(pcView->GetXMLName(), "Subcircuit") == 0 ? 1 : 0)->szName.Text());
-		pcNew = sTest.cEditor.SetProperties(pcView, &cProperties, pcView->GetRotation());
+		pcNew = sTest.cEditor.SetProperties(pcView, &cProperties, pcView->GetRotation(), pcView->IsMirrored());
 		AssertNotNull(pcNew);
 		AssertPointer(pcNew, pcMain->GetComponent(k));
 		if (pcNew->MakesComponent())
@@ -1842,7 +1937,7 @@ void TestCircuitEditorPropertiesEdited(void)
 	gcLogger.GetConfig(&sLogConfig);
 	gcLogger.SetSilent();
 	StartLogCapture(&cCapture);
-	pcNew = sTest.cEditor.SetProperties(pcInverter, &cProperties, ROT_East);
+	pcNew = sTest.cEditor.SetProperties(pcInverter, &cProperties, ROT_East, false);
 	StopLogCapture(&cCapture, &szLogged);
 	gcLogger.SetConfig(&sLogConfig);
 	cProperties.Kill();
@@ -1858,7 +1953,7 @@ void TestCircuitEditorPropertiesEdited(void)
 	sTest.cEditor.GetProperties(pcNew, &cProperties);
 	AssertTrue(cProperties.SetValue("inputWidth", "1"));
 	StartLogCapture(&cCapture);
-	pcNew = sTest.cEditor.SetProperties(pcNew, &cProperties, ROT_East);
+	pcNew = sTest.cEditor.SetProperties(pcNew, &cProperties, ROT_East, false);
 	StopLogCapture(&cCapture, &szLogged);
 	cProperties.Kill();
 	AssertSize(0, szLogged.Length());
@@ -1870,7 +1965,7 @@ void TestCircuitEditorPropertiesEdited(void)
 
 	cProperties.Init();
 	sTest.cEditor.GetProperties(pcNew, &cProperties);
-	pcNew = sTest.cEditor.SetProperties(pcNew, &cProperties, ROT_South);
+	pcNew = sTest.cEditor.SetProperties(pcNew, &cProperties, ROT_South, false);
 	cProperties.Kill();
 	AssertInt(ROT_South, pcNew->GetRotation());
 	AssertInt(-3, pcNew->GetPosition().x);
@@ -2249,7 +2344,7 @@ void TestCircuitEditorUndoProperties(void)
 	cProperties.Init();
 	pcEditor->GetProperties(pcInverter, &cProperties);
 	AssertTrue(cProperties.SetValue("name", "U1"));
-	AssertNotNull(pcEditor->SetProperties(pcInverter, &cProperties, ROT_East));
+	AssertNotNull(pcEditor->SetProperties(pcInverter, &cProperties, ROT_East, false));
 	cProperties.Kill();
 	AssertString("U1", pcEditor->GetCircuit()->GetComponent(1)->GetName());
 	AssertSize(3, pcUndo->NumSnapshots());
@@ -2675,6 +2770,7 @@ void TestCircuitEditor(void)
 	TestCircuitEditorMoveFromJunction();
 	TestCircuitEditorMoveWire();
 	TestCircuitEditorRotateAndDelete();
+	TestCircuitEditorFlip();
 	TestCircuitEditorSaveLoad();
 	TestCircuitEditorTraceLines();
 	TestCircuitEditorPullWire();

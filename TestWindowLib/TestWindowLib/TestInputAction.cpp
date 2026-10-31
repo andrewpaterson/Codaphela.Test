@@ -59,6 +59,8 @@ public:
 	void Redo(SComponentInputEvent* psEvent)		{ mpszLog->Append("Redo;"); }
 	void StepRedo(SComponentInputEvent* psEvent)	{ mpszLog->Append("StepRedo;"); }
 	void HomeEnter(SComponentInputEvent* psEvent)	{ mpszLog->Append("HomeEnter;"); }
+	void FlipH(SComponentInputEvent* psEvent)		{ mpszLog->Append("FlipH;"); }
+	void FlipV(SComponentInputEvent* psEvent)		{ mpszLog->Append("FlipV;"); }
 };
 
 
@@ -223,6 +225,9 @@ public:
 		mpcKeyboard->AddSource("Y");
 		mpcKeyboard->AddSource("Z");
 		mpcKeyboard->AddSource("Enter");
+		mpcKeyboard->AddSource("F");
+		mpcKeyboard->AddSource("H");
+		mpcKeyboard->AddSource("V");
 		mpcKeyboard->AddSource("Tab");
 		mpcMouse->AddSource("Button 1");
 		mpcMouse->AddSource("Wheel Forward");
@@ -353,10 +358,10 @@ void TestInputActionDispatch(void)
 //////////////////////////////////////////////////////////////////////////
 //
 // The undo and redo chords, with and without shift, in the orders people
-// press them.  Shift can be pressed or let go while control is held.  The
-// keys a chord uses up are never seen as keys.  A keyboard without right
-// modifiers gets only the left ones' chords, so control+Z isn't also
-// control+shift+Z.
+// press them, and the flip chords.  Shift can be pressed or let go while
+// control is held.  The keys a chord uses up are never seen as keys.  A
+// keyboard without right modifiers gets only the left ones' chords, so
+// control+Z isn't also control+shift+Z.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestInputActionUndoChords(bool bRightModifiers)
@@ -398,6 +403,8 @@ void TestInputActionUndoChords(bool bRightModifiers)
 		pA->AddInputAction(CIC_Redo, &pA, &CActionTestComponent::Redo);
 		pA->AddInputAction(CIC_StepRedo, &pA, &CActionTestComponent::StepRedo);
 		pA->AddInputAction(CIC_HomeEnter, &pA, &CActionTestComponent::HomeEnter);
+		pA->AddInputAction(CIC_FlipHorizontally, &pA, &CActionTestComponent::FlipH);
+		pA->AddInputAction(CIC_FlipVertically, &pA, &CActionTestComponent::FlipV);
 		pA->AddInputAction(IAF_AnyKeyDown, NULL, &pA, &CActionTestComponent::AnyKeyDown);
 
 		pTestWindow->PointerMoved(10, 10);
@@ -447,6 +454,27 @@ void TestInputActionUndoChords(bool bRightModifiers)
 		//Control+Enter isn't a chord.
 		cDevices.Press("Left Control"); cDevices.Tap("Enter"); cDevices.Release("Left Control");
 		AssertLog("AnyDown(Left Control);AnyDown(Enter);");
+
+		//Control+Shift+F then H or V, with control and shift held or let go of first.
+		cDevices.Press("Left Control"); cDevices.Press("Left Shift"); cDevices.Tap("F"); cDevices.Tap("H"); cDevices.Release("Left Shift"); cDevices.Release("Left Control");
+		AssertLog("FlipH;");
+		cDevices.Press("Left Shift"); cDevices.Press("Left Control"); cDevices.Tap("F"); cDevices.Release("Left Control"); cDevices.Release("Left Shift"); cDevices.Tap("V");
+		AssertLog("FlipV;");
+		cDevices.Press("Left Control"); cDevices.Press("Left Shift"); cDevices.Tap("F"); cDevices.Release("Left Shift"); cDevices.Tap("H"); cDevices.Release("Left Control");
+		AssertLog("FlipH;");
+		cDevices.Press("Left Control"); cDevices.Press("Left Shift"); cDevices.Tap("F"); cDevices.Release("Left Control"); cDevices.Tap("V"); cDevices.Release("Left Shift");
+		AssertLog("FlipV;");
+		cDevices.Press("Left Control"); cDevices.Press("Left Shift"); cDevices.Press("F"); cDevices.Release("Left Control"); cDevices.Release("F"); cDevices.Release("Left Shift"); cDevices.Tap("H");
+		AssertLog("FlipH;");
+
+		//Held, they carry on to the next.
+		cDevices.Press("Left Control"); cDevices.Press("Left Shift"); cDevices.Tap("F"); cDevices.Tap("H"); cDevices.Tap("F"); cDevices.Tap("V"); cDevices.Release("Left Shift"); cDevices.Release("Left Control");
+		AssertLog("FlipH;FlipV;");
+
+		//H and V alone are keys.
+		cDevices.Tap("H");
+		cDevices.Tap("V");
+		AssertLog("AnyDown(H);AnyDown(V);");
 
 		cComponentInput.Kill();
 		pInputSource = NULL;

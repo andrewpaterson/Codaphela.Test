@@ -450,6 +450,49 @@ void TestTextViewsRender(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// D flip flops facing East, North, South and West, and below them the
+// same mirrored: their clock and reset swap ends, the notch and bubbles go
+// with them, and their labels still read and point in.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMirroredViewsRender(void)
+{
+	CCircuitView			cCircuit;
+	CCircuitColours			cColours;
+	CCircuitFonts			cFonts;
+	CDTypeFlipFlopView*		pcFlipFlop;
+	ERotation				aeRotations[] = { ROT_East, ROT_North, ROT_South, ROT_West };
+	size					i;
+	size					j;
+
+	ObjectsInit();
+	LoadTestCircuitFonts(&cFonts);
+	cCircuit.Init();
+	cColours.InitLogicim();
+
+	for (i = 0; i < 2; i++)
+	{
+		for (j = 0; j < 4; j++)
+		{
+			pcFlipFlop = NewMalloc<CDTypeFlipFlopView>();
+			pcFlipFlop->Init(-21 + (int32)j * 14, -7 + (int32)i * 14, aeRotations[j], "", "LVC", false);
+			pcFlipFlop->SetMirrored(i == 1);
+			cCircuit.Add(pcFlipFlop);
+		}
+	}
+
+	AssertRenderedCircuit(&cCircuit, &cColours, 1200, 600, 2, NULL, NULL, true, "MirroredViews", &cFonts);
+
+	cCircuit.Kill();
+	cColours.Kill();
+	KillTestCircuitFonts(&cFonts);
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestTextViews(void)
@@ -465,6 +508,7 @@ void TestTextViews(void)
 	TestValueViewBoxKept();
 	TestClockNotch();
 	TestTextViewsRender();
+	TestMirroredViewsRender();
 
 	DataMemoryKill();
 	DataIOKill();
