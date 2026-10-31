@@ -1,3 +1,4 @@
+#include <string.h>
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/PointerFunctions.h"
 #include "BaseLib/DiskFile.h"
@@ -291,6 +292,9 @@ void TestAsm65ObjectFile(void)
 	CMemoryFile*	pcMemoryFile;
 	CFileUtil		cFileUtil;
 	char			acJunk[64];
+	SAsm65Section*	psSection;
+	SAsm65Section*	psRead;
+	size			i;
 
 	cObject.Init("file");
 	AssertTrue(TestAsm65AssembleObject(&cObject,
@@ -313,6 +317,26 @@ void TestAsm65ObjectFile(void)
 	pcMemoryFile = MemoryFile();
 	pcMemoryFile->mbBasicFileMustFree = false;
 	AssertReadsBack(&cObject, pcMemoryFile, pcMemoryFile);
+
+	//SetSkipSectionBytes: the sections' bytes are left in the file, where iBytesPosition and uiNumBytes say.
+	cRead.Init("");
+	cRead.SetSkipSectionBytes(true);
+	AssertTrue(cRead.Read(MemoryFile(pcMemoryFile->GetBufferPointer(), pcMemoryFile->GetBufferSize())));
+	AssertSize(cObject.NumSections(), cRead.NumSections());
+	for (i = 0; i < cObject.NumSections(); i++)
+	{
+		psSection = cObject.GetSection(i);
+		psRead = cRead.GetSection(i);
+		AssertString(psSection->szName.Text(), psRead->szName.Text());
+		AssertSize(0, psRead->cBytes.NumElements());
+		AssertInt((uint32)psSection->cBytes.NumElements(), psRead->uiNumBytes);
+		if (psRead->uiNumBytes > 0)
+		{
+			AssertTrue(psRead->iBytesPosition > 0);
+			AssertTrue(memcmp(&((uint8*)pcMemoryFile->GetBufferPointer())[psRead->iBytesPosition], psSection->cBytes.GetData(), psRead->uiNumBytes) == 0);
+		}
+	}
+	cRead.Kill();
 	SafeKill(pcMemoryFile);
 
 	cFileUtil.MakeDir("Output");

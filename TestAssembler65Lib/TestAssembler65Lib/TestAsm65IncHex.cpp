@@ -1,3 +1,4 @@
+#include <string.h>
 #include "BaseLib/TextFile.h"
 #include "Assembler65Lib/Asm65816Assembler.h"
 #include "Assembler65Lib/Asm65Linker.h"
@@ -177,6 +178,40 @@ void TestAsm65IncHexMathTable(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// .include: Input/Include.inc defines Answer and includes
+// IncludeNested.inc, which defines Nested from it; every pass reads them.
+// A file that isn't there is an error.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestAsm65Include(void)
+{
+	CAsm65C64Assembler	cAssembler;
+	int64				iEnd;
+	int64				iNested;
+
+	cAssembler.Init();
+	cAssembler.SetDirectory("Input");
+	AssertTrue(cAssembler.Assemble(".org $1000\n\t\t.include \"Include.inc\"\n.word Answer, Nested, Later\nEnd:\nLater = End + 1\n"));
+	AssertString("", cAssembler.GetErrors());
+	AssertTrue(cAssembler.GetSymbol("End", &iEnd));
+	AssertLongLongIntHex(0x1006LL, iEnd);
+	AssertTrue(cAssembler.GetSymbol("Nested", &iNested));
+	AssertLong(43LL, iNested);
+	AssertIntHex(42, cAssembler.GetOutput()->GetWord(0x1000));
+	AssertIntHex(43, cAssembler.GetOutput()->GetWord(0x1002));
+	AssertIntHex(0x1007, cAssembler.GetOutput()->GetWord(0x1004));
+	cAssembler.Kill();
+
+	cAssembler.Init();
+	cAssembler.SetDirectory("Input");
+	AssertFalse(cAssembler.Assemble(".org $1000\n.include \"Missing.inc\"\n"));
+	AssertTrue(strstr(cAssembler.GetErrors(), "Could not read the included file") != NULL);
+	cAssembler.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65IncHex(void)
@@ -186,6 +221,7 @@ void TestAsm65IncHex(void)
 	TestAsm65IncHexAbsolute();
 	TestAsm65IncHexErrors();
 	TestAsm65IncHexMathTable();
+	TestAsm65Include();
 
 	TestStatistics();
 }

@@ -302,11 +302,12 @@ void TestModPlayerEffects(void)
 	AssertInt(64, psChannel->iVolume);
 	AssertInt(428, psChannel->iPeriod);
 	psChannel = PlayModTick(&cPlayer, 0, 11, 1, 882);
-	AssertTrue(psChannel->fPosition > 0.5);
+	AssertTrue((psChannel->uiPosition > 0) || (psChannel->uiFraction >= 0x8000));
 	AssertLSize(882, cPlayer.SkipTick());
 	psChannel = cPlayer.GetChannel(0);
 	AssertSize(2, cPlayer.GetTick());
-	AssertDouble(0.0, psChannel->fPosition, 12);
+	AssertLSize(0, psChannel->uiPosition);
+	AssertInt(0, (int)psChannel->uiFraction);
 	for (uiTick = 3; uiTick < 6; uiTick++)
 	{
 		PlayModTick(&cPlayer, 0, 11, uiTick, 882);
@@ -316,10 +317,11 @@ void TestModPlayerEffects(void)
 	PlayModTick(&cPlayer, 0, 12, 0, 882);
 	PlayModTick(&cPlayer, 0, 12, 1, 882);
 	psChannel = PlayModTick(&cPlayer, 0, 12, 2, 882);
-	AssertTrue(psChannel->fPosition > 0.5);
+	AssertTrue((psChannel->uiPosition > 0) || (psChannel->uiFraction >= 0x8000));
 	cPlayer.SkipTick();
 	AssertSize(3, cPlayer.GetTick());
-	AssertDouble(0.0, cPlayer.GetChannel(0)->fPosition, 12);
+	AssertLSize(0, cPlayer.GetChannel(0)->uiPosition);
+	AssertInt(0, (int)cPlayer.GetChannel(0)->uiFraction);
 	PlayModTick(&cPlayer, 0, 12, 4, 882);
 	PlayModTick(&cPlayer, 0, 12, 5, 882);
 
@@ -328,7 +330,8 @@ void TestModPlayerEffects(void)
 	AssertSize(13, cPlayer.GetRow());
 	psChannel = cPlayer.GetChannel(0);
 	AssertSize(2, psChannel->uiSample);
-	AssertDouble(256.0, psChannel->fPosition, 12);
+	AssertLSize(256, psChannel->uiPosition);
+	AssertInt(0, (int)psChannel->uiFraction);
 	for (uiTick = 1; uiTick < 6; uiTick++)
 	{
 		PlayModTick(&cPlayer, 0, 13, uiTick, 882);

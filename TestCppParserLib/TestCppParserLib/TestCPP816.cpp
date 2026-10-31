@@ -651,6 +651,121 @@ void TestCPP816IndexedWords(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// 32 bit shl and lshr by 1 to 7 bits written straight to the result
+// (ShiftTwoWords): to a place apart from the value, which is used after,
+// and in the value's own place, against one bit shifts repeated.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816SmallShifts(void)
+{
+	AssertInt(1, TestCPP816Run(
+		"volatile int giOne = 1;\n"
+		"volatile unsigned long gul;\n"
+		"unsigned long ShlL(unsigned long x, int n) { while (n-- > 0) { x <<= giOne; } return x; }\n"
+		"unsigned long ShrL(unsigned long x, int n) { while (n-- > 0) { x >>= giOne; } return x; }\n"
+		"int Check(unsigned long ul)\n"
+		"{\n"
+		"\tunsigned long\tx;\n"
+		"\tgul = ul;\n"
+		"\tul = gul;\n"
+		"\tif (((ul << 1) != ShlL(ul, 1)) || ((ul >> 1) != ShrL(ul, 1)) || ((ul << 3) != ShlL(ul, 3)) || ((ul >> 5) != ShrL(ul, 5))) { return 0; }\n"
+		"\tif (((ul << 7) != ShlL(ul, 7)) || ((ul >> 7) != ShrL(ul, 7)) || ((ul << 2) + (ul >> 6) != ShlL(ul, 2) + ShrL(ul, 6))) { return 0; }\n"
+		"\tx = gul;\n"
+		"\tx >>= 3;\n"
+		"\tx <<= 2;\n"
+		"\tx >>= 1;\n"
+		"\tx <<= 1;\n"
+		"\treturn x == ShlL(ShrL(ShlL(ShrL(ul, 3), 2), 1), 1);\n"
+		"}\n"
+		"int main(void)\n"
+		"{\n"
+		"\treturn Check(0x89ABCDEFUL) && Check(0x12345678UL) && Check(0xFFFFFFFFUL) && Check(0x80000001UL) && Check(0x00018000UL) ? 1 : 0;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A 32 bit value whose one use is the next instruction, a multiply, divide
+// or remainder by a scratch runtime routine (R816_Mul32, R816_UDiv32 ...),
+// is worked out straight into the routine's operand bytes (CanFuse): as the
+// first operand and the second, with an add's carry between its words.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816ScratchOperands(void)
+{
+	AssertInt(1, TestCPP816Run(
+		"unsigned long MulXor(unsigned long a, unsigned long b, unsigned long c) { return (a ^ b) * c; }\n"
+		"unsigned long DivSum(unsigned long a, unsigned long b, unsigned long c) { return a / (b + c); }\n"
+		"unsigned long RemDifference(unsigned long a, unsigned long b, unsigned long c) { return (a - b) % c; }\n"
+		"long DivOr(long a, long b, long c) { return (a | b) / c; }\n"
+		"unsigned long (*volatile gpMulXor)(unsigned long, unsigned long, unsigned long) = MulXor;\n"
+		"unsigned long (*volatile gpDivSum)(unsigned long, unsigned long, unsigned long) = DivSum;\n"
+		"unsigned long (*volatile gpRemDifference)(unsigned long, unsigned long, unsigned long) = RemDifference;\n"
+		"long (*volatile gpDivOr)(long, long, long) = DivOr;\n"
+		"int main(void)\n"
+		"{\n"
+		"\tif (gpMulXor(0x89ABCDEFUL, 0x13572468UL, 0x00012345UL) != 0x439F6663UL) { return 2; }\n"
+		"\tif (gpDivSum(0xFEDCBA98UL, 0x01234567UL, 0x00071C3BUL) != 0xDAUL) { return 3; }\n"
+		"\tif (gpRemDifference(0xFEDCBA98UL, 0x01234567UL, 0x00071C3BUL) != 0x117DCUL) { return 4; }\n"
+		"\tif (gpDivOr((long)0x87654321UL, 0x00F00F00L, -1234L) != 1632063L) { return 5; }\n"
+		"\treturn 1;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A load may have its pointer's place (PackTemporaries): a 1 word load, and
+// a 2 word one when a phi joins them (p = p->psNext), whose second word is
+// kept on the stack while the first, which overwrites the pointer, is read
+// (Load).  Walked through lists, against the nodes' array.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816PointerPlaceLoads(void)
+{
+	AssertInt(1, TestCPP816Run(
+		"struct SNode\n"
+		"{\n"
+		"\tSNode*\tpsNext;\n"
+		"\tlong\tl;\n"
+		"\tint\t\ti;\n"
+		"};\n"
+		"SNode\tgasNodes[20];\n"
+		"long Sum(SNode* ps) { long l = 0; for (; ps; ps = ps->psNext) { l += ps->l; } return l; }\n"
+		"int Last(SNode* ps) { while (ps->psNext) { ps = ps->psNext; } return ps->i; }\n"
+		"long Second(SNode* ps) { SNode* psNext = ps->psNext; return psNext->l; }\n"
+		"int Count(SNode* ps) { int i = 0; while (ps) { i += ps->i; ps = ps->psNext; } return i; }\n"
+		"long (*volatile gpSum)(SNode*) = Sum;\n"
+		"int (*volatile gpLast)(SNode*) = Last;\n"
+		"long (*volatile gpSecond)(SNode*) = Second;\n"
+		"int (*volatile gpCount)(SNode*) = Count;\n"
+		"int main(void)\n"
+		"{\n"
+		"\tint\t\ti;\n"
+		"\tlong\tl;\n"
+		"\tint\t\tiCount;\n"
+		"\tl = 0;\n"
+		"\tiCount = 0;\n"
+		"\tfor (i = 0; i < 20; i++)\n"
+		"\t{\n"
+		"\t\tgasNodes[i].psNext = (i < 19) ? &gasNodes[i + 1] : 0;\n"
+		"\t\tgasNodes[i].l = 0x10003L * (long)(i + 1);\n"
+		"\t\tgasNodes[i].i = i * 3 + 1;\n"
+		"\t\tl += gasNodes[i].l;\n"
+		"\t\tiCount += gasNodes[i].i;\n"
+		"\t}\n"
+		"\tif (gpSum(&gasNodes[0]) != l) { return 2; }\n"
+		"\tif (gpLast(&gasNodes[3]) != 58) { return 3; }\n"
+		"\tif (gpSecond(&gasNodes[4]) != 0x10003L * 6) { return 4; }\n"
+		"\tif (gpCount(&gasNodes[0]) != iCount) { return 5; }\n"
+		"\treturn 1;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // 32 bit unsigned divides and remainders by divisors under 65536 (R816_UDiv32
 // and R816_URem32, with the dividend's high word below the divisor and not),
 // checked as q * d + r == x with r < d for pseudo random x and d of every
@@ -3034,7 +3149,7 @@ void TestCPP816MergeLoop(void)
 		}
 	}
 	AssertInt((int16)uiHash, TestCPP816RunProfiled(szSource, NULL, NULL, &uiCycles));
-	AssertTrue(uiCycles < 1075000);	//1032421 in the blocks' order, 1173183 in reverse post order.
+	AssertTrue(uiCycles < 1095000);	//1032421 in the blocks' order, 1173183 in reverse post order; +15.4K clearing the arrays (bss) at start up.
 }
 
 
@@ -3430,6 +3545,103 @@ void TestCPP816AlignedFrames(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The argument words the function whose label starts with szPrefix copies
+// into its aligned frame: the lda long,X + sta dp pairs after its aligned
+// prologue (phd, tsc, tax, sec, sbc, and, tcs, tcd).  -1 if it isn't aligned.
+//
+//////////////////////////////////////////////////////////////////////////
+int32 TestCPP816AlignedCopies(CCPP65Builder* pcBuilder, CAsm65Memory* pcMemory, const char* szPrefix)
+{
+	const char*	szLine;
+	uint32		uiAddress;
+	int32		iCopies;
+
+	if (!TestCPP816IsAligned(pcBuilder, pcMemory, szPrefix))
+	{
+		return -1;
+	}
+	for (szLine = strstr(pcBuilder->GetMap(), "Symbols\n"); szLine; szLine = strchr(szLine + 1, '\n'))
+	{
+		if ((szLine[1] == ' ') && (szLine[3] == '0') && (szLine[4] == 'x') && (strncmp(&szLine[16], szPrefix, strlen(szPrefix)) == 0))
+		{
+			uiAddress = (uint32)strtoul(&szLine[3], NULL, 16) + 12;
+			for (iCopies = 0; (pcMemory->GetByte(uiAddress) == 0xBF) && (pcMemory->GetByte(uiAddress + 4) == 0x85); iCopies++)
+			{
+				uiAddress += 6;
+			}
+			return iCopies;
+		}
+	}
+	return -1;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// An aligned frame copies only the argument words its function reads: not
+// an argument it ignores, nor a long's high word when only its low word is
+// used.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816AlignedFrameUnreadArguments(void)
+{
+	static const char*	szSource =
+		"int Sum(int* p, int unused, int n) { int s = 0; for (int i = 0; i < n; i++) { s += p[i]; } return s; }\n"
+		"int Low(int* p, long n) { int s = 0; for (int i = 0; i < (int)n; i++) { s += p[i]; } return s; }\n"
+		"int All(int* p, int k, int n) { int s = 0; for (int i = 0; i < n; i++) { s += p[i] * k; } return s; }\n"
+		"int (*volatile gpSum)(int*, int, int) = Sum;\n"
+		"int (*volatile gpLow)(int*, long) = Low;\n"
+		"int (*volatile gpAll)(int*, int, int) = All;\n"
+		"int main()\n"
+		"{\n"
+		"	int v[50];\n"
+		"	for (int i = 0; i < 50; i++) { v[i] = i; }\n"
+		"	int a = gpSum(v, 99, 50);\n"
+		"	int b = gpLow(v, 0x70000L + 10);\n"
+		"	int c = gpAll(v, 2, 20);\n"
+		"	return ((a == 1225) && (b == 45) && (c == 380)) ? 7 : 1;\n"
+		"}\n";
+	static const char*	aszUnits[] = { "Libc65/string816.asm", NULL };
+	CCPP65Builder		cBuilder;
+	CAsm65Memory		cMemory;
+	CFast65C816			cFast;
+	CChars				szProject;
+	CFileUtil			cFileUtil;
+
+	cBuilder.Init();
+	cBuilder.SetTarget(CPPT_W65C816);
+	TestCPP65AddIncludeDirectories(&cBuilder);
+	AssertTrue(cBuilder.AddStartUp());
+	szProject.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "Libc65");
+	cFileUtil.FullPath(&szProject);
+	cBuilder.AddMathTables(szProject.Text());
+	szProject.Kill();
+	AssertTrue(cBuilder.AddSource("Test.cpp", szSource));
+	TestCPP65AddUnits(&cBuilder, aszUnits, false);
+	AssertTrue(cBuilder.Link());
+	AssertString("", cBuilder.GetErrors());
+
+	cMemory.Init(ASM65_MEMORY_LOW_SIZE);
+	cMemory.Load(cBuilder.GetOutput());
+
+	//p's two words and n; not unused.  p and n's low word.  All of p, k and n.
+	AssertInt(3, TestCPP816AlignedCopies(&cBuilder, &cMemory, "_Sum"));
+	AssertInt(3, TestCPP816AlignedCopies(&cBuilder, &cMemory, "_Low"));
+	AssertInt(4, TestCPP816AlignedCopies(&cBuilder, &cMemory, "_All"));
+
+	cMemory.InitFast65816(&cFast);
+	cFast.Reset();
+	cFast.Run(TEST_CPP816_STEPS);
+	AssertTrue(cFast.IsStopped());
+	AssertInt(7, (int16)cFast.GetC());
+	cFast.Kill();
+	cMemory.Kill();
+	cBuilder.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Integer constant expressions that overflow their type, and constants that
 // an implicit conversion truncates, are warned about: the W65C816's 16 bit int
 // turns code written for a 32 bit int quietly wrong ("12000 * 6").
@@ -3767,6 +3979,9 @@ void TestCPP816(void)
 	TestCPP816Divide64();
 	TestCPP816BitTables();
 	TestCPP816IndexedWords();
+	TestCPP816SmallShifts();
+	TestCPP816ScratchOperands();
+	TestCPP816PointerPlaceLoads();
 	TestCPP816NarrowDivisors();
 	TestCPP816WordShifts();
 	TestCPP816Globals();
@@ -3813,6 +4028,7 @@ void TestCPP816(void)
 	TestCPP816IntIndexPointers();
 	TestCPP816NarrowCounters();
 	TestCPP816AlignedFrames();
+	TestCPP816AlignedFrameUnreadArguments();
 
 	CW65C816InstructionFactory::GetInstance()->Kill();
 	NumberKill();

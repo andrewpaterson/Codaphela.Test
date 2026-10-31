@@ -172,6 +172,7 @@ void TestTransactionConcurrency(void);
 void TestMemoryDrive(void);
 void TestFatCache(void);
 void TestFat32(void);
+void TestFat16(void);
 void TestFatBench(void);
 void TestFatStress(void);
 void TestFat32Bugs(void);
@@ -362,6 +363,7 @@ int __cdecl main(void)
 	TestMemoryDrive();
 	TestFatCache();
 	TestFat32();
+	TestFat16();
 	TestFatBench();
 	TestFat32Bugs();
 	TestFatStress();

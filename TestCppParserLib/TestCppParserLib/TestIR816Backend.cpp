@@ -1679,7 +1679,8 @@ void TestIR816BackendPeephole(void)
 //
 // RemoveDeadStores: a store to a direct page word goes when, in straight
 // line code, the next instruction naming a byte near it (other than a store
-// to another direct page word) stores to it (IR816DeadStore); an lda of a
+// to another direct page word; a word [D + n] is near when it shares a
+// byte) stores to it (IR816DeadStore); an lda of a
 // direct page word or a constant goes when A is loaded again before A or
 // its N and Z are read (IR816DeadLoad).
 //
@@ -1692,6 +1693,11 @@ void TestIR816BackendRemoveDeadStores(void)
 
 	//The first store is overwritten unread, past a store to the word next to it.
 	AssertIR816Pass("\t\tsta [D + 25]\n\t\tstz [D + 23]\n\t\trtl\n", "\t\tsta [D + 23]\n\t\tsta [D + 25]\n\t\tstz [D + 23]\n\t\trtl\n", fPass);
+
+	//A word read two bytes away ([D + 25] is bytes 25 and 26) doesn't read it: the copy of a value's low word, and the
+	//lda feeding it, go.  Kept when the word read shares a byte with it ([D + 26]).
+	AssertIR816Pass("\t\tlda [D + 25]\n\t\tsta [D + 27]\n\t\trtl\n", "\t\tlda [D + 23]\n\t\tsta [D + 27]\n\t\tlda [D + 25]\n\t\tsta [D + 27]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda [D + 23]\n\t\tsta [D + 27]\n\t\tlda [D + 26]\n\t\tsta [D + 27]\n\t\trtl\n", "\t\tlda [D + 23]\n\t\tsta [D + 27]\n\t\tlda [D + 26]\n\t\tsta [D + 27]\n\t\trtl\n", fPass);
 
 	//Kept: a pointer at [D + 22] read or stored through, a branch or a label before the next store.
 	AssertIR816Pass("\t\tsta [D + 23]\n\t\tlda [[D + 22]:24]\n\t\tstz [D + 23]\n\t\trtl\n", "\t\tsta [D + 23]\n\t\tlda [[D + 22]:24]\n\t\tstz [D + 23]\n\t\trtl\n", fPass);

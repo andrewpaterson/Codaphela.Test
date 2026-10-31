@@ -681,6 +681,9 @@
     <ClCompile Include="TestFat32.cpp">
       <Filter>Source\FileSystem\Fat32</Filter>
     </ClCompile>
+    <ClCompile Include="TestFat16.cpp">
+      <Filter>Source\FileSystem\Fat32</Filter>
+    </ClCompile>
     <ClCompile Include="TestMemoryDrive.cpp">
       <Filter>Source\FileSystem\Underlying</Filter>
     </ClCompile>
