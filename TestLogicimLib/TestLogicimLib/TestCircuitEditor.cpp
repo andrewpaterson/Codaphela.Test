@@ -14,9 +14,10 @@
 #include "MicroprocessorLib/Event.h"
 #include "MicroprocessorLib/Timeline.h"
 #include "MicroprocessorLib/LogicPort.h"
+#include "MicroprocessorLib/IntegratedCircuit.h"
 #include "LogicimLib/ClockView.h"
 #include "LogicimLib/BufferView.h"
-#include "LogicimLib/InverterPackageView.h"
+#include "LogicimLib/Logic74View.h"
 #include "LogicimLib/PowerSourceView.h"
 #include "LogicimLib/ValueView.h"
 #include "LogicimLib/LabelView.h"
@@ -1611,6 +1612,7 @@ void TestCircuitEditorComponentLibraries(void)
 	size					j;
 	size					k;
 	int						iFound;
+	int						iFoundParts;
 	const char*				szXMLName;
 
 	ObjectsInit();
@@ -1626,14 +1628,14 @@ void TestCircuitEditorComponentLibraries(void)
 			psEntry = &psLibrary->asEntries[j];
 			pcView = NewPlacedComponentView(psEntry->szXMLName, 0, 0, ROT_East, &cCircuit, &cFonts);
 			AssertNotNull(pcView);
-			AssertString(psEntry->szXMLName, pcView->GetXMLName());
+			AssertTrue(strncmp(psEntry->szXMLName, pcView->GetXMLName(), strlen(pcView->GetXMLName())) == 0);
 			SafeKill(pcView);
 		}
 	}
 	AssertNull(GetComponentLibrary(NumComponentLibraries()));
 
 	//A chip is given a reference; anything else isn't.
-	pcView = NewPlacedComponentView("InverterPackage", 0, 0, ROT_East, &cCircuit, &cFonts);
+	pcView = NewPlacedComponentView("Logic74Package:04", 0, 0, ROT_East, &cCircuit, &cFonts);
 	AssertString("U1", pcView->GetName());
 	SafeKill(pcView);
 	pcView = NewPlacedComponentView("DTypeFlipFlop", 0, 0, ROT_East, &cCircuit, &cFonts);
@@ -1650,7 +1652,9 @@ void TestCircuitEditorComponentLibraries(void)
 		{
 			continue;
 		}
+		//A 74 series view is in the chooser once for each part ("Logic74Package:00") and anything else once.
 		iFound = 0;
+		iFoundParts = 0;
 		for (i = 0; i < NumComponentLibraries(); i++)
 		{
 			psLibrary = GetComponentLibrary(i);
@@ -1660,15 +1664,29 @@ void TestCircuitEditorComponentLibraries(void)
 				{
 					iFound++;
 				}
+				else if ((strncmp(psLibrary->asEntries[j].szXMLName, szXMLName, strlen(szXMLName)) == 0) && (psLibrary->asEntries[j].szXMLName[strlen(szXMLName)] == PLACED_PART_SEPARATOR))
+				{
+					iFoundParts++;
+				}
 			}
 		}
-		AssertInt(1, iFound);
+		if (iFoundParts > 0)
+		{
+			AssertInt(0, iFound);
+		}
+		else
+		{
+			AssertInt(1, iFound);
+		}
 	}
 
 	psLogic = GetComponentLibrary(0);
 	AssertString("Generic Logic", psLogic->szName);
 	AssertString("74' Series", GetComponentLibrary(1)->szName);
-	AssertString("InverterPackage", GetComponentLibrary(1)->asEntries[0].szXMLName);
+	AssertString("Logic74Package:00", GetComponentLibrary(1)->asEntries[0].szXMLName);
+	AssertString("74LVC00", GetComponentLibrary(1)->asEntries[0].szName);
+	AssertString("Logic74Unit:00", GetComponentLibrary(1)->asEntries[1].szXMLName);
+	AssertString("74LVC00 Unit", GetComponentLibrary(1)->asEntries[1].szName);
 	AssertString("Memory", GetComponentLibrary(2)->szName);
 	AssertString("Sources", GetComponentLibrary(3)->szName);
 	AssertSize(2, GetComponentLibrary(3)->uiNumEntries);
@@ -1706,7 +1724,7 @@ void TestCircuitEditorPlaceUnits(void)
 {
 	SEditorTest				sTest;
 	CCircuitView*			pcMain;
-	CInverterUnitView*		pcUnit;
+	CLogic74UnitView*		pcUnit;
 	int						i;
 
 	sTest.Init();
@@ -1714,7 +1732,7 @@ void TestCircuitEditorPlaceUnits(void)
 	AssertTrue(sTest.cEditor.Simulate("Main"));
 
 	sTest.PointAt(0, 0);
-	AssertTrue(sTest.cEditor.StartPlaceComponent("InverterUnit"));
+	AssertTrue(sTest.cEditor.StartPlaceComponent("Logic74Unit:04"));
 	for (i = 0; i < 6; i++)
 	{
 		AssertTrue(sTest.cEditor.IsEditing());
@@ -1725,8 +1743,9 @@ void TestCircuitEditorPlaceUnits(void)
 	AssertSize(6, pcMain->NumComponents());
 	for (i = 0; i < 6; i++)
 	{
-		pcUnit = (CInverterUnitView*)pcMain->GetComponent(i);
-		AssertString("InverterUnit", pcUnit->GetXMLName());
+		pcUnit = (CLogic74UnitView*)pcMain->GetComponent(i);
+		AssertString("Logic74Unit", pcUnit->GetXMLName());
+		AssertString("04", pcUnit->GetPartType());
 		AssertChar((char)('A' + i), pcUnit->GetUnitLetter());
 		AssertInt(6 * i, pcUnit->GetPosition().x);
 		AssertNotNull(pcUnit->GetComponent(sTest.cEditor.GetViewPath(), sTest.cEditor.GetSimulation()));
@@ -1734,7 +1753,7 @@ void TestCircuitEditorPlaceUnits(void)
 
 	//Stopped while placing the second unit: only the first is placed.
 	sTest.PointAt(0, 10);
-	AssertTrue(sTest.cEditor.StartPlaceComponent("InverterUnit"));
+	AssertTrue(sTest.cEditor.StartPlaceComponent("Logic74Unit:04"));
 	sTest.Click(0, 10);
 	AssertTrue(sTest.cEditor.IsEditing());
 	AssertSize(8, pcMain->NumComponents());
@@ -1761,11 +1780,27 @@ void TestCircuitEditorPlaceUnits(void)
 	AssertTrue(sTest.cEditor.GetHover() == pcMain->GetComponent(2));
 	AssertTrue(sTest.cEditor.Delete());
 	AssertSize(7, pcMain->NumComponents());
-	AssertChar('B', ((CInverterUnitView*)pcMain->GetComponent(1))->GetUnitLetter());
-	AssertChar('D', ((CInverterUnitView*)pcMain->GetComponent(2))->GetUnitLetter());
+	AssertChar('B', ((CLogic74UnitView*)pcMain->GetComponent(1))->GetUnitLetter());
+	AssertChar('D', ((CLogic74UnitView*)pcMain->GetComponent(2))->GetUnitLetter());
 	AssertString("U1", pcMain->GetComponent(4)->GetName());
 	AssertString("U2", pcMain->GetComponent(5)->GetName());
 	AssertString("Inverter", pcMain->GetComponent(6)->GetXMLName());
+
+	//A NAND part's four units, each a NAND gate.
+	sTest.cEditor.StopEdit();
+	sTest.PointAt(0, 30);
+	AssertTrue(sTest.cEditor.StartPlaceComponent("Logic74Unit:00"));
+	for (i = 0; i < 4; i++)
+	{
+		AssertTrue(sTest.cEditor.IsEditing());
+		sTest.Click(8 * i, 30);
+	}
+	AssertFalse(sTest.cEditor.IsEditing());
+	AssertSize(11, pcMain->NumComponents());
+	pcUnit = (CLogic74UnitView*)pcMain->GetComponent(10);
+	AssertChar('D', pcUnit->GetUnitLetter());
+	AssertString("U4", pcUnit->GetName());
+	AssertString("NAND Gate", ((CIntegratedCircuit*)pcUnit->GetComponent(sTest.cEditor.GetViewPath(), sTest.cEditor.GetSimulation()))->GetType());
 
 	sTest.Kill();
 }
@@ -1816,7 +1851,7 @@ void TestCircuitEditorPlaceEveryComponent(void)
 			}
 			AssertFalse(sTest.cEditor.IsEditing());
 			pcView = pcMain->GetComponent(pcMain->NumComponents() - 1);
-			AssertString(psLibrary->asEntries[j].szXMLName, pcView->GetXMLName());
+			AssertTrue(strncmp(psLibrary->asEntries[j].szXMLName, pcView->GetXMLName(), strlen(pcView->GetXMLName())) == 0);
 			if (pcView->MakesComponent())
 			{
 				AssertNotNull(pcView->GetComponent(sTest.cEditor.GetViewPath(), sTest.cEditor.GetSimulation()));

@@ -549,7 +549,7 @@ void AssertKicadSchemLogicimElements(char* szName, char* szElement, int iExpecte
 //////////////////////////////////////////////////////////////////////////
 void TestKicadSchemLogicimConvert(void)
 {
-	AssertKicadSchemLogicimConverts("Importer Test", 2, 0, "U1B", gszKicadSchemTestFile, 1);
+	AssertKicadSchemLogicimConverts("Importer Test", 2, 0, "U1", gszKicadSchemTestFile, 1);
 	AssertKicadSchemLogicimConverts("Netlist Test", 0, 1, NULL, gszKicadSchemNetlistTestFile, 1);
 	AssertKicadSchemLogicimConverts("Bus Test", 0, 2, NULL, gszKicadSchemBusTestFile, 0, 3);
 	AssertKicadSchemLogicimConverts("Clock Oscillator", 0, 3, NULL);
@@ -558,17 +558,18 @@ void TestKicadSchemLogicimConvert(void)
 	AssertKicadSchemLogicimConverts("LED Display", 0, 2, NULL);
 	AssertKicadSchemLogicimConverts("LCD Dual 7 Segment Tester", 0, 1, NULL);
 	AssertKicadSchemLogicimConverts("Power and Reset", 0, 1, NULL);
-	AssertKicadSchemLogicimConverts("HCP65 MPU NMI", 10, 1, "IC8A");
-	AssertKicadSchemLogicimConverts("Triple MPU Clock Generator", 10, 1, NULL);
+	AssertKicadSchemLogicimConverts("HCP65 MPU NMI", 10, 1, "IC8");
+	AssertKicadSchemLogicimConverts("Triple MPU Clock Generator", 8, 1, NULL);
 	AssertKicadSchemLogicimConverts("Flags Enable Interrupt", 0, 1, NULL, NULL, 0, 4);
 	AssertKicadSchemLogicimConverts("UART Board", 0, 1, NULL, NULL, 0, 10);
 
-	//A 74LVC04 drawn as units is units, and drawn whole is a package.
-	AssertKicadSchemLogicimElements("HCP65 MPU NMI", "InverterUnit", 6);
-	AssertKicadSchemLogicimElements("HCP65 MPU NMI", "InverterPackage", 0);
-	AssertKicadSchemLogicimElements("Flags Enable Interrupt", "InverterUnit", 6);
-	AssertKicadSchemLogicimElements("Triple MPU Clock Generator", "InverterPackage", 1);
-	AssertKicadSchemLogicimElements("Triple MPU Clock Generator", "InverterUnit", 0);
+	//A 74 series part drawn as units is units, and drawn whole is a package.
+	AssertKicadSchemLogicimElements("HCP65 MPU NMI", "Logic74Unit", 15);
+	AssertKicadSchemLogicimElements("HCP65 MPU NMI", "Logic74Package", 6);
+	AssertKicadSchemLogicimElements("Flags Enable Interrupt", "Logic74Unit", 11);
+	AssertKicadSchemLogicimElements("Flags Enable Interrupt", "Logic74Package", 3);
+	AssertKicadSchemLogicimElements("Triple MPU Clock Generator", "Logic74Package", 3);
+	AssertKicadSchemLogicimElements("Triple MPU Clock Generator", "Logic74Unit", 14);
 }
 
 

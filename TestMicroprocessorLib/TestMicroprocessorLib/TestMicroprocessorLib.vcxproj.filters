@@ -133,6 +133,9 @@
     <ClCompile Include="TestStandardIntegratedCircuits.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="TestGroupIntegratedCircuits.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
     <ClCompile Include="TestProcessorChips.cpp">
       <Filter>Source</Filter>
     </ClCompile>

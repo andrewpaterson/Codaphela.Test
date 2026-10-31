@@ -11,6 +11,7 @@ void TestKicadSchemImporter(void);
 void TestKicadSchemFile(void);
 void TestKicadSchemNetlist(void);
 void TestKicadSchemLogicim(void);
+void SweepKicadComponentBoards(void);
 
 
 int __cdecl main(void)
@@ -24,11 +25,7 @@ int __cdecl main(void)
 	TypeConverterInit();
 	MemoryInit();
 
-	TestKicadSchemParser();
-	TestKicadSchemImporter();
-	TestKicadSchemFile();
-	TestKicadSchemNetlist();
-	TestKicadSchemLogicim();
+	SweepKicadComponentBoards();
 
 	MemoryKill();
 	TypeConverterKill();

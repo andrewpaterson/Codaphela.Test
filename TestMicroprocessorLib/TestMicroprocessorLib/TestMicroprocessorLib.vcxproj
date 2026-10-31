@@ -265,6 +265,7 @@
     <ClCompile Include="TestLogicPort.cpp" />
     <ClCompile Include="TestPassive.cpp" />
     <ClCompile Include="TestStandardIntegratedCircuits.cpp" />
+    <ClCompile Include="TestGroupIntegratedCircuits.cpp" />
     <ClCompile Include="TestProcessorChips.cpp" />
   </ItemGroup>
   <ItemGroup>

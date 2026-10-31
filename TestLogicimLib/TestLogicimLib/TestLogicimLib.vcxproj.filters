@@ -6,7 +6,7 @@
     <ClCompile Include="TestTextViews.cpp" />
     <ClCompile Include="TestWiring.cpp" />
     <ClCompile Include="TestTraceAutoConnector.cpp" />
-    <ClCompile Include="TestInverterPackageViews.cpp" />
+    <ClCompile Include="TestLogic74Views.cpp" />
     <ClCompile Include="TestGateViews.cpp" />
     <ClCompile Include="TestLogicimRender.cpp" />
     <ClCompile Include="TestSimulationState.cpp" />
