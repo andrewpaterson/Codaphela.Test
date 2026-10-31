@@ -1632,6 +1632,17 @@ void TestCircuitEditorComponentLibraries(void)
 	}
 	AssertNull(GetComponentLibrary(NumComponentLibraries()));
 
+	//A chip is given a reference; anything else isn't.
+	pcView = NewPlacedComponentView("InverterPackage", 0, 0, ROT_East, &cCircuit, &cFonts);
+	AssertString("U1", pcView->GetName());
+	SafeKill(pcView);
+	pcView = NewPlacedComponentView("DTypeFlipFlop", 0, 0, ROT_East, &cCircuit, &cFonts);
+	AssertString("U1", pcView->GetName());
+	SafeKill(pcView);
+	pcView = NewPlacedComponentView("Ground", 0, 0, ROT_East, &cCircuit, &cFonts);
+	AssertString("", pcView->GetName());
+	SafeKill(pcView);
+
 	for (k = 0; k < NumComponentViewTypes(); k++)
 	{
 		szXMLName = GetComponentViewXMLName(k);
@@ -1658,6 +1669,12 @@ void TestCircuitEditorComponentLibraries(void)
 	AssertString("Generic Logic", psLogic->szName);
 	AssertString("74' Series", GetComponentLibrary(1)->szName);
 	AssertString("InverterPackage", GetComponentLibrary(1)->asEntries[0].szXMLName);
+	AssertString("Memory", GetComponentLibrary(2)->szName);
+	AssertString("Sources", GetComponentLibrary(3)->szName);
+	AssertSize(2, GetComponentLibrary(3)->uiNumEntries);
+	AssertString("Power", GetComponentLibrary(4)->szName);
+	AssertString("PositivePower", GetComponentLibrary(4)->asEntries[0].szXMLName);
+	AssertString("Ground", GetComponentLibrary(4)->asEntries[1].szXMLName);
 	AssertString("AndGate", psLogic->asEntries[0].szXMLName);
 	AssertTrue(ComponentMatchesFilter(psLogic, &psLogic->asEntries[0], ""));
 	AssertTrue(ComponentMatchesFilter(psLogic, &psLogic->asEntries[0], "  "));
@@ -1732,10 +1749,11 @@ void TestCircuitEditorPlaceUnits(void)
 	AssertFalse(sTest.cEditor.IsEditing());
 	AssertSize(8, pcMain->NumComponents());
 
-	//The units are named as one part, and the next part's as another.
+	//The units are named as one part, the next part's as another and the inverter as a third.
 	AssertString("U1", pcMain->GetComponent(0)->GetName());
 	AssertString("U1", pcMain->GetComponent(5)->GetName());
 	AssertString("U2", pcMain->GetComponent(6)->GetName());
+	AssertString("U3", pcMain->GetComponent(7)->GetName());
 
 	//Deleting one unit deletes only that unit.
 	sTest.cEditor.StopEdit();
