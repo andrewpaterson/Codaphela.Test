@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/Fat32.h"
 #include "BaseLib/FatFilenameHelper.h"
+#include "BaseLib/FatTime.h"
 #include "TestLib/Assert.h"
 #include "TestFat32Common.h"
 
@@ -365,6 +367,177 @@ void TestFatBugLongNameOverClusters(void)
 	FatBugCheckFile(&cVolume, szPath, auiData, 100);
 	FatBugCheckFile(&cVolume, "\\Dir\\First.txt", auiData, 10);
 	FatBugCheckFile(&cVolume, "\\Dir\\Last.txt", auiData, 30);
+	FatBugKill(&cDrive, &cVolume);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Names of every length that fills a long name entry exactly and one
+// either side, up to 255 (all 20 entries, the 20th holding 9 characters),
+// come back from a query as they were made (SetQueryLongFilenamePart copies
+// each entry's 13 characters at once).  In the root: a path is at most 260.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFatLongNameLengths(void)
+{
+	static const int	aiLengths[] = { 1, 12, 13, 14, 25, 26, 27, 38, 39, 40, 246, 247, 248, 254, 255 };
+	CFatTestDrive		cDrive;
+	CFatVolume			cVolume;
+	uint8				auiData[16];
+	static char			aszNames[15][256];
+	char				szPath[300];
+	uint32				uiSize;
+	uint32				uiCount;
+	int					i;
+	int					j;
+	int					iFiles;
+
+	FatBugVolume(&cDrive, &cVolume, 1);
+	FatBugFill(auiData, 16, 9);
+	iFiles = (int)(sizeof(aiLengths) / sizeof(int));
+	for (i = 0; i < iFiles; i++)
+	{
+		for (j = 0; j < aiLengths[i]; j++)
+		{
+			aszNames[i][j] = (char)(((j % 3) == 2) ? ('0' + (j % 10)) : ('a' + ((j + i) % 26)));
+		}
+		aszNames[i][aiLengths[i]] = '\0';
+		sprintf(szPath, "\\%s", aszNames[i]);
+		FatBugCreate(&cVolume, szPath, auiData, (uint32)i);
+	}
+	for (i = 0; i < iFiles; i++)
+	{
+		AssertTrue(FatBugListed(&cVolume, "\\", aszNames[i], &uiSize, &uiCount));
+		AssertInt((uint32)i, uiSize);
+		AssertInt((uint32)iFiles, uiCount);
+		sprintf(szPath, "\\%s", aszNames[i]);
+		FatBugCheckFile(&cVolume, szPath, auiData, (uint32)i);
+	}
+	FatBugKill(&cDrive, &cVolume);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A directory entry's times are decoded from its raw date and time when
+// asked for: 2024-02-29 13:45:58 is that local time, 1980-01-01 00:00:00
+// (the earliest FAT date) is too, and a new file's create time is the one
+// its raw entry holds.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFatDirectoryEntryTimes(void)
+{
+	CFatTestDrive		cDrive;
+	CFatVolume			cVolume;
+	SFatDirectoryEntry	sEntry;
+	uint8				auiData[16];
+	time_t				tTime;
+	struct tm*			psTime;
+
+	memset(&sEntry, 0, sizeof(SFatDirectoryEntry));
+	sEntry.sRaw.uEntry.sFatRawCommon.uiModifyDate = (uint16)(((2024 - 1980) << 9) | (2 << 5) | 29);
+	sEntry.sRaw.uEntry.sFatRawCommon.uiModifyTime = (uint16)((13 << 11) | (45 << 5) | (58 >> 1));
+	tTime = sEntry.GetModifyTime();
+	psTime = localtime(&tTime);
+	AssertInt(124, psTime->tm_year);
+	AssertInt(1, psTime->tm_mon);
+	AssertInt(29, psTime->tm_mday);
+	AssertInt(13, psTime->tm_hour);
+	AssertInt(45, psTime->tm_min);
+	AssertInt(58, psTime->tm_sec);
+
+	sEntry.sRaw.uEntry.sFatRawCommon.uiAccessDate = (uint16)((0 << 9) | (1 << 5) | 1);
+	tTime = sEntry.GetAccessTime();
+	psTime = localtime(&tTime);
+	AssertInt(80, psTime->tm_year);
+	AssertInt(0, psTime->tm_mon);
+	AssertInt(1, psTime->tm_mday);
+	AssertInt(0, psTime->tm_hour);
+
+	FatBugVolume(&cDrive, &cVolume, 1);
+	FatBugFill(auiData, 16, 4);
+	FatBugCreate(&cVolume, "\\Timed.txt", auiData, 16);
+	AssertInt(FAT_SUCCESS, cVolume.GetFileEntry("\\Timed.txt", &sEntry));
+	AssertTrue(sEntry.GetCreateTime() == (time_t)FatDecodeDateTime(sEntry.sRaw.uEntry.sFatRawCommon.uiCreateDate, sEntry.sRaw.uEntry.sFatRawCommon.uiCreateTime));
+	AssertTrue(sEntry.GetModifyTime() == (time_t)FatDecodeDateTime(sEntry.sRaw.uEntry.sFatRawCommon.uiModifyDate, sEntry.sRaw.uEntry.sFatRawCommon.uiModifyTime));
+	FatBugKill(&cDrive, &cVolume);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A boot sector whose bytes per sector isn't a power of two isn't mounted
+// (sector offsets are shifted and masked); put back to 512 it is.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFatMountSectorSizePowerOfTwo(void)
+{
+	CFatTestDrive	cDrive;
+	CFatVolume		cVolume;
+	uint8			auiSector[512];
+
+	FatBugVolume(&cDrive, &cVolume, 1);
+	FatBugKill(&cDrive, &cVolume);
+
+	cDrive.Init((uint64)65600 + 4096);
+	AssertInt(FAT_SUCCESS, FatFormat(FAT_FS_TYPE_FAT32, "Odd", 1, &cDrive));
+	AssertTrue(cDrive.Read(0, auiSector));
+	AssertInt(512, auiSector[11] | (auiSector[12] << 8));
+	auiSector[11] = 0x00;
+	auiSector[12] = 0x03;
+	AssertTrue(cDrive.Write(0, auiSector));
+	AssertFalse(cVolume.Mount(&cDrive) == FAT_SUCCESS);
+
+	auiSector[11] = 0x00;
+	auiSector[12] = 0x02;
+	AssertTrue(cDrive.Write(0, auiSector));
+	AssertInt(FAT_SUCCESS, cVolume.Mount(&cDrive));
+	FatBugKill(&cDrive, &cVolume);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A broken long name entry with a sequence past the 20th (30) is not a long
+// name: its characters went past the end of the query's name (and over the
+// query).  The file is listed by its short name and still reads.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFatBugLongNameSequenceTooHigh(void)
+{
+	CFatTestDrive		cDrive;
+	CFatVolume			cVolume;
+	SFatDirectoryEntry	sEntry;
+	uint8				auiData[40];
+	uint8				auiSector[512];
+	char				szShortName[13];
+	uint32				uiSector;
+	uint32				uiSize;
+	uint32				uiCount;
+	uint16				uiOffset;
+
+	FatBugVolume(&cDrive, &cVolume, 1);
+	FatBugFill(auiData, 40, 2);
+	FatBugCreate(&cVolume, "\\Long nm.text", auiData, 40);
+	AssertInt(FAT_SUCCESS, cVolume.GetFileEntry("\\Long nm.text", &sEntry));
+	uiSector = sEntry.uiSectorAddress;
+	uiOffset = sEntry.uiSectorOffset;
+	strcpy(szShortName, (char*)sEntry.szName);
+	AssertInt(FAT_SUCCESS, cVolume.Unmount());
+
+	//The long name's one entry is just before the short one (in the same sector: it isn't the sector's first).
+	AssertTrue(uiOffset >= 32);
+	AssertTrue(cDrive.Read(uiSector, auiSector));
+	AssertInt(FAT_FIRST_LFN_ENTRY | 1, auiSector[uiOffset - 32]);
+	auiSector[uiOffset - 32] = FAT_FIRST_LFN_ENTRY | 30;
+	AssertTrue(cDrive.Write(uiSector, auiSector));
+
+	AssertInt(FAT_SUCCESS, cVolume.Mount(&cDrive));
+	AssertFalse(FatBugListed(&cVolume, "\\", "Long nm.text", &uiSize, &uiCount));
+	AssertTrue(FatBugListed(&cVolume, "\\", szShortName, &uiSize, &uiCount));
+	AssertInt((uint32)40, uiSize);
+	AssertInt((uint32)1, uiCount);
 	FatBugKill(&cDrive, &cVolume);
 }
 
@@ -764,6 +937,10 @@ void TestFat32Bugs(void)
 	TestFatBugLongNameKeptForNextEntry();
 	TestFatBugAppendToFullCluster();
 	TestFatBugBigDirectory();
+	TestFatLongNameLengths();
+	TestFatDirectoryEntryTimes();
+	TestFatMountSectorSizePowerOfTwo();
+	TestFatBugLongNameSequenceTooHigh();
 
 	TestStatistics();
 	TypeConverterKill();

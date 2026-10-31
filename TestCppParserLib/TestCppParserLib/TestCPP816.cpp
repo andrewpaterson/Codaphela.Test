@@ -2085,6 +2085,624 @@ void TestCPP816ConstantDivisions(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// How many times szText is in the 816 assembly of szSource's functions
+// (compiled, not linked), not in the runtime's routines after them.
+//
+//////////////////////////////////////////////////////////////////////////
+int TestCPP816CountInAssembly(const char* szSource, const char* szText)
+{
+	CCPP65Builder	cBuilder;
+	CChars			szAssembly;
+	CChars			szErrors;
+	int				iCount;
+	const char*		szAt;
+	const char*		szEnd;
+
+	cBuilder.Init();
+	TestCPP65AddIncludeDirectories(&cBuilder);
+	szAssembly.Init();
+	szErrors.Init();
+	AssertTrue(CCPP65Builder::Generate(&szAssembly, &szErrors, cBuilder.GetIncludeDirectories(), "Test.cpp", szSource, false, NULL, CPPT_W65C816));
+	AssertString("", szErrors.Text());
+	szEnd = strstr(szAssembly.Text(), ".section text.R816_");
+	iCount = 0;
+	for (szAt = strstr(szAssembly.Text(), szText); szAt && (!szEnd || (szAt < szEnd)); szAt = strstr(szAt + 1, szText))
+	{
+		iCount++;
+	}
+	szErrors.Kill();
+	szAssembly.Kill();
+	cBuilder.Kill();
+	return iCount;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// gmtime's divides: x / 86400 and x % 86400 of any x share one runtime
+// divide (by 675, after x / 128); the remainder made positive is narrowed
+// by the branch around its fix-up, so its divides by 60 and 3600 are
+// multiplies (60 = 4 * 15: (r >> 2) * m fits where r * m doesn't), as are
+// those of the days (a quotient's range) by 7 and 365 on either side of a
+// branch on its sign.
+//
+//////////////////////////////////////////////////////////////////////////
+static uint16 TestCPP816DivisionRangesSplit(int32 x)
+{
+	int32	q;
+	int32	r;
+	uint16	h;
+
+	q = x / 86400;
+	r = x % 86400;
+	if (r < 0)
+	{
+		r += 86400;
+		q--;
+	}
+	h = (uint16)((r % 60) + ((r / 60) % 60) * 3 + (r / 3600) * 5);
+	return (uint16)(h * 31 + (uint16)((q + 4) % 7) + (uint16)((q >= 0) ? q / 365 : -((364 - q) / 365)));
+}
+
+
+void TestCPP816DivisionRanges(void)
+{
+	static const char*	szSplit =
+		"unsigned int Split(long x)\n"
+		"{\n"
+		"\tlong q = x / 86400;\n"
+		"\tlong r = x % 86400;\n"
+		"\tif (r < 0) { r += 86400; q--; }\n"
+		"\tunsigned int h = (unsigned int)(r % 60) + (unsigned int)((r / 60) % 60) * 3 + (unsigned int)(r / 3600) * 5;\n"
+		"\treturn h * 31 + (unsigned int)((q + 4) % 7) + (unsigned int)(q >= 0 ? q / 365 : -((364 - q) / 365));\n"
+		"}\n";
+	static const char*	szMain =
+		"unsigned int (*volatile gpSplit)(long) = Split;\n"
+		"int main()\n"
+		"{\n"
+		"\tunsigned int h = 0;\n"
+		"\tfor (long l = -40; l < 40; l++) { h = h * 31 + gpSplit(l * 53687091L + l * 7919L); }\n"
+		"\th = h * 31 + gpSplit(2147483647L);\n"
+		"\th = h * 31 + gpSplit(-2147483647L - 1);\n"
+		"\treturn (int)h;\n"
+		"}\n";
+	CChars		szSource;
+	uint16		uiHash;
+	int32		l;
+	uint64		uiCycles;
+
+	uiHash = 0;
+	for (l = -40; l < 40; l++)
+	{
+		uiHash = (uint16)(uiHash * 31 + TestCPP816DivisionRangesSplit((int32)((uint32)l * 53687091u + (uint32)l * 7919u)));
+	}
+	uiHash = (uint16)(uiHash * 31 + TestCPP816DivisionRangesSplit(2147483647));
+	uiHash = (uint16)(uiHash * 31 + TestCPP816DivisionRangesSplit(-2147483647 - 1));
+
+	szSource.Init(szSplit);
+	szSource.Append(szMain);
+	AssertInt((int16)uiHash, TestCPP816RunProfiled(szSource.Text(), NULL, NULL, &uiCycles));
+	szSource.Kill();
+
+	AssertInt(1, TestCPP816CountInAssembly(szSplit, "jsl R816_SDiv32"));
+	AssertInt(0, TestCPP816CountInAssembly(szSplit, "jsl R816_SRem32"));
+	AssertInt(0, TestCPP816CountInAssembly(szSplit, "jsl R816_UDiv32"));
+	AssertInt(0, TestCPP816CountInAssembly(szSplit, "jsl R816_URem32"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A 32 bit divide by a wide constant 2^k * m (m under 65536) is x / 2^k
+// (shifts) then the runtime's narrow divide by m: a quotient, a remainder
+// alone ((x / 2^k) % m << k plus x % 2^k) and an unsigned remainder (by
+// 3 * 65536: x >> 16 is in range for a multiply) are right for negative
+// and positive x.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816WideDivisors(void)
+{
+	static const char*	szFunctions =
+		"long Quotient(long x) { return x / 86400; }\n"
+		"long Remainder(long x) { return x % 86400; }\n"
+		"unsigned long URemainder(unsigned long x) { return x % 196608UL; }\n";
+	static const char*	szMain =
+		"long (*volatile gpQuotient)(long) = Quotient;\n"
+		"long (*volatile gpRemainder)(long) = Remainder;\n"
+		"unsigned long (*volatile gpURemainder)(unsigned long) = URemainder;\n"
+		"int main()\n"
+		"{\n"
+		"\tunsigned int h = 0;\n"
+		"\tfor (long l = -40; l < 40; l++)\n"
+		"\t{\n"
+		"\t\tlong x = l * 53687091L + l * 7919L;\n"
+		"\t\th = h * 31 + (unsigned int)gpQuotient(x) + (unsigned int)gpRemainder(x) * 3 + (unsigned int)(gpURemainder((unsigned long)x) >> 2) * 5;\n"
+		"\t}\n"
+		"\th = h * 31 + (unsigned int)gpQuotient(-2147483647L - 1) + (unsigned int)gpRemainder(-2147483647L - 1) + (unsigned int)gpURemainder(4294967295UL);\n"
+		"\treturn (int)h;\n"
+		"}\n";
+	CChars		szSource;
+	uint16		uiHash;
+	int32		l;
+	int32		x;
+	int32		iMin;
+	uint64		uiCycles;
+
+	uiHash = 0;
+	for (l = -40; l < 40; l++)
+	{
+		x = (int32)((uint32)l * 53687091u + (uint32)l * 7919u);
+		uiHash = (uint16)(uiHash * 31 + (uint16)(x / 86400) + (uint16)(x % 86400) * 3 + (uint16)(((uint32)x % 196608u) >> 2) * 5);
+	}
+	iMin = -2147483647 - 1;
+	uiHash = (uint16)(uiHash * 31 + (uint16)(iMin / 86400) + (uint16)(iMin % 86400) + (uint16)(4294967295u % 196608u));
+
+	szSource.Init(szFunctions);
+	szSource.Append(szMain);
+	AssertInt((int16)uiHash, TestCPP816RunProfiled(szSource.Text(), NULL, NULL, &uiCycles));
+	szSource.Kill();
+
+	AssertInt(2, TestCPP816CountInAssembly(szFunctions, "pea 675"));
+	AssertInt(0, TestCPP816CountInAssembly(szFunctions, "jsl R816_URem32"));
+	AssertInt(0, TestCPP816CountInAssembly(szFunctions, "jsl R816_UDiv32"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A uint16 array element's bytes through an index from a byte field (as
+// FAT's long file name parts are put together): p + sext(x) * 2 + c with x
+// from -141 to 3429 is (p + -141 * 2) + zext(x * 2 + 282 + c), the index
+// worked out in 16 bits (no 32 bit shift) and the bases shared.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816ScaledIndices(void)
+{
+	static const char*	szSetPart =
+		"struct SQ { unsigned char auiPad[16]; unsigned short auiName[256]; unsigned char uiSequence; };\n"
+		"void SetPart(SQ* ps, signed char iOffset, unsigned char* puiChars, signed char iRaw)\n"
+		"{\n"
+		"\t((unsigned char*)&ps->auiName[((ps->uiSequence - 1) * 13) + iOffset])[0] = puiChars[iRaw + 0];\n"
+		"\t((unsigned char*)&ps->auiName[((ps->uiSequence - 1) * 13) + iOffset])[1] = puiChars[iRaw + 1];\n"
+		"}\n";
+	static const char*	szMain =
+		"SQ gsQ;\n"
+		"unsigned char gauiRaw[32];\n"
+		"void (*volatile gpSetPart)(SQ*, signed char, unsigned char*, signed char) = SetPart;\n"
+		"int main()\n"
+		"{\n"
+		"\tunsigned int h = 0;\n"
+		"\tfor (int i = 0; i < 32; i++) { gauiRaw[i] = (unsigned char)(i * 7 + 3); }\n"
+		"\tfor (int j = 1; j < 20; j++)\n"
+		"\t{\n"
+		"\t\tgsQ.uiSequence = (unsigned char)j;\n"
+		"\t\tfor (int i = -1; i < 13; i++) { gpSetPart(&gsQ, (signed char)i, gauiRaw, (signed char)(i + 1 + (j & 7))); }\n"
+		"\t\tfor (int i = 0; i < 256; i++) { h = h * 3 + gsQ.auiName[i]; }\n"
+		"\t}\n"
+		"\treturn (int)h;\n"
+		"}\n";
+	CChars		szSource;
+	uint16		auiName[256];
+	uint8		auiRaw[32];
+	uint16		uiHash;
+	int			i;
+	int			j;
+	int			iIndex;
+	uint64		uiCycles;
+
+	memset(auiName, 0, sizeof(auiName));
+	for (i = 0; i < 32; i++)
+	{
+		auiRaw[i] = (uint8)(i * 7 + 3);
+	}
+	uiHash = 0;
+	for (j = 1; j < 20; j++)
+	{
+		for (i = -1; i < 13; i++)
+		{
+			iIndex = ((j - 1) * 13) + i;
+			if (iIndex >= 0)
+			{
+				auiName[iIndex] = (uint16)(auiRaw[i + 1 + (j & 7)] | (auiRaw[i + 2 + (j & 7)] << 8));
+			}
+		}
+		for (i = 0; i < 256; i++)
+		{
+			uiHash = (uint16)(uiHash * 3 + auiName[i]);
+		}
+	}
+
+	//The element before auiName (-1 at sequence 1) is the pad's last two bytes: never read back.
+	szSource.Init(szSetPart);
+	szSource.Append(szMain);
+	AssertInt((int16)uiHash, TestCPP816RunProfiled(szSource.Text(), NULL, NULL, &uiCycles));
+	szSource.Kill();
+
+	AssertInt(0, TestCPP816CountInAssembly(szSetPart, "rol "));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Two signed indices in one block: biasing the first moves the block's
+// instructions, and the second's index was looked up where its sext had
+// been (another i16's sext three instructions before it): b[m] read b[j].
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816BiasedIndicesInOneBlock(void)
+{
+	static const char*	szSource =
+		"char gac[16];\n"
+		"char gbc[16];\n"
+		"long gl;\n"
+		"short gs;\n"
+		"char Get(char* a, char* b, short i, short j, short m, long* pl, short* ps)\n"
+		"{\n"
+		"\tchar c = a[i];\n"
+		"\t*pl = j;\n"
+		"\t*ps = 0;\n"
+		"\treturn c + b[m];\n"
+		"}\n"
+		"char (*volatile gpGet)(char*, char*, short, short, short, long*, short*) = Get;\n"
+		"int main()\n"
+		"{\n"
+		"\tfor (int i = 0; i < 16; i++) { gac[i] = (char)(i + 1); gbc[i] = (char)(i * 16); }\n"
+		"\treturn gpGet(gac, gbc, 1, 2, 3, &gl, &gs) + gl * 100;\n"
+		"}\n";
+	uint64	uiCycles;
+
+	AssertInt(250, TestCPP816RunProfiled(szSource, NULL, NULL, &uiCycles));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The Mersenne Twister's (i + 1) % 624 and (i + 397) % 624 with i a loop
+// counter below 624 are a compare and a subtract (BoundDivisions), not a
+// reciprocal multiply: ConstantDivisions' ranges once found them first
+// (TestArrayTemplate's Twist 22% slower).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816BoundedRemainders(void)
+{
+	static const char*	szSource =
+		"typedef unsigned long uint32;\n"
+		"struct CMT { uint32 mauiState[624]; unsigned short muiIndex; void Twist(void); };\n"
+		"void CMT::Twist(void)\n"
+		"{\n"
+		"\tuint32\ti;\n"
+		"\tuint32\tuiCombined;\n"
+		"\tuint32\tuiTwisted;\n"
+		"\n"
+		"\tfor (i = 0; i < 624; i++)\n"
+		"\t{\n"
+		"\t\tuiCombined = (mauiState[i] & 0x80000000UL) | (mauiState[(i + 1) % 624] & 0x7FFFFFFFUL);\n"
+		"\t\tuiTwisted = uiCombined >> 1;\n"
+		"\t\tif (uiCombined & 1)\n"
+		"\t\t{\n"
+		"\t\t\tuiTwisted ^= 0x9908B0DFUL;\n"
+		"\t\t}\n"
+		"\t\tmauiState[i] = mauiState[(i + 397) % 624] ^ uiTwisted;\n"
+		"\t}\n"
+		"\tmuiIndex = 0;\n"
+		"}\n"
+		"CMT gc;\n"
+		"int main()\n"
+		"{\n"
+		"\tfor (int i = 0; i < 624; i++) gc.mauiState[i] = (uint32)i * 2654435761UL;\n"
+		"\tgc.Twist();\n"
+		"\tunsigned int h = 0;\n"
+		"\tfor (int i = 0; i < 624; i++) h = h * 31 + (unsigned int)gc.mauiState[i] + (unsigned int)(gc.mauiState[i] >> 16);\n"
+		"\treturn (int)h;\n"
+		"}\n";
+	uint32	auiState[624];
+	uint32	uiCombined;
+	uint32	uiTwisted;
+	uint16	uiHash;
+	int		i;
+	uint64	uiCycles;
+
+	for (i = 0; i < 624; i++)
+	{
+		auiState[i] = (uint32)i * 2654435761u;
+	}
+	for (i = 0; i < 624; i++)
+	{
+		uiCombined = (auiState[i] & 0x80000000u) | (auiState[(i + 1) % 624] & 0x7FFFFFFFu);
+		uiTwisted = uiCombined >> 1;
+		if (uiCombined & 1)
+		{
+			uiTwisted ^= 0x9908B0DFu;
+		}
+		auiState[i] = auiState[(i + 397) % 624] ^ uiTwisted;
+	}
+	uiHash = 0;
+	for (i = 0; i < 624; i++)
+	{
+		uiHash = (uint16)(uiHash * 31 + (uint16)auiState[i] + (uint16)(auiState[i] >> 16));
+	}
+	AssertInt((int16)uiHash, TestCPP816RunProfiled(szSource, NULL, NULL, &uiCycles));
+	AssertTrue(uiCycles < 780000);	//750160 with BoundDivisions, 830348 with a multiply.
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// TimSort's merge loop (two arms in a do while(true) left by gotos and
+// breaks, then a galloping loop): its blocks in reverse post order made it
+// 14% slower (TestArrayTemplate's mergeLo and mergeHi), so the 816 keeps
+// the order they were made in.
+//
+//////////////////////////////////////////////////////////////////////////
+static void TestCPP816MergeLoopNative(int16* pi1, int16 iLen1, int16* pi2, int16 iLen2, int16* piDest)
+{
+	int16	iMinGallop;
+	int16	iCount1;
+	int16	iCount2;
+
+	iMinGallop = 7;
+	for (;;)
+	{
+		iCount1 = 0;
+		iCount2 = 0;
+		for (;;)
+		{
+			if (*pi2 - *pi1 < 0)
+			{
+				*piDest++ = *pi2++;
+				iCount2++;
+				iCount1 = 0;
+				if (--iLen2 == 0) goto outer;
+				if (iCount2 >= iMinGallop) break;
+			}
+			else
+			{
+				*piDest++ = *pi1++;
+				iCount1++;
+				iCount2 = 0;
+				if (--iLen1 == 0) goto outer;
+				if (iCount1 >= iMinGallop) break;
+			}
+		}
+		do
+		{
+			*piDest++ = *pi1++;
+			if (--iLen1 == 0) goto outer;
+			*piDest++ = *pi2++;
+			if (--iLen2 == 0) goto outer;
+			if (iMinGallop > 0) iMinGallop--;
+		}
+		while ((*pi1 - *pi2 < 0) && (iMinGallop > 3));
+		iMinGallop += 2;
+	}
+outer:
+	while (iLen1-- > 0) *piDest++ = *pi1++;
+	while (iLen2-- > 0) *piDest++ = *pi2++;
+}
+
+
+void TestCPP816MergeLoop(void)
+{
+	static const char*	szSource =
+		"int Compare(const void* a, const void* b) { return *(const int*)a - *(const int*)b; }\n"
+		"int (*volatile gpCompare)(const void*, const void*) = Compare;\n"
+		"int gaiA[256];\n"
+		"int gaiB[256];\n"
+		"int gaiOut[512];\n"
+		"void Merge(int* pi1, int iLen1, int* pi2, int iLen2, int* piDest, int (*Cmp)(const void*, const void*))\n"
+		"{\n"
+		"\tint\tiMinGallop = 7;\n"
+		"\twhile (1)\n"
+		"\t{\n"
+		"\t\tint\tiCount1 = 0;\n"
+		"\t\tint\tiCount2 = 0;\n"
+		"\t\tdo\n"
+		"\t\t{\n"
+		"\t\t\tif (Cmp(pi2, pi1) < 0)\n"
+		"\t\t\t{\n"
+		"\t\t\t\t*piDest++ = *pi2++;\n"
+		"\t\t\t\tiCount2++;\n"
+		"\t\t\t\tiCount1 = 0;\n"
+		"\t\t\t\tif (--iLen2 == 0) goto outer;\n"
+		"\t\t\t\tif (iCount2 >= iMinGallop) break;\n"
+		"\t\t\t}\n"
+		"\t\t\telse\n"
+		"\t\t\t{\n"
+		"\t\t\t\t*piDest++ = *pi1++;\n"
+		"\t\t\t\tiCount1++;\n"
+		"\t\t\t\tiCount2 = 0;\n"
+		"\t\t\t\tif (--iLen1 == 0) goto outer;\n"
+		"\t\t\t\tif (iCount1 >= iMinGallop) break;\n"
+		"\t\t\t}\n"
+		"\t\t}\n"
+		"\t\twhile (true);\n"
+		"\t\tdo\n"
+		"\t\t{\n"
+		"\t\t\t*piDest++ = *pi1++;\n"
+		"\t\t\tif (--iLen1 == 0) goto outer;\n"
+		"\t\t\t*piDest++ = *pi2++;\n"
+		"\t\t\tif (--iLen2 == 0) goto outer;\n"
+		"\t\t\tif (iMinGallop > 0) iMinGallop--;\n"
+		"\t\t}\n"
+		"\t\twhile (Cmp(pi1, pi2) < 0 && iMinGallop > 3);\n"
+		"\t\tiMinGallop += 2;\n"
+		"\t}\n"
+		"outer:\n"
+		"\twhile (iLen1-- > 0) *piDest++ = *pi1++;\n"
+		"\twhile (iLen2-- > 0) *piDest++ = *pi2++;\n"
+		"}\n"
+		"int main()\n"
+		"{\n"
+		"\tunsigned int h = 0;\n"
+		"\tfor (int k = 0; k < 4; k++)\n"
+		"\t{\n"
+		"\t\tfor (int i = 0; i < 256; i++) { gaiA[i] = i * 4 + (k & 1); gaiB[i] = i * 4 + 2 - ((i >> 3) & 1) * k; }\n"
+		"\t\tMerge(gaiA, 256, gaiB, 256, gaiOut, gpCompare);\n"
+		"\t\tfor (int i = 0; i < 512; i++) h = h * 31 + (unsigned int)gaiOut[i];\n"
+		"\t}\n"
+		"\treturn (int)h;\n"
+		"}\n";
+	int16	aiA[256];
+	int16	aiB[256];
+	int16	aiOut[512];
+	uint16	uiHash;
+	int		i;
+	int		k;
+	uint64	uiCycles;
+
+	uiHash = 0;
+	for (k = 0; k < 4; k++)
+	{
+		for (i = 0; i < 256; i++)
+		{
+			aiA[i] = (int16)(i * 4 + (k & 1));
+			aiB[i] = (int16)(i * 4 + 2 - ((i >> 3) & 1) * k);
+		}
+		TestCPP816MergeLoopNative(aiA, 256, aiB, 256, aiOut);
+		for (i = 0; i < 512; i++)
+		{
+			uiHash = (uint16)(uiHash * 31 + (uint16)aiOut[i]);
+		}
+	}
+	AssertInt((int16)uiHash, TestCPP816RunProfiled(szSource, NULL, NULL, &uiCycles));
+	AssertTrue(uiCycles < 1075000);	//1032421 in the blocks' order, 1173183 in reverse post order.
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// An object returned by value is built in a slot and copied to the hidden
+// result a word at a time: its pointer field is stored as a pointer and
+// loaded as an integer.  The slot's accesses are made one type
+// (UnifySlotTypes), so it is split and promoted, and the fields go
+// straight to the result (FAT's SFatCache CFatInfoSectorCache::ReadSector).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816ReturnedObjectSlots(void)
+{
+	static const char*	szSource =
+		"struct SCache { void* pv; unsigned long uiStamp; };\n"
+		"struct CSector { unsigned long long uiStamp; unsigned long uiSector; char ac[16]; };\n"
+		"CSector gas[4];\n"
+		"CSector* Get(unsigned long ui) { return (ui < 4) ? &gas[ui] : 0; }\n"
+		"SCache Read(unsigned long ui)\n"
+		"{\n"
+		"\tCSector*\tpc;\n"
+		"\tSCache\t\ts;\n"
+		"\n"
+		"\tpc = Get(ui);\n"
+		"\tif (pc != 0)\n"
+		"\t{\n"
+		"\t\ts.pv = pc->ac;\n"
+		"\t\ts.uiStamp = (unsigned long)pc->uiStamp;\n"
+		"\t}\n"
+		"\telse\n"
+		"\t{\n"
+		"\t\ts.pv = 0;\n"
+		"\t\ts.uiStamp = 0xffffffff;\n"
+		"\t}\n"
+		"\treturn s;\n"
+		"}\n"
+		"SCache (*volatile gpRead)(unsigned long) = Read;\n"
+		"int main()\n"
+		"{\n"
+		"\tunsigned int h = 0;\n"
+		"\tfor (int i = 0; i < 4; i++) gas[i].uiStamp = (unsigned long long)(i * 1000 + 7);\n"
+		"\tfor (unsigned long j = 0; j < 100; j++) { SCache s = gpRead(j & 7); h = h * 31 + (unsigned int)s.uiStamp + (s.pv ? 1 : 0); }\n"
+		"\treturn (int)h;\n"
+		"}\n";
+	uint16	uiHash;
+	uint32	j;
+	uint32	uiIndex;
+	uint32	uiStamp;
+	uint64	uiCycles;
+
+	uiHash = 0;
+	for (j = 0; j < 100; j++)
+	{
+		uiIndex = j & 7;
+		uiStamp = (uiIndex < 4) ? (uint32)(uiIndex * 1000 + 7) : 0xFFFFFFFF;
+		uiHash = (uint16)(uiHash * 31 + (uint16)uiStamp + ((uiIndex < 4) ? 1 : 0));
+	}
+	AssertInt((int16)uiHash, TestCPP816RunProfiled(szSource, NULL, NULL, &uiCycles));
+	AssertTrue(uiCycles < 58000);	//54330 promoted, 65558 through the slot.
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// x % c == 0 and x % c != 0 for 16 and 32 bit, signed (negative too, and
+// the most negative) and unsigned x, odd and even c, are a multiply by the
+// inverse of c's odd part and a rotate (DivisibilityTests): no runtime
+// remainder.
+//
+//////////////////////////////////////////////////////////////////////////
+static int TestCPP816DivisibilityLeap(int16 y)
+{
+	return ((y % 4) == 0) && (((y % 100) != 0) || ((y % 400) == 0));
+}
+
+
+static int TestCPP816DivisibilityTestsNative(int16 x, uint16 u, int32 l, uint32 ul)
+{
+	return ((x % 7) == 0) + ((x % 12) != 0) * 2 + ((u % 100) == 0) * 4 + ((u % 6) == 0) * 8 + ((l % 86400) == 0) * 16 + ((ul % 1000) != 0) * 32 + ((l % 3) == 0) * 64;
+}
+
+
+void TestCPP816DivisibilityTests(void)
+{
+	static const char*	szFunctions =
+		"int Leap(int y) { return ((y % 4) == 0) && (((y % 100) != 0) || ((y % 400) == 0)); }\n"
+		"int Tests(int x, unsigned int u, long l, unsigned long ul)\n"
+		"{\n"
+		"\treturn ((x % 7) == 0) + ((x % 12) != 0) * 2 + ((u % 100) == 0) * 4 + ((u % 6) == 0) * 8 + ((l % 86400) == 0) * 16 + ((ul % 1000) != 0) * 32 + ((l % 3) == 0) * 64;\n"
+		"}\n";
+	static const char*	szMain =
+		"int (*volatile gpLeap)(int) = Leap;\n"
+		"int (*volatile gpTests)(int, unsigned int, long, unsigned long) = Tests;\n"
+		"int main()\n"
+		"{\n"
+		"\tunsigned int h = 0;\n"
+		"\tfor (long i = -33000; i < 33000; i += 7)\n"
+		"\t{\n"
+		"\t\tint x = (int)i;\n"
+		"\t\th = h * 31 + (unsigned int)gpLeap(x);\n"
+		"\t\th = h * 31 + (unsigned int)gpTests(x, (unsigned int)x, i * 4321, (unsigned long)i * 1000UL);\n"
+		"\t}\n"
+		"\th = h * 31 + (unsigned int)gpTests(-32768, 65535, -2147483647L - 1, 4294967295UL);\n"
+		"\th = h * 31 + (unsigned int)gpTests(32767, 0, 2147483647L, 0);\n"
+		"\th = h * 31 + (unsigned int)gpLeap(-32768) + (unsigned int)gpLeap(-400) * 3;\n"
+		"\treturn (int)h;\n"
+		"}\n";
+	CChars		szSource;
+	uint16		uiHash;
+	int32		i;
+	int16		x;
+	uint64		uiCycles;
+
+	uiHash = 0;
+	for (i = -33000; i < 33000; i += 7)
+	{
+		x = (int16)i;
+		uiHash = (uint16)(uiHash * 31 + TestCPP816DivisibilityLeap(x));
+		uiHash = (uint16)(uiHash * 31 + TestCPP816DivisibilityTestsNative(x, (uint16)x, (int32)((uint32)i * 4321u), (uint32)i * 1000u));
+	}
+	uiHash = (uint16)(uiHash * 31 + TestCPP816DivisibilityTestsNative(-32768, 65535, -2147483647 - 1, 4294967295u));
+	uiHash = (uint16)(uiHash * 31 + TestCPP816DivisibilityTestsNative(32767, 0, 2147483647, 0));
+	uiHash = (uint16)(uiHash * 31 + TestCPP816DivisibilityLeap(-32768) + TestCPP816DivisibilityLeap(-400) * 3);
+
+	szSource.Init(szFunctions);
+	szSource.Append(szMain);
+	AssertInt((int16)uiHash, TestCPP816RunProfiled(szSource.Text(), NULL, NULL, &uiCycles));
+	szSource.Kill();
+
+	AssertInt(0, TestCPP816CountInAssembly(szFunctions, "jsl R816_SRem"));
+	AssertInt(0, TestCPP816CountInAssembly(szFunctions, "jsl R816_URem"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // A small function that takes an object by value (passed as its bytes: the
 // callee takes the parameter's address) is inlined, with the object in a
 // slot in the caller; the callee changing its copy changes the caller's
@@ -2697,6 +3315,14 @@ void TestCPP816(void)
 	TestCPP816MergedAddressPhis();
 	TestCPP816InlineObjectParameters();
 	TestCPP816ConstantDivisions();
+	TestCPP816DivisionRanges();
+	TestCPP816WideDivisors();
+	TestCPP816ScaledIndices();
+	TestCPP816BiasedIndicesInOneBlock();
+	TestCPP816BoundedRemainders();
+	TestCPP816MergeLoop();
+	TestCPP816ReturnedObjectSlots();
+	TestCPP816DivisibilityTests();
 	TestCPP816IntIndexPointers();
 	TestCPP816NarrowCounters();
 	TestCPP816AlignedFrames();
