@@ -14,6 +14,7 @@ void TestIR816Backend(void);
 void TestCPP816(void);
 void TestCPP65IR(void);
 void TestCPP65Generator(void);
+void TestCPP65Spill(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -39,6 +40,7 @@ int __cdecl main(void)
 	TestCPP816();
 	TestCPP65Generator();
 	TestCPP65IR();
+	TestCPP65Spill();
 
 	iTotalTestsFailed = TestTotalStatistics();
 

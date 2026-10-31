@@ -3245,6 +3245,54 @@ void TestIROptimiserBiasSignedIndices(void)
 // isn't biased).
 //
 //////////////////////////////////////////////////////////////////////////
+//
+// x % d next to x / d (d not a constant) is x - (x / d) * d, one divide
+// (ShareDivisions, with the W65C816's options), the divide first or not.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserSharedDivisions(void)
+{
+	AssertIROptimisedOptions(
+		"function i32 @f(i32 %x, i32 %d)\n"
+		"{\n"
+		"a:\n"
+		"\t%q = udiv i32 %x, %d\n"
+		"\t%0 = mul i32 %q, %d\n"
+		"\t%r = sub i32 %x, %0\n"
+		"\t%s = xor i32 %q, %r\n"
+		"\tret i32 %s\n"
+		"}\n",
+		"function i32 @f(i32 %x, i32 %d)\n"
+		"{\n"
+		"a:\n"
+		"\t%q = udiv i32 %x, %d\n"
+		"\t%r = urem i32 %x, %d\n"
+		"\t%s = xor i32 %q, %r\n"
+		"\tret i32 %s\n"
+		"}\n", IR_TEST_CONSTANT_DIVISIONS);
+
+	AssertIROptimisedOptions(
+		"function i16 @f(i16 %x, i16 %d)\n"
+		"{\n"
+		"a:\n"
+		"\t%0 = sdiv i16 %x, %d\n"
+		"\t%1 = mul i16 %0, %d\n"
+		"\t%r = sub i16 %x, %1\n"
+		"\t%s = xor i16 %0, %r\n"
+		"\tret i16 %s\n"
+		"}\n",
+		"function i16 @f(i16 %x, i16 %d)\n"
+		"{\n"
+		"a:\n"
+		"\t%r = srem i16 %x, %d\n"
+		"\t%q = sdiv i16 %x, %d\n"
+		"\t%s = xor i16 %q, %r\n"
+		"\tret i16 %s\n"
+		"}\n", IR_TEST_CONSTANT_DIVISIONS);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 void TestIROptimiserMergeAddressPhis(void)
 {
 	static const char*	szText =
@@ -3994,6 +4042,7 @@ void TestIR(void)
 	TestIRImportsRestrict();
 	TestIROptimiserLoopCounters();
 	TestIROptimiserZeroExtendedCounters();
+	TestIROptimiserSharedDivisions();
 	TestIROptimiserSinkLoads();
 	TestIROptimiserExitValues();
 	TestIROptimiserSinkAndHoist();

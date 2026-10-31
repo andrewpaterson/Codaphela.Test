@@ -1400,6 +1400,65 @@ void TestIR816BackendBranches(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The code PeepholeRegisters makes of szCode.
+//
+//////////////////////////////////////////////////////////////////////////
+static void AssertPeepholeRegisters(const char* szExpected, const char* szCode)
+{
+	CChars	sz;
+
+	sz.Init(szCode);
+	CIR816Backend::PeepholeRegisters(&sz, 0);
+	AssertString(szExpected, sz.Text());
+	sz.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A load of what the register already holds goes: after a load and a store
+// (A holds both words), after transfers and of constants.  It stays when
+// the N and Z it sets are read, the word may have been written (an
+// overlapping store, a store through a pointer, a step of memory), or a
+// label, call or width change came between.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendPeepholeRegisters(void)
+{
+	AssertPeepholeRegisters("\t\tlda [D + 5]\n\t\tsta [D + 9]\n\t\tadc 1\n\t\tsta [D + 11]\n\t\trtl\n",
+		"\t\tlda [D + 5]\n\t\tsta [D + 9]\n\t\tlda [D + 5]\n\t\tadc 1\n\t\tsta [D + 11]\n\t\trtl\n");
+	AssertPeepholeRegisters("\t\tlda [D + 5]\n\t\tsta [D + 9]\n\t\tclc\n\t\tadc 1\n\t\trtl\n",
+		"\t\tlda [D + 5]\n\t\tsta [D + 9]\n\t\tlda [D + 9]\n\t\tclc\n\t\tadc 1\n\t\trtl\n");
+	AssertPeepholeRegisters("\t\tldx 4\n\t\ttxa\n\t\ttay\n\t\tsta [D + 3]\n\t\trtl\n",
+		"\t\tldx 4\n\t\ttxa\n\t\ttay\n\t\tldy 4\n\t\tlda 4\n\t\tsta [D + 3]\n\t\trtl\n");
+
+	//The N and Z it sets are read: kept.
+	AssertPeepholeRegisters("\t\tlda [D + 5]\n\t\tsta [D + 9]\n\t\tldx 3\n\t\tlda [D + 9]\n\t\tbeq L1\n\t\trtl\nL1:\n\t\trtl\n",
+		"\t\tlda [D + 5]\n\t\tsta [D + 9]\n\t\tldx 3\n\t\tlda [D + 9]\n\t\tbeq L1\n\t\trtl\nL1:\n\t\trtl\n");
+
+	//The word may have changed: kept.
+	AssertPeepholeRegisters("\t\tlda [D + 5]\n\t\tsta [D + 6]\n\t\tlda [D + 5]\n\t\tsta [D + 3]\n\t\trtl\n",
+		"\t\tlda [D + 5]\n\t\tsta [D + 6]\n\t\tlda [D + 5]\n\t\tsta [D + 3]\n\t\trtl\n");
+	AssertPeepholeRegisters("\t\tlda [D + 5]\n\t\tldy 2\n\t\tsta [[D + 9]:24 + Y]\n\t\tlda [D + 5]\n\t\tsta [D + 3]\n\t\trtl\n",
+		"\t\tlda [D + 5]\n\t\tldy 2\n\t\tsta [[D + 9]:24 + Y]\n\t\tlda [D + 5]\n\t\tsta [D + 3]\n\t\trtl\n");
+	AssertPeepholeRegisters("\t\tlda [D + 5]\n\t\tinc [D + 5]\n\t\tlda [D + 5]\n\t\tsta [D + 3]\n\t\trtl\n",
+		"\t\tlda [D + 5]\n\t\tinc [D + 5]\n\t\tlda [D + 5]\n\t\tsta [D + 3]\n\t\trtl\n");
+	AssertPeepholeRegisters("\t\tlda [D + 5]\n\t\tsta [D + X]\n\t\tlda [D + 5]\n\t\tsta [D + 3]\n\t\trtl\n",
+		"\t\tlda [D + 5]\n\t\tsta [D + X]\n\t\tlda [D + 5]\n\t\tsta [D + 3]\n\t\trtl\n");
+
+	//A label, a call or a width change between: kept.
+	AssertPeepholeRegisters("\t\tlda 1\nL1:\n\t\tlda 1\n\t\tsta [D + 3]\n\t\trtl\n", "\t\tlda 1\nL1:\n\t\tlda 1\n\t\tsta [D + 3]\n\t\trtl\n");
+	AssertPeepholeRegisters("\t\tlda 1\n\t\tjsl _F\n\t\tlda 1\n\t\tsta [D + 3]\n\t\trtl\n", "\t\tlda 1\n\t\tjsl _F\n\t\tlda 1\n\t\tsta [D + 3]\n\t\trtl\n");
+	AssertPeepholeRegisters("\t\tlda 1\n\t\tsep m\n\t\tlda 1\n\t\tsta [D + 3]\n\t\trtl\n", "\t\tlda 1\n\t\tsep m\n\t\tlda 1\n\t\tsta [D + 3]\n\t\trtl\n");
+
+	//A changed: kept.
+	AssertPeepholeRegisters("\t\tlda [D + 5]\n\t\tsta [D + 9]\n\t\tadc 1\n\t\tlda [D + 5]\n\t\tsta [D + 3]\n\t\trtl\n",
+		"\t\tlda [D + 5]\n\t\tsta [D + 9]\n\t\tadc 1\n\t\tlda [D + 5]\n\t\tsta [D + 3]\n\t\trtl\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // The code PeepholeBranches makes of szCode.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -1791,6 +1850,7 @@ void TestIR816Backend(void)
 	TestIR816BackendIndexed();
 	TestIR816BackendBranches();
 	TestIR816BackendPeepholeBranches();
+	TestIR816BackendPeepholeRegisters();
 	TestIR816BackendPeephole();
 	TestIR816BackendRemoveDeadStores();
 	TestIR816BackendPeepholeMasks();

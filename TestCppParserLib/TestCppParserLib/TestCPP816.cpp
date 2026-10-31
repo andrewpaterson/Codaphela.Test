@@ -436,6 +436,96 @@ void TestCPP816Classes(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// array[index] of an array (not a pointer) under 64KB has its offset worked
+// out in 16 bits (CCPP65IRFrontEnd::NarrowSubscript): 2D member arrays, local
+// and global arrays, 6 byte elements and char, int and 32 bit indices; a
+// pointer into an array still takes negative indices.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816NarrowSubscripts(void)
+{
+	AssertInt(5 + 60 + 700 + 8000 + 3 + 40, TestCPP816Run(
+		"struct SSix { short a; short b; short c; };\n"
+		"class CTable\n"
+		"{\n"
+		"public:\n"
+		"\tvoid*\tmapv[27][16];\n"
+		"\tlong\tmal[30];\n"
+		"\tSSix\tmas[200];\n"
+		"};\n"
+		"char gac[300];\n"
+		"int main(void)\n"
+		"{\n"
+		"\tCTable\t\tcTable;\n"
+		"\tint\t\t\tai[10];\n"
+		"\tint\t\t\ti;\n"
+		"\tchar\t\tc;\n"
+		"\tunsigned long\tul;\n"
+		"\tint*\t\tpi;\n"
+		"\tfor (i = 0; i < 10; i++) { ai[i] = i; }\n"
+		"\tfor (i = 0; i < 200; i++) { cTable.mas[i].b = (short)(i * 3); }\n"
+		"\tfor (i = 0; i < 300; i++) { gac[i] = (char)(i & 0x7F); }\n"
+		"\tcTable.mapv[26][15] = &ai[5];\n"
+		"\tc = 20;\n"
+		"\tul = 29;\n"
+		"\tcTable.mal[ul] = 700;\n"
+		"\tpi = &ai[6];\n"
+		"\treturn *(int*)cTable.mapv[26][15] + cTable.mas[c].b + (int)cTable.mal[ul] + (gac[i - 1] == 43) * 8000 + pi[-3] + ai[(int)(ul - 25)] * 10;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// x / d and x % d of a d that isn't a constant share one divide (the
+// remainder is x - q * d, CIROptimiser::ShareDivisions), either way round,
+// signed and unsigned, 16 and 32 bits.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816SharedDivisions(void)
+{
+	AssertInt(1, TestCPP816Run(
+		"int Check(long x, long d) { long q = x / d; long r = x % d; return (q * d + r == x) && ((r < 0 ? -r : r) < (d < 0 ? -d : d)) && ((r == 0) || ((r < 0) == (x < 0))) ? 1 : 0; }\n"
+		"int CheckU(unsigned long x, unsigned long d) { unsigned long r = x % d; unsigned long q = x / d; return (q * d + r == x) && (r < d) ? 1 : 0; }\n"
+		"int Check16(int x, int d) { int r = x % d; int q = x / d; return (q * d + r == x) && ((r < 0 ? -r : r) < (d < 0 ? -d : d)) && ((r == 0) || ((r < 0) == (x < 0))) ? 1 : 0; }\n"
+		"int main(void)\n"
+		"{\n"
+		"\tint\tiOk;\n"
+		"\tiOk = Check(1000000L, 7L) & Check(-1000000L, 7L) & Check(1000000L, -7L) & Check(-123456789L, 100000L) & Check(5L, 9L);\n"
+		"\tiOk &= CheckU(4000000000UL, 3UL) & CheckU(4000000000UL, 70000UL) & CheckU(65535UL, 65536UL) & CheckU(0xFFFFFFFFUL, 0x10001UL);\n"
+		"\tiOk &= Check16(30000, 7) & Check16(-30000, 7) & Check16(-30000, -7) & Check16(3, 30000);\n"
+		"\tiOk &= ((-7L / 2L) == -3L) & ((-7L % 2L) == -1L) & ((7UL / 2UL) == 3UL);\n"
+		"\treturn iOk;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Signed 64 bit divides and remainders whose magnitudes fit in 32 bits use
+// the 32 bit routine (gszIR816Signed64); wider ones the 64 bit loop.  Every
+// sign, at the boundary and either side of it.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816Divide64(void)
+{
+	AssertInt(1, TestCPP816Run(
+		"int Check(long long x, long long d, long long q, long long r) { return ((x / d) == q) && ((x % d) == r) ? 1 : 0; }\n"
+		"int main(void)\n"
+		"{\n"
+		"\tint\tiOk;\n"
+		"\tiOk = Check(1000000LL, 7LL, 142857LL, 1LL) & Check(-1000000LL, 7LL, -142857LL, -1LL) & Check(1000000LL, -7LL, -142857LL, 1LL) & Check(-1000000LL, -7LL, 142857LL, -1LL);\n"
+		"\tiOk &= Check(4294967295LL, 65537LL, 65535LL, 0LL) & Check(-4294967295LL, 2LL, -2147483647LL, -1LL);\n"
+		"\tiOk &= Check(4294967296LL, 3LL, 1431655765LL, 1LL) & Check(-4294967296LL, 4294967296LL, -1LL, 0LL);\n"
+		"\tiOk &= Check(1000000000000LL, 1000LL, 1000000000LL, 0LL) & Check(-1000000000007LL, 1000LL, -1000000000LL, -7LL);\n"
+		"\tiOk &= Check(123456789012345LL, 4294967297LL, 28744LL, 2249027377LL);\n"
+		"\treturn iOk;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Statements and operators: switch, do, 16 bit multiply, divide and shifts, unsigned long, function pointers,
 // globals and a destructor.
 //
@@ -1687,6 +1777,9 @@ void TestCPP816ProfileGuidedInlining(void)
 		"\tx += a * b; x ^= (b >> 3); x += 11; x -= a; x ^= 0x55;\n"
 		"\tx += b * 5; x ^= (a >> 1); x += (b & 3) * 9; x ^= (x >> 4);\n"
 		"\tx += a ^ b; x -= (a | b) >> 2; x ^= (b << 2); x += (a & b) * 7;\n"
+		"\tx ^= (x >> 3); x += a & 5; x -= b | 9; x ^= x << 2; x += a * 5;\n"
+		"\tx ^= (b >> 2); x += 13; x -= b; x ^= 0x33; x += a * 9; x ^= (b >> 1);\n"
+		"\tx += (a & 7) * 3; x ^= (x >> 5); x += a | b; x -= (a ^ b) >> 3; x ^= (a << 3);\n"
 		"\treturn x;\n"
 		"}\n"
 		"int main()\n"
@@ -1714,9 +1807,9 @@ void TestCPP816ProfileGuidedInlining(void)
 	psMix = cProfile.Get("_Mix__Fss");
 	AssertNotNull((void*)psMix);
 	AssertLong(2001, psMix ? (int64)psMix->ulliCalls : 0);
-	AssertTrue(cProfile.GetLine("_main", "Test.cpp", 15) != NULL);
-	AssertLong(2000, cProfile.GetLine("_main", "Test.cpp", 15) ? (int64)cProfile.GetLine("_main", "Test.cpp", 15)->ulliEntries : 0);
-	AssertLong(2000, (int64)cProfile.LineEntries("Test.cpp", 15));
+	AssertTrue(cProfile.GetLine("_main", "Test.cpp", 18) != NULL);
+	AssertLong(2000, cProfile.GetLine("_main", "Test.cpp", 18) ? (int64)cProfile.GetLine("_main", "Test.cpp", 18)->ulliEntries : 0);
+	AssertLong(2000, (int64)cProfile.LineEntries("Test.cpp", 18));
 	psMain = cProfile.Get("_main");
 	AssertTrue(psMain && (psMain->uiHash != 0) && (psMain->iTime != 0));
 
@@ -3117,6 +3210,7 @@ void TestCPP816AlignedFrames(void)
 		"long (*volatile gpWide)(int, long) = Wide;\n"
 		"int (*volatile gpCold)(int*, int) = Cold;\n"
 		"long Big(int n, long add) { int a[200]; for (int i = 0; i < 200; i++) { a[i] = i + n; } long s = add; for (int i = 0; i < 200; i++) { s += a[i]; } if (n > 0) { s += Big(n - 1, 1); } return s; }\n"
+		"long (*volatile gpBig)(int, long) = Big;\n"
 		"int main()\n"
 		"{\n"
 		"	int v[100];\n"
@@ -3126,7 +3220,7 @@ void TestCPP816AlignedFrames(void)
 		"	for (int i = 0; i < 5; i++) { r += gpSum(v, 100, 1); }\n"
 		"	for (int i = 0; i < 20; i++) { w += gpWide(i, 1); }\n"
 		"	int c = gpCold(v, 3);\n"
-		"	long b = Big(5, 7);\n"
+		"	long b = gpBig(5, 7);\n"
 		"	return ((r == 24750) && (w == 436020L) && (c == 2) && (b == 122412L)) ? 7 : 1;\n"
 		"}\n";
 	static const char*	aszPrefixes[] = { "_Sum", "_Wide", "_Cold", "_Big", NULL };
@@ -3490,6 +3584,9 @@ void TestCPP816(void)
 	TestCPP816Functions();
 	TestCPP816Classes();
 	TestCPP816Statements();
+	TestCPP816NarrowSubscripts();
+	TestCPP816SharedDivisions();
+	TestCPP816Divide64();
 	TestCPP816Globals();
 	TestCPP816Builtins();
 	TestCPP816MemSwp();

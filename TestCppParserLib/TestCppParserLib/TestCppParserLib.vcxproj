@@ -239,6 +239,7 @@
     <ClCompile Include="TestIR816Backend.cpp" />
     <ClCompile Include="TestCPP816.cpp" />
     <ClCompile Include="TestCPP65IR.cpp" />
+    <ClCompile Include="TestCPP65Spill.cpp" />
     <ClCompile Include="TestCppParser.cpp" />
     <ClCompile Include="TestCppHighlighter.cpp" />
     <ClCompile Include="TestCPP65Context.cpp" />

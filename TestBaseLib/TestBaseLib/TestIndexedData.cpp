@@ -2073,7 +2073,7 @@ void TestIndexedDataRemove2(EIndexWriteThrough eWriteThrough)
 	cIndexedData.Add(0x0102LL, &cObject1, cObject1.Size());
 	cObject2.Init("Bohr", 1885, 1962);
 	cIndexedData.Add(0x0203LL, &cObject2, cObject2.Size());
-	cObject2.Init("Planck", 1858, 1947);
+	cObject3.Init("Planck", 1858, 1947);
 	cIndexedData.Add(0x0304LL, &cObject3, cObject3.Size());
 	AssertLong(3, cIndexedData.NumIndices());
 	AssertTrue(cIndexedData.Contains(0x0102LL));

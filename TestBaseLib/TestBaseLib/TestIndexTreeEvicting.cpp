@@ -906,6 +906,73 @@ void AssertTree(const char* szExpected, CIndexTreeEvicting* pcTree)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Keys put and then removed again and again stay within the cache: a written
+// back tree keeps a removed key in memory until its removal is written, and
+// writes the removals when nothing else can be evicted.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeEvictingEvictRemoved(EIndexWriteThrough eWriteThrough)
+{
+	CTestIndexTreeEvicting					cIndexTree;
+	CIndexTreeHelper						cHelper;
+	CDurableFileController					cController;
+	CIndexTreeEvictionStrategyDataOrderer	cStrategy;
+	CAccessDataOrderer						cOrderer;
+	char									szData[1024];
+	char									szRead[1024];
+	char									szKey[8];
+	int										i;
+	int										iRound;
+	size									uiCacheSize;
+	size									uiSize;
+
+	for (i = 0; i < 1024; i++)
+	{
+		szData[i] = (char)('A' + i % 26);
+	}
+
+	cHelper.Init("Output" _FS_"IndexTreeEvicting5", "primary", "backup", true);
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
+	cController.Begin();
+	cOrderer.Init();
+	cStrategy.Init(LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
+	//Room for the tree's nodes and a few keys, but not the 20 put each round.
+	uiCacheSize = 16 KB;
+	cIndexTree.Init(&cController, "Sub", uiCacheSize, NULL, LifeLocal<CIndexTreeEvictionStrategy>(&cStrategy), NULL, eWriteThrough, IKR_No, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
+
+	for (iRound = 0; iRound < 5; iRound++)
+	{
+		for (i = 0; i < 20; i++)
+		{
+			snprintf(szKey, sizeof(szKey), "Key%02d", i);
+			szData[0] = (char)('a' + iRound);
+			AssertTrue(cIndexTree.Put((uint8*)szKey, 5, szData, 1024));
+			AssertTrue(cIndexTree.GetSystemMemorySize() <= uiCacheSize);
+		}
+		for (i = 0; i < 20; i++)
+		{
+			snprintf(szKey, sizeof(szKey), "Key%02d", i);
+			AssertTrue(cIndexTree.Get((uint8*)szKey, 5, szRead, &uiSize, 1024));
+			AssertSize(1024, uiSize);
+			AssertChar((char)('a' + iRound), szRead[0]);
+			AssertTrue(cIndexTree.Remove((uint8*)szKey, 5));
+			AssertTrue(cIndexTree.GetSystemMemorySize() <= uiCacheSize);
+		}
+		AssertFalse(cIndexTree.Get((uint8*)"Key00", 5, szRead, &uiSize, 1024));
+	}
+
+	cController.End();
+	cIndexTree.Kill();
+	cStrategy.Kill();
+	cOrderer.Kill();
+	cController.Kill();
+	cHelper.Kill(true);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeEvicting(void)
@@ -929,6 +996,8 @@ void TestIndexTreeEvicting(void)
 	TestIndexTreeEvictingEvictRandom(IWT_No, IKR_Yes);
 	TestIndexTreeEvictingEvictRandom(IWT_No, IKR_No);
 	TestIndexTreeEvictingEvictLastAccessed();
+	TestIndexTreeEvictingEvictRemoved(IWT_No);
+	TestIndexTreeEvictingEvictRemoved(IWT_Yes);
 	
 	TestStatistics();
 	DataMemoryKill();
