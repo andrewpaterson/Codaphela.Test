@@ -634,9 +634,9 @@ void TestIndexBlockDataFree(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexBlockPrimitiveTemplate(void)
 {
-	CIndexPrimitiveTemplate<int64, int32>	cIndex;
-	int32*									piData;
-	int32									iData;
+	CIndexPrimitiveTemplate<int64, int>		cIndex;
+	int*									piData;
+	int										iData;
 	SIndexTreeMemoryUnsafeIterator			sIter;
 	int64									lliKey;
 	bool									bExists;
@@ -655,7 +655,7 @@ void TestIndexBlockPrimitiveTemplate(void)
 	AssertInt(30, *piData);
 	AssertNull(cIndex.Get(5LL));
 	AssertTrue(cIndex.HasKey(7LL));
-	AssertSize(sizeof(int32), cIndex.DataSize(7LL));
+	AssertSize(sizeof(int), cIndex.DataSize(7LL));
 
 	lliSum = 0;
 	bExists = cIndex.StartIteration(&sIter, &piData, &lliKey);
