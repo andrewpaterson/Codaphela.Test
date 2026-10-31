@@ -67,6 +67,9 @@ enum ETestSoftFloatKind
 	TSFK_DoubleToLongLong,
 	TSFK_IntToDouble,
 	TSFK_LongLongToDouble,
+	TSFK_DoubleIntToDouble,		//ldexp
+	TSFK_DoubleToDoubleInt,		//frexp: the int written through its pointer to the second argument's place
+	TSFK_DoubleToDoubleDouble,	//modf: the double likewise
 };
 
 
@@ -277,6 +280,34 @@ static uint64 TestSoftFloatRandomDoubleNear(uint64 ulliNear)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Double pairs whose products the W65C816's truncated multiply (softfloat816.asm,
+// MultiplyRows7Truncated) would round wrongly without its fall back: a carry from the products
+// left out reaches the round bit.  Random cases almost never find one.
+//
+//////////////////////////////////////////////////////////////////////////
+static const uint64 gaulliTestSoftDoublePairs[][2] =
+{
+	{0x44A00FBFFFCCDBEBULL, 0x42654A93FFFFFFFFULL},
+	{0x3841BF257FFFD2E1ULL, 0x3CD43F85FC2FFFFFULL},
+	{0x3D038BFFFFA6B8ACULL, 0x42EA3DBCC5FFFFFFULL},
+	{0x3E833FFFF3C0762CULL, 0x3843817FFFFFFFFFULL},
+	{0x43ABF374397FFFD6ULL, 0x411CAAF1FFFFFFFFULL},
+	{0x3DCE50AA547FFFFEULL, 0x3DBC406AC303FFFFULL},
+	{0x4414CDF2CA40FFFFULL, 0x3DB3318FFFFFFFFFULL},
+	{0x385257FFFE69BC6CULL, 0x43E782D827FFFFFFULL},
+	{0x4351376FFFFFF952ULL, 0x3B23880CE23FFFFFULL},
+	{0x3ABFB040AFFFFC56ULL, 0x3C6F55C7FFFFFFFFULL},
+	{0x42079599805FFFF2ULL, 0x43FF7544FFFFFFFFULL},
+	{0x3D4568DFFFF59221ULL, 0x4017CEDFFFFFFFFFULL},
+	{0x3AB4458FFFFE35CBULL, 0x40FBF4FFFFFFFFFFULL},
+	{0x3A4A4C066530FFFFULL, 0x40FBCCB9CB9FFFFFULL},
+	{0x38C544BFFFE7EDFEULL, 0x3E08D54C6763FFFFULL},
+	{0x3AB1D1FFFF2D5C3FULL, 0x3981AFEDFFFFFFFFULL},
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Every pair of special floats (or every special float) and then uiRandom random cases.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -287,12 +318,19 @@ static void TestSoftFloatMakeCases(STestSoftFloatCases* psCases, ETestSoftFloatK
 	size	j;
 	uint64	ulliFirst;
 	uint64	ulliSecond;
+	uint64	ulli;
 
 	gulliTestSoftFloatRandom = 0x9E3779B97F4A7C15ULL + eKind;
 	uiSpecials = sizeof(gauiTestSoftFloatSpecials) / sizeof(uint32);
 	psCases->uiCount = 0;
 	if ((eKind == TSFK_DoubleDoubleToDouble) || (eKind == TSFK_DoubleDoubleToInt))
 	{
+		for (i = 0; i < sizeof(gaulliTestSoftDoublePairs) / sizeof(gaulliTestSoftDoublePairs[0]); i++)
+		{
+			psCases->auiFirst[psCases->uiCount] = gaulliTestSoftDoublePairs[i][0];
+			psCases->auiSecond[psCases->uiCount] = gaulliTestSoftDoublePairs[i][1];
+			psCases->uiCount++;
+		}
 		uiSpecials = sizeof(gaulliTestSoftDoubleSpecials) / sizeof(uint64);
 		for (i = 0; i < uiSpecials; i++)
 		{
@@ -304,7 +342,7 @@ static void TestSoftFloatMakeCases(STestSoftFloatCases* psCases, ETestSoftFloatK
 			}
 		}
 	}
-	else if ((eKind == TSFK_DoubleToDouble) || (eKind == TSFK_DoubleToInt) || (eKind == TSFK_DoubleToLongLong))
+	else if ((eKind == TSFK_DoubleToDouble) || (eKind == TSFK_DoubleToInt) || (eKind == TSFK_DoubleToLongLong) || (eKind >= TSFK_DoubleIntToDouble))
 	{
 		uiSpecials = sizeof(gaulliTestSoftDoubleSpecials) / sizeof(uint64);
 		for (i = 0; i < uiSpecials; i++)
@@ -340,6 +378,23 @@ static void TestSoftFloatMakeCases(STestSoftFloatCases* psCases, ETestSoftFloatK
 	{
 		switch (eKind)
 		{
+		case TSFK_DoubleIntToDouble:
+			//Mostly the normal range's steps, some far past it and the extremes of an int.
+			ulliFirst = TestSoftFloatRandomDoubleNear(TestSoftFloatRandom());
+			ulli = TestSoftFloatRandom();
+			switch (ulli % 4)
+			{
+			case 0:		ulliSecond = (uint64)(int64)((int)((ulli >> 8) % 121) - 60);		break;
+			case 1:		ulliSecond = (uint64)(int64)((int)((ulli >> 8) % 2201) - 1100);	break;
+			case 2:		ulliSecond = (uint64)(int64)((int)((ulli >> 8) % 4401) - 2200);	break;
+			default:	ulliSecond = (uint64)(int64)(((ulli >> 8) & 1) ? 32767 : -32768);	break;
+			}
+			break;
+		case TSFK_DoubleToDoubleInt:
+		case TSFK_DoubleToDoubleDouble:
+			ulliFirst = TestSoftFloatRandomDoubleNear(TestSoftFloatRandom());
+			ulliSecond = 0;
+			break;
 		case TSFK_DoubleDoubleToDouble:
 		case TSFK_DoubleDoubleToInt:
 		case TSFK_DoubleToDouble:
@@ -371,6 +426,195 @@ static void TestSoftFloatMakeCases(STestSoftFloatCases* psCases, ETestSoftFloatK
 		psCases->auiSecond[psCases->uiCount] = ulliSecond;
 		psCases->uiCount++;
 	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// math.cpp's functions that Libc65/softfloat816.asm has on the W65C816, as math.cpp has them, with
+// the native soft float for their arithmetic (so the results are the 65C64's and must be the
+// W65C816's, bit for bit).  frexp's and modf's second results go to gulliTestMathSecond.
+//
+//////////////////////////////////////////////////////////////////////////
+static uint64	gulliTestMathSecond;
+#define TEST_MATH_SIGN	0x8000000000000000ULL
+#define TEST_MATH_ONE	0x3FF0000000000000ULL
+
+
+static int TestMathExponent(uint64 ulli)
+{
+	return (int)((ulli >> 52) & 0x7FF) - 1023;
+}
+
+
+static int TestMathTopExponent(uint64 ulli)
+{
+	int		iExponent;
+
+	iExponent = TestMathExponent(ulli);
+	if (iExponent == -1023)
+	{
+		ulli &= 0x000FFFFFFFFFFFFFULL;
+		iExponent = -1022;
+		while (!(ulli & 0x0010000000000000ULL))
+		{
+			ulli <<= 1;
+			iExponent--;
+		}
+	}
+	return iExponent;
+}
+
+
+static bool TestMathIsNaNOrInfinity(uint64 ulli)
+{
+	return ((ulli >> 52) & 0x7FF) == 0x7FF;
+}
+
+
+static uint64 TestMathTrunc(uint64 ulli)
+{
+	int		iExponent;
+
+	iExponent = TestMathExponent(ulli);
+	if (iExponent >= 52)
+	{
+		return ulli;
+	}
+	if (iExponent < 0)
+	{
+		return ulli & TEST_MATH_SIGN;
+	}
+	return ulli & ~(0x000FFFFFFFFFFFFFULL >> iExponent);
+}
+
+
+static uint64 TestMathFloor(uint64 ulli)
+{
+	uint64	ulliTruncated;
+
+	ulliTruncated = TestMathTrunc(ulli);
+	return (SoftDoubleCompare(ulliTruncated, ulli) == 1) ? SoftDoubleSubtract(ulliTruncated, TEST_MATH_ONE) : ulliTruncated;
+}
+
+
+static uint64 TestMathCeil(uint64 ulli)
+{
+	uint64	ulliTruncated;
+
+	ulliTruncated = TestMathTrunc(ulli);
+	return (SoftDoubleCompare(ulliTruncated, ulli) == -1) ? SoftDoubleAdd(ulliTruncated, TEST_MATH_ONE) : ulliTruncated;
+}
+
+
+static uint64 TestMathRound(uint64 ulli)
+{
+	uint64	ulliTruncated;
+	int		iCompare;
+
+	ulliTruncated = TestMathTrunc(ulli);
+	iCompare = SoftDoubleCompare(SoftDoubleSubtract(ulli, ulliTruncated) & ~TEST_MATH_SIGN, 0x3FE0000000000000ULL);
+	if ((iCompare == 0) || (iCompare == 1))
+	{
+		return (SoftDoubleCompare(ulli, 0) == 1) ? SoftDoubleAdd(ulliTruncated, TEST_MATH_ONE) : SoftDoubleSubtract(ulliTruncated, TEST_MATH_ONE);
+	}
+	return ulliTruncated;
+}
+
+
+static uint64 TestMathLdexp(uint64 ulli, int iExponent)
+{
+	while (iExponent > 1023)
+	{
+		ulli = SoftDoubleMultiply(ulli, 0x7FE0000000000000ULL);
+		iExponent -= 1023;
+	}
+	while (iExponent < -1022)
+	{
+		ulli = SoftDoubleMultiply(ulli, 0x0010000000000000ULL);
+		iExponent += 1022;
+	}
+	return SoftDoubleMultiply(ulli, (uint64)(iExponent + 1023) << 52);
+}
+
+
+static uint64 TestMathFrexp(uint64 ulli, int* piExponent)
+{
+	int		iAdjust;
+
+	*piExponent = 0;
+	if ((SoftDoubleCompare(ulli, 0) == 0) || TestMathIsNaNOrInfinity(ulli))
+	{
+		return ulli;
+	}
+	iAdjust = 0;
+	if (TestMathExponent(ulli) == -1023)
+	{
+		ulli = SoftDoubleMultiply(ulli, 0x4350000000000000ULL);
+		iAdjust = -54;
+	}
+	*piExponent = TestMathExponent(ulli) + 1 + iAdjust;
+	return (ulli & 0x800FFFFFFFFFFFFFULL) | 0x3FE0000000000000ULL;
+}
+
+
+static uint64 TestMathModf(uint64 ulli, uint64* pulliInteger)
+{
+	uint64	ulliFraction;
+
+	*pulliInteger = TestMathTrunc(ulli);
+	if (TestMathIsNaNOrInfinity(ulli) && (SoftDoubleCompare(ulli, ulli) == 0))
+	{
+		return ulli & TEST_MATH_SIGN;
+	}
+	ulliFraction = SoftDoubleSubtract(ulli, *pulliInteger);
+	if (SoftDoubleCompare(ulliFraction, 0) == 0)
+	{
+		return ulli & TEST_MATH_SIGN;
+	}
+	return ulliFraction;
+}
+
+
+static uint64 TestMathFmod(uint64 ulliX, uint64 ulliY)
+{
+	uint64	ulliRemainder;
+	uint64	ulliDivisor;
+	uint64	ulliPart;
+	int		iCompare;
+
+	if ((SoftDoubleCompare(ulliY, 0) == 0) || TestMathIsNaNOrInfinity(ulliX) || (SoftDoubleCompare(ulliY, ulliY) == 2))
+	{
+		return SoftDoubleDivide(SoftDoubleSubtract(ulliX, ulliX), SoftDoubleAdd(SoftDoubleSubtract(ulliY, ulliY), SoftDoubleMultiply(0, ulliX)));
+	}
+	ulliRemainder = ulliX & ~TEST_MATH_SIGN;
+	ulliDivisor = ulliY & ~TEST_MATH_SIGN;
+	if (TestMathIsNaNOrInfinity(ulliY) || (SoftDoubleCompare(ulliRemainder, ulliDivisor) == -1))
+	{
+		return ulliX;
+	}
+	for (;;)
+	{
+		iCompare = SoftDoubleCompare(ulliRemainder, ulliDivisor);
+		if ((iCompare != 0) && (iCompare != 1))
+		{
+			break;
+		}
+		ulliPart = TestMathLdexp(ulliDivisor, TestMathTopExponent(ulliRemainder) - TestMathTopExponent(ulliDivisor));
+		if (SoftDoubleCompare(ulliPart, ulliRemainder) == 1)
+		{
+			ulliPart = SoftDoubleDivide(ulliPart, 0x4000000000000000ULL);
+		}
+		ulliRemainder = SoftDoubleSubtract(ulliRemainder, ulliPart);
+	}
+	return (SoftDoubleCompare(ulliX, 0) == -1) ? (ulliRemainder ^ TEST_MATH_SIGN) : ulliRemainder;
+}
+
+
+//A float function: math.cpp's in double.
+static uint32 TestMathFloat(uint64 (*fDouble)(uint64), uint32 ui)
+{
+	return SoftDoubleToFloat(fDouble(SoftFloatToDouble(ui)));
 }
 
 
@@ -416,6 +660,31 @@ static uint64 TestSoftFloatReference(const char* szName, uint64 ulliFirst, uint6
 	if (strcmp(szName, "SoftDoubleFromUnsigned") == 0)			return SoftDoubleFromUnsigned(uiFirst);
 	if (strcmp(szName, "SoftDoubleFromLongLong") == 0)			return SoftDoubleFromLongLong((int64_t)ulliFirst);
 	if (strcmp(szName, "SoftDoubleFromUnsignedLongLong") == 0)	return SoftDoubleFromUnsignedLongLong(ulliFirst);
+	if (strcmp(szName, "fabs") == 0)							return ulliFirst & ~TEST_MATH_SIGN;
+	if (strcmp(szName, "fabsf") == 0)							return uiFirst & 0x7FFFFFFF;
+	if (strcmp(szName, "sqrt") == 0)							return SoftDoubleSqrt(ulliFirst);
+	if (strcmp(szName, "sqrtf") == 0)							return SoftFloatSqrt(uiFirst);
+	if (strcmp(szName, "trunc") == 0)							return TestMathTrunc(ulliFirst);
+	if (strcmp(szName, "floor") == 0)							return TestMathFloor(ulliFirst);
+	if (strcmp(szName, "ceil") == 0)							return TestMathCeil(ulliFirst);
+	if (strcmp(szName, "round") == 0)							return TestMathRound(ulliFirst);
+	if (strcmp(szName, "truncf") == 0)							return TestMathFloat(TestMathTrunc, uiFirst);
+	if (strcmp(szName, "floorf") == 0)							return TestMathFloat(TestMathFloor, uiFirst);
+	if (strcmp(szName, "ceilf") == 0)							return TestMathFloat(TestMathCeil, uiFirst);
+	if (strcmp(szName, "roundf") == 0)							return TestMathFloat(TestMathRound, uiFirst);
+	if (strcmp(szName, "fmod") == 0)							return TestMathFmod(ulliFirst, ulliSecond);
+	if (strcmp(szName, "fmodf") == 0)							return SoftDoubleToFloat(TestMathFmod(SoftFloatToDouble(uiFirst), SoftFloatToDouble(uiSecond)));
+	if (strcmp(szName, "ldexp") == 0)							return TestMathLdexp(ulliFirst, (int)(int64)ulliSecond);
+	if (strcmp(szName, "frexp") == 0)
+	{
+		int		iExponent;
+		uint64	ulliResult;
+
+		ulliResult = TestMathFrexp(ulliFirst, &iExponent);
+		gulliTestMathSecond = (uint64)(int64)iExponent;
+		return ulliResult;
+	}
+	if (strcmp(szName, "modf") == 0)							return TestMathModf(ulliFirst, &gulliTestMathSecond);
 	return 0;
 }
 
@@ -444,6 +713,9 @@ static void TestSoftFloatProgram(CChars* pszSource, const char* szName, ETestSof
 		"uint64_t NAME(uint64_t ulli);\n",
 		"uint64_t NAME(uint32_t ui);\n",
 		"uint64_t NAME(uint64_t ulli);\n",
+		"uint64_t NAME(uint64_t ulli, int i);\n",
+		"uint64_t NAME(uint64_t ulli, int* pi);\n",
+		"uint64_t NAME(uint64_t ulli, uint64_t* pulli);\n",
 	};
 	static const char*	aszCalls[] =
 	{
@@ -462,6 +734,9 @@ static void TestSoftFloatProgram(CChars* pszSource, const char* szName, ETestSof
 		"		pulliResult[i] = NAME(pulliArgument[i]);\n",
 		"		pulliResult[i] = NAME(puiArgument[2 * i]);\n",
 		"		pulliResult[i] = NAME(pulliArgument[i]);\n",
+		"		pulliResult[i] = NAME(pulliArgument[i], (int)pulliSecond[i]);\n",
+		"		pulliResult[i] = NAME(pulliArgument[i], (int*)&pulliSecond[i]);\n",
+		"		pulliResult[i] = NAME(pulliArgument[i], &pulliSecond[i]);\n",
 	};
 
 	pszSource->Init();
@@ -492,7 +767,7 @@ static void TestSoftFloatProgram(CChars* pszSource, const char* szName, ETestSof
 //////////////////////////////////////////////////////////////////////////
 static bool TestSoftFloatWideArgument(ETestSoftFloatKind eKind)
 {
-	return (eKind == TSFK_LongLongToFloat) || (eKind == TSFK_DoubleToFloat) || (eKind >= TSFK_DoubleDoubleToDouble && eKind <= TSFK_DoubleToLongLong) || (eKind == TSFK_LongLongToDouble);
+	return (eKind == TSFK_LongLongToFloat) || (eKind == TSFK_DoubleToFloat) || (eKind >= TSFK_DoubleDoubleToDouble && eKind <= TSFK_DoubleToLongLong) || (eKind >= TSFK_LongLongToDouble);
 }
 
 
@@ -503,7 +778,7 @@ static bool TestSoftFloatWideArgument(ETestSoftFloatKind eKind)
 //////////////////////////////////////////////////////////////////////////
 static bool TestSoftFloatWideResult(ETestSoftFloatKind eKind)
 {
-	return (eKind == TSFK_FloatToLongLong) || (eKind == TSFK_DoubleDoubleToDouble) || (eKind == TSFK_DoubleToDouble) || (eKind == TSFK_DoubleToLongLong) || (eKind == TSFK_IntToDouble) || (eKind == TSFK_LongLongToDouble);
+	return (eKind == TSFK_FloatToLongLong) || (eKind == TSFK_DoubleDoubleToDouble) || (eKind == TSFK_DoubleToDouble) || (eKind == TSFK_DoubleToLongLong) || (eKind == TSFK_IntToDouble) || (eKind >= TSFK_LongLongToDouble);
 }
 
 
@@ -516,6 +791,7 @@ static bool TestSoftFloatWideResult(ETestSoftFloatKind eKind)
 static void TestSoftFloatFunction(const char* szName, ETestSoftFloatKind eKind, size uiRandom)
 {
 	static const char*		aszUnits[] = { "softfloat.asm", "softfloat.cpp", NULL };
+	static const char*		aszMathUnits[] = { "softfloat.asm", "softfloat.cpp", "math.cpp", NULL };
 	STestSoftFloatCases*	psCases;
 	STestLibc65Run			sRun;
 	CChars					szSource;
@@ -525,10 +801,15 @@ static void TestSoftFloatFunction(const char* szName, ETestSoftFloatKind eKind, 
 	uint64					ulliResult;
 	uint32					uiSecond;
 
+	//For tuning: TEST_SOFT_FLOAT_ONLY=name runs only that function.
+	if (getenv("TEST_SOFT_FLOAT_ONLY") && (strcmp(getenv("TEST_SOFT_FLOAT_ONLY"), szName) != 0))
+	{
+		return;
+	}
 	psCases = (STestSoftFloatCases*)malloc(sizeof(STestSoftFloatCases));
 	TestSoftFloatMakeCases(psCases, eKind, uiRandom);
 	TestSoftFloatProgram(&szSource, szName, eKind, psCases->uiCount);
-	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "", szSource.Text()));
+	AssertTrue(TestLibc65Begin(&sRun, (strncmp(szName, "Soft", 4) == 0) ? aszUnits : aszMathUnits, "", szSource.Text()));
 	szSource.Kill();
 	if (sRun.pcMemory)
 	{
@@ -547,7 +828,8 @@ static void TestSoftFloatFunction(const char* szName, ETestSoftFloatKind eKind, 
 				sRun.pcMemory->SetLong(TEST_SOFT_FLOAT_ARGUMENTS + 8 * (uint32)i + 4, uiSecond);
 			}
 		}
-		AssertTrue(TestLibc65Run(&sRun, 400 * psCases->uiCount + 1000));
+		//math.cpp's fmod (C++ on the 65C64) takes a step of soft float calls per bit of x's exponent over y's.
+		AssertTrue(TestLibc65Run(&sRun, ((strncmp(szName, "fmod", 4) == 0) ? 400000 : ((strncmp(szName, "Soft", 4) == 0) ? 400 : 4000)) * psCases->uiCount + 1000));
 		if (getenv("TEST_SOFT_FLOAT_CYCLES"))
 		{
 			//The program's cycles (the loop round each call included) over its calls, for tuning.
@@ -563,6 +845,15 @@ static void TestSoftFloatFunction(const char* szName, ETestSoftFloatKind eKind, 
 				ulliExpected &= 0xFFFFFFFF;
 			}
 			AssertLongLongIntHex(ulliExpected, ulliResult);
+			if (eKind == TSFK_DoubleToDoubleDouble)
+			{
+				AssertLongLongIntHex(gulliTestMathSecond, sRun.pcMemory->GetQuad(TEST_SOFT_FLOAT_SECONDS + 8 * (uint32)i));
+			}
+			else if (eKind == TSFK_DoubleToDoubleInt)
+			{
+				//An int is 16 bits on the W65C816, 32 on the 65C64; the rest of the place stays 0.
+				AssertLongLongIntHex(gulliTestMathSecond & ((geTestLibc65Target == CPPT_W65C816) ? 0xFFFFULL : 0xFFFFFFFFULL), sRun.pcMemory->GetQuad(TEST_SOFT_FLOAT_SECONDS + 8 * (uint32)i));
+			}
 		}
 	}
 	TestLibc65End(&sRun);
@@ -691,6 +982,37 @@ void TestLibc65SoftFloatOperators(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//
+// math.cpp's functions that only take bits apart (softfloat816.asm's on the W65C816).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLibc65SoftFloatMath(void)
+{
+	TestSoftFloatFunction("fabs", TSFK_DoubleToDouble, 1000);
+	TestSoftFloatFunction("fabsf", TSFK_FloatToFloat, 1000);
+	TestSoftFloatFunction("sqrt", TSFK_DoubleToDouble, 1000);
+	TestSoftFloatFunction("sqrtf", TSFK_FloatToFloat, 1000);
+	TestSoftFloatFunction("trunc", TSFK_DoubleToDouble, 3000);
+	TestSoftFloatFunction("floor", TSFK_DoubleToDouble, 3000);
+	TestSoftFloatFunction("ceil", TSFK_DoubleToDouble, 3000);
+	TestSoftFloatFunction("round", TSFK_DoubleToDouble, 3000);
+	TestSoftFloatFunction("truncf", TSFK_FloatToFloat, 3000);
+	TestSoftFloatFunction("floorf", TSFK_FloatToFloat, 3000);
+	TestSoftFloatFunction("ceilf", TSFK_FloatToFloat, 3000);
+	TestSoftFloatFunction("roundf", TSFK_FloatToFloat, 3000);
+	TestSoftFloatFunction("ldexp", TSFK_DoubleIntToDouble, 3000);
+	TestSoftFloatFunction("frexp", TSFK_DoubleToDoubleInt, 3000);
+	TestSoftFloatFunction("modf", TSFK_DoubleToDoubleDouble, 3000);
+	TestSoftFloatFunction("fmod", TSFK_DoubleDoubleToDouble, 1000);
+	TestSoftFloatFunction("fmodf", TSFK_FloatFloatToFloat, 1000);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestLibc65SoftFloat(void)
 {
 	BeginTests();
@@ -699,6 +1021,7 @@ void TestLibc65SoftFloat(void)
 	TestLibc65SoftFloatConversions();
 	TestLibc65SoftFloatDouble();
 	TestLibc65SoftFloatOperators();
+	TestLibc65SoftFloatMath();
 
 	TestStatistics();
 }
