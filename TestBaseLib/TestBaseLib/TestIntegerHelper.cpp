@@ -738,6 +738,120 @@ void TestIntegerHelperFindBitsLarge(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//
+// i (0 to 9999) as a packed BCD word.
+//
+//////////////////////////////////////////////////////////////////////////
+uint16 TestIntegerHelperToBCD(int32 i)
+{
+	return (uint16)(((i / 1000) << 12) | (((i / 100) % 10) << 8) | (((i / 10) % 10) << 4) | (i % 10));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// BCDAdd and BCDSubtract (the W65C816's decimal mode there) against
+// binary arithmetic: one word, with and without a carry or borrow in, then
+// carries and borrows going on through several words, and no words.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIntegerHelperBCD(void)
+{
+	uint16	uiDest;
+	uint16	uiSource;
+	uint16	uiCarry;
+	uint16	auiDest[3];
+	uint16	auiSource[3];
+	int32	a;
+	int32	b;
+	int32	c;
+	int32	iSum;
+	int32	iDifference;
+	int32	iFailedA;
+	int32	iFailedB;
+
+	iFailedA = -1;
+	iFailedB = -1;
+	for (a = 0; (a < 10000) && (iFailedA < 0); a += 73)
+	{
+		for (b = 0; (b < 10000) && (iFailedA < 0); b += 89)
+		{
+			for (c = 0; c <= 1; c++)
+			{
+				iSum = a + b + c;
+				uiDest = TestIntegerHelperToBCD(a);
+				uiSource = TestIntegerHelperToBCD(b);
+				uiCarry = BCDAdd(&uiDest, &uiSource, 1, (uint16)c);
+				if ((uiDest != TestIntegerHelperToBCD(iSum % 10000)) || (uiCarry != ((iSum >= 10000) ? 1 : 0)))
+				{
+					iFailedA = a;
+					iFailedB = b;
+				}
+
+				iDifference = a - b - c;
+				uiDest = TestIntegerHelperToBCD(a);
+				uiCarry = BCDSubtract(&uiDest, &uiSource, 1, (uint16)c);
+				if ((uiDest != TestIntegerHelperToBCD((iDifference < 0) ? (iDifference + 10000) : iDifference)) || (uiCarry != ((iDifference < 0) ? 1 : 0)))
+				{
+					iFailedA = a;
+					iFailedB = b;
+				}
+			}
+		}
+	}
+	AssertInt((int32)-1, iFailedA);
+	AssertInt((int32)-1, iFailedB);
+
+	auiSource[0] = 0x0001;
+	auiSource[1] = 0;
+	auiSource[2] = 0;
+
+	auiDest[0] = 0x9999;
+	auiDest[1] = 0x9999;
+	auiDest[2] = 0x0000;
+	AssertShort((uint16)0, BCDAdd(auiDest, auiSource, 3, 0));
+	AssertShortHex((uint16)0x0000, auiDest[0]);
+	AssertShortHex((uint16)0x0000, auiDest[1]);
+	AssertShortHex((uint16)0x0001, auiDest[2]);
+
+	auiDest[0] = 0x9999;
+	auiDest[1] = 0x9999;
+	auiDest[2] = 0x9999;
+	AssertShort((uint16)1, BCDAdd(auiDest, auiSource, 3, 0));
+	AssertShortHex((uint16)0x0000, auiDest[0]);
+	AssertShortHex((uint16)0x0000, auiDest[2]);
+
+	auiDest[0] = 0x0000;
+	auiDest[1] = 0x0000;
+	auiDest[2] = 0x0001;
+	AssertShort((uint16)0, BCDSubtract(auiDest, auiSource, 3, 0));
+	AssertShortHex((uint16)0x9999, auiDest[0]);
+	AssertShortHex((uint16)0x9999, auiDest[1]);
+	AssertShortHex((uint16)0x0000, auiDest[2]);
+
+	auiDest[0] = 0x0000;
+	auiDest[1] = 0x0000;
+	auiDest[2] = 0x0000;
+	AssertShort((uint16)1, BCDSubtract(auiDest, auiSource, 3, 0));
+	AssertShortHex((uint16)0x9999, auiDest[2]);
+
+	auiDest[0] = 0x1234;
+	auiDest[1] = 0x5678;
+	auiSource[0] = 0x8766;
+	auiSource[1] = 0x4321;
+	AssertShort((uint16)1, BCDAdd(auiDest, auiSource, 2, 0));
+	AssertShortHex((uint16)0x0000, auiDest[0]);
+	AssertShortHex((uint16)0x0000, auiDest[1]);
+
+	//No words: the carry (or borrow) goes straight out.
+	AssertShort((uint16)1, BCDAdd(auiDest, auiSource, 0, 1));
+	AssertShort((uint16)0, BCDAdd(auiDest, auiSource, 0, 0));
+	AssertShort((uint16)1, BCDSubtract(auiDest, auiSource, 0, 1));
+	AssertShortHex((uint16)0x0000, auiDest[0]);
+}
+
+
 void TestIntegerHelper(void)
 {
 	TestIntegerHelperFindFirstClearBit();
@@ -755,5 +869,6 @@ void TestIntegerHelper(void)
 	TestIntegerHelperFindBitsAgainstGetBit();
 	TestIntegerHelperFindBitInWord();
 	TestIntegerHelperFindBitsLarge();
+	TestIntegerHelperBCD();
 }
 

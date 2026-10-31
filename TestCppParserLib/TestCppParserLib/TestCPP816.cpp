@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "Assembler65Lib/Asm816Profile.h"
+#include "BaseLib/IntegerHelper.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/NumberControl.h"
@@ -1775,6 +1776,117 @@ void TestCPP816ProfileGuidedDivisionTables(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A uint16 array indexed by i >> 2 (an arithmetic shift of any int16 is
+// within -8192 to 8191, so the scaled index fits Y) and by i >> 5, from
+// below the pointer as well as above it, loaded and stored.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816ShiftedWordIndices(void)
+{
+	static const char*	szSource =
+		"unsigned short gaui[700];\n"
+		"unsigned short Get(unsigned short* p, short i) { return p[i >> 2]; }\n"
+		"unsigned short (*volatile gpGet)(unsigned short*, short) = Get;\n"
+		"int main()\n"
+		"{\n"
+		"\tunsigned short* p = &gaui[350];\n"
+		"\tunsigned short h = 0;\n"
+		"\tfor (short i = -1400; i < 1400; i++) { p[i >> 2] = (unsigned short)(i * 7); }\n"
+		"\tfor (short i = 1399; i >= -1400; i -= 3) { h = h * 31 + p[i >> 2]; }\n"
+		"\tfor (short i = -11200; i < 11200; i += 13) { h = h * 31 + p[i >> 5]; }\n"
+		"\th = h * 31 + gpGet(p, -1400);\n"
+		"\th = h * 31 + gpGet(p, 1399);\n"
+		"\treturn (int)(short)h;\n"
+		"}\n";
+	uint16	aui[700];
+	uint16*	pui;
+	uint16	uiHash;
+	int		i;
+	uint64	uiCycles;
+
+	memset(aui, 0, sizeof(aui));
+	pui = &aui[350];
+	for (i = -1400; i < 1400; i++)
+	{
+		pui[i >> 2] = (uint16)(i * 7);
+	}
+	uiHash = 0;
+	for (i = 1399; i >= -1400; i -= 3)
+	{
+		uiHash = (uint16)(uiHash * 31 + pui[i >> 2]);
+	}
+	for (i = -11200; i < 11200; i += 13)
+	{
+		uiHash = (uint16)(uiHash * 31 + pui[i >> 5]);
+	}
+	uiHash = (uint16)(uiHash * 31 + pui[-1400 >> 2]);
+	uiHash = (uint16)(uiHash * 31 + pui[1399 >> 2]);
+	AssertInt((int16)uiHash, TestCPP816RunProfiled(szSource, NULL, NULL, &uiCycles));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// __builtin_bcd_add and __builtin_bcd_subtract (R816_BcdAdd and
+// R816_BcdSubtract, the W65C816's decimal mode) give what BaseLib's
+// BCDAdd and BCDSubtract give: carries and borrows through the words, a
+// carry or borrow in, and none at all with no words.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816BCDBuiltins(void)
+{
+	static const char*	szSource =
+		"unsigned short gauiA[3] = { 0x9999, 0x1234, 0x0000 };\n"
+		"unsigned short gauiB[3] = { 0x0001, 0x8765, 0x0000 };\n"
+		"unsigned short guiHash;\n"
+		"void Mix(unsigned short ui) { guiHash = guiHash * 31 + ui; }\n"
+		"void MixAll(unsigned short uiCarry) { Mix(uiCarry); Mix(gauiA[0]); Mix(gauiA[1]); Mix(gauiA[2]); }\n"
+		"int main()\n"
+		"{\n"
+		"\tMixAll(__builtin_bcd_add(gauiA, gauiB, 3, 0));\n"
+		"\tMixAll(__builtin_bcd_subtract(gauiA, gauiB, 3, 1));\n"
+		"\tMixAll(__builtin_bcd_subtract(gauiA, gauiB, 2, 0));\n"
+		"\tMixAll(__builtin_bcd_add(gauiA, gauiB, 1, 1));\n"
+		"\tMixAll(__builtin_bcd_add(gauiA, gauiB, 0, 1));\n"
+		"\tMixAll(__builtin_bcd_subtract(gauiA, gauiB, 0, 1));\n"
+		"\treturn (int)(short)guiHash;\n"
+		"}\n";
+	uint16	auiA[3] = { 0x9999, 0x1234, 0x0000 };
+	uint16	auiB[3] = { 0x0001, 0x8765, 0x0000 };
+	uint16	auiCarries[6];
+	uint16	uiHash;
+	int		i;
+	int		j;
+	uint64	uiCycles;
+
+	uiHash = 0;
+	for (i = 0; i < 6; i++)
+	{
+		switch (i)
+		{
+		case 0:		auiCarries[i] = BCDAdd(auiA, auiB, 3, 0);		break;
+		case 1:		auiCarries[i] = BCDSubtract(auiA, auiB, 3, 1);	break;
+		case 2:		auiCarries[i] = BCDSubtract(auiA, auiB, 2, 0);	break;
+		case 3:		auiCarries[i] = BCDAdd(auiA, auiB, 1, 1);		break;
+		case 4:		auiCarries[i] = BCDAdd(auiA, auiB, 0, 1);		break;
+		default:	auiCarries[i] = BCDSubtract(auiA, auiB, 0, 1);	break;
+		}
+		uiHash = (uint16)(uiHash * 31 + auiCarries[i]);
+		for (j = 0; j < 3; j++)
+		{
+			uiHash = (uint16)(uiHash * 31 + auiA[j]);
+		}
+	}
+	AssertShort((uint16)0, auiCarries[0]);
+	AssertShort((uint16)0, auiCarries[1]);
+	AssertShort((uint16)1, auiCarries[4]);
+	AssertShort((uint16)1, auiCarries[5]);
+	AssertInt((int16)uiHash, TestCPP816RunProfiled(szSource, NULL, NULL, &uiCycles));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Loads and stores through a pointer plus a signed 16 bit index (biased:
 // (p - 32768) + zext(i ^ 32768) with the index in Y), negative and
 // positive, bytes and words, in a loop and not.
@@ -3312,6 +3424,8 @@ void TestCPP816(void)
 	TestCPP816ProfileGuidedInlining();
 	TestCPP816ProfileGuidedDivisionTables();
 	TestCPP816BiasedIndices();
+	TestCPP816BCDBuiltins();
+	TestCPP816ShiftedWordIndices();
 	TestCPP816MergedAddressPhis();
 	TestCPP816InlineObjectParameters();
 	TestCPP816ConstantDivisions();

@@ -829,6 +829,118 @@ void TestNumberDoubleValue(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The digits are packed BCD with the whole numbers and decimals each
+// rounded up to whole words: sizes that aren't multiples of four (spare
+// nibbles at the top and below the smallest decimal), numbers of different
+// sizes, carries and borrows through several words, shifts by each nibble
+// count, and digits lost below the smallest decimal or carried past the
+// biggest whole number.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestNumberPackedDigits(void)
+{
+	CNumber*	pcSmall;
+	CNumber*	pcLarge;
+	CNumber*	pcNine;
+	CNumber*	pcOther;
+	CNumber*	pcShifted;
+
+	pcSmall = gcNumberControl.Add(5, 3);
+	pcLarge = gcNumberControl.Add(7, 9);
+	pcNine = gcNumberControl.Add(9, 9);
+	pcOther = gcNumberControl.Add(9, 9);
+	pcShifted = gcNumberControl.Add(9, 9);
+
+	//A carry past the biggest whole number lands in the top word's spare nibbles.
+	pcSmall->Init("99999", 5, 3);
+	pcOther->Init("1", 5, 3);
+	pcSmall->Add(pcOther);
+	AssertBool(true, pcSmall->IsOverflow());
+	pcSmall->Init("99999.999", 5, 3);
+	pcLarge->Init("0.001", 7, 9);
+	pcSmall->Add(pcLarge);
+	AssertBool(true, pcSmall->IsOverflow());
+
+	//A smaller number's decimals past this one's are lost, not carried.
+	pcSmall->Init("12345.678", 5, 3);
+	pcLarge->Init("0.0005", 7, 9);
+	pcSmall->Add(pcLarge);
+	AssertNumber("12345.678", pcSmall);
+	AssertBool(true, pcSmall->IsUnderflow());
+	pcSmall->Init("12345.678", 5, 3);
+	pcLarge->Init("1234.5", 7, 9);
+	pcSmall->Add(pcLarge);
+	AssertNumber("13580.178", pcSmall);
+	AssertBool(false, pcSmall->IsUnderflow());
+
+	//Carries and borrows through every word.
+	pcNine->Init("9999.9999", 9, 9);
+	pcOther->Init("0.0001", 9, 9);
+	pcNine->Add(pcOther);
+	AssertNumber("10000", pcNine);
+	pcNine->Init("100000000", 9, 9);
+	pcOther->Init("0.000000001", 9, 9);
+	pcNine->Subtract(pcOther);
+	AssertNumber("99999999.999999999", pcNine);
+	pcNine->Add(pcOther);
+	AssertNumber("100000000", pcNine);
+
+	//Shifts by one to five digits, down (losing the smallest decimals) and up.
+	pcNine->Init("123456789.123456789", 9, 9);
+	pcShifted->Init(pcNine, 9, 9);
+	AssertNumber("12345678.912345678", pcShifted->Shift(-1));
+	AssertBool(true, pcShifted->IsUnderflow());
+	pcShifted->Init(pcNine, 9, 9);
+	AssertNumber("1234567.891234567", pcShifted->Shift(-2));
+	pcShifted->Init(pcNine, 9, 9);
+	AssertNumber("123456.789123456", pcShifted->Shift(-3));
+	pcShifted->Init(pcNine, 9, 9);
+	AssertNumber("12345.678912345", pcShifted->Shift(-4));
+	pcShifted->Init(pcNine, 9, 9);
+	AssertNumber("1234.567891234", pcShifted->Shift(-5));
+	AssertNumber("12345.6789", pcShifted->Init("1234.56789", 9, 9)->Shift(1));
+	AssertNumber("123456.789", pcShifted->Init("1234.56789", 9, 9)->Shift(2));
+	AssertNumber("1234567.89", pcShifted->Init("1234.56789", 9, 9)->Shift(3));
+	AssertNumber("12345678.9", pcShifted->Init("1234.56789", 9, 9)->Shift(4));
+	AssertNumber("123456789", pcShifted->Init("1234.56789", 9, 9)->Shift(5));
+	AssertBool(false, pcShifted->IsUnderflow());
+	AssertNumber("0.000000123", pcShifted->Init("1234.56789", 9, 9)->Shift(-10));
+	AssertBool(true, pcShifted->IsUnderflow());
+
+	//Products and quotients cut at the smallest decimal.
+	pcSmall->Init("1.11", 5, 3);
+	AssertNumber("1.232", pcSmall->Multiply(pcOther->Init("1.11", 5, 3)));
+	AssertBool(true, pcSmall->IsUnderflow());
+	pcSmall->Init("0.111", 5, 3);
+	AssertNumber("0.001", pcSmall->Multiply(pcOther->Init("0.011", 5, 3)));
+	pcSmall->Init("123.45", 5, 3);
+	AssertNumber("83810.205", pcSmall->Multiply(pcOther->Init("678.9", 5, 3)));
+	AssertBool(false, pcSmall->IsUnderflow());
+	pcSmall->Init("1", 5, 3);
+	AssertNumber("0.333", pcSmall->Divide(pcOther->Init("3", 5, 3)));
+	AssertBool(true, pcSmall->IsUnderflow());
+	pcSmall->Init("10", 5, 3);
+	AssertNumber("2.5", pcSmall->Divide(pcOther->Init("4", 5, 3)));
+	AssertBool(false, pcSmall->IsUnderflow());
+
+	//Leading zeros past the biggest whole number, and trailing zeros past the smallest decimal, aren't lost digits.
+	pcSmall->Init("0000012", 2, 0);
+	AssertNumber("12", pcSmall);
+	AssertBool(false, pcSmall->IsOverflow());
+	pcSmall->Init("1.2000", 2, 1);
+	AssertNumber("1.2", pcSmall);
+	AssertBool(false, pcSmall->IsUnderflow());
+	pcSmall->Init("1.25", 2, 1);
+	AssertNumber("1.2", pcSmall);
+	AssertBool(true, pcSmall->IsUnderflow());
+
+	gcNumberControl.Remove(5);
+	AssertInt(0, gcNumberControl.NumElements());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestNumber(void)
@@ -839,6 +951,7 @@ void TestNumber(void)
 	NumberInit();
 
 	TestPrivateSubtract();
+	TestNumberPackedDigits();
 	TestNumberDoubleValue();
 	TestInit();
 	TestConstants();
