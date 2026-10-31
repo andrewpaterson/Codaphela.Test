@@ -560,6 +560,32 @@ static bool TestProject65Run(STestProject65* psProject, CCPP65Builder* pcBuilder
 			//(CAsm65816Profile).
 			uiSteps = gpcTestProject65Measure->Run(pcMemory, &cMPU816, pcBuilder->GetMap(), uiMaxSteps, pcBuilder->GetLineTable());
 		}
+		else if (getenv("TEST_PROJECT65_TRACE"))
+		{
+			//TEST_PROJECT65_TRACE: one instruction at a time, stopping when the program counter runs into bank 0 (below
+			//the stubs at 0xFF00); the last addresses it was at are printed.
+			uint32	auiTrace[64];
+			uint32	auiTraceS[64];
+			size	uiTrace;
+			size	ui;
+
+			uiTrace = 0;
+			for (uiSteps = 0; (uiSteps < uiMaxSteps) && !cMPU816.IsStopped() && (cMPU816.GetProgramAddress() >= 0xFF00); uiSteps++)
+			{
+				auiTrace[uiTrace % 64] = cMPU816.GetProgramAddress();
+				auiTraceS[uiTrace % 64] = cMPU816.GetS();
+				uiTrace++;
+				cMPU816.Step();
+			}
+			for (ui = (uiTrace > 64) ? uiTrace - 64 : 0; ui < uiTrace; ui++)
+			{
+				pszConsole->Append("  ");
+				TestProject65AppendSymbol(pcBuilder, auiTrace[ui % 64], pszConsole);
+				pszConsole->Append(" S 0x");
+				pszConsole->AppendHexHiLo(&auiTraceS[ui % 64], sizeof(uint32));
+				pszConsole->AppendNewLine();
+			}
+		}
 		else
 		{
 			for (uiSteps = 0; (uiSteps < uiMaxSteps) && !cMPU816.IsStopped(); uiSteps += 1000000)
@@ -666,6 +692,8 @@ void TestProject65RunTests(STestProject65* psProject)
 
 	cBuilder.Init();
 	cBuilder.SetTarget(geTestProject65Target);
+	//TEST_PROJECT65_CPP=1: the W65C816 build compiles the C++ of units that have X816.asm, not the assembly.
+	CCPP65Generator::SetW65C816Assembly(getenv("TEST_PROJECT65_CPP") == NULL);
 	if (getenv("TEST_PROJECT65_LISTINGS"))
 	{
 		//TEST_PROJECT65_LISTINGS=directory: each unit's assembly with its C++ source lines as comments (Unit.lst).
