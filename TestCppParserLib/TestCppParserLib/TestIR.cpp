@@ -1087,6 +1087,242 @@ void TestIROptimiserRestrictParameters(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Strength reduction of an unsigned i16 counter (the W65C816's size) zero
+// extended in an address: p + (zext i << 2) becomes a pointer stepping by
+// 4 when the loop's tests keep i from wrapping, and stays when they don't.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserZeroExtendedCounters(void)
+{
+	//i from 0 while i < n: i is at most 65534, so i + 1 never wraps.
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i32 @_S(ptr %p, i16 %n)\n"
+		"{\n"
+		"b:\n"
+		"\t%0 = ult i16 0, %n\n"
+		"\tbrif %0, l, x\n"
+		"l:\n"
+		"\t%1 = phi i16 [l, %j], [b, 0]\n"
+		"\t%2 = phi i32 [l, %s2], [b, 0]\n"
+		"\t%3 = phi ptr [l, %4], [b, %p]\n"
+		"\t%v = load i32 %3\n"
+		"\t%s2 = add i32 %2, %v\n"
+		"\t%j = add i16 %1, 1\n"
+		"\t%4 = ptradd ptr %3, 4\n"
+		"\t%5 = ult i16 %j, %n\n"
+		"\tbrif %5, l, x\n"
+		"x:\n"
+		"\t%6 = phi i32 [b, 0], [l, %s2]\n"
+		"\tret i32 %6\n"
+		"}\n",
+		"function i32 @_S(ptr %p, i16 %n)\n"
+		"{\n"
+		"b:\n"
+		"\tjmp t\n"
+		"t:\n"
+		"\t%i = phi i16 [b, 0], [l, %j]\n"
+		"\t%s = phi i32 [b, 0], [l, %s2]\n"
+		"\t%c = ult i16 %i, %n\n"
+		"\tbrif %c, l, x\n"
+		"l:\n"
+		"\t%e = zext i16 %i to i32\n"
+		"\t%o = shl i32 %e, 2\n"
+		"\t%a = ptradd ptr %p, %o\n"
+		"\t%v = load i32 %a\n"
+		"\t%s2 = add i32 %s, %v\n"
+		"\t%j = add i16 %i, 1\n"
+		"\tjmp t\n"
+		"x:\n"
+		"\tret i32 %s\n"
+		"}\n", false, true);
+
+	//i from k while i < n: the loop is only entered when k < n, so k doesn't wrap either.
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i32 @_S(ptr %p, i16 %k, i16 %n)\n"
+		"{\n"
+		"b:\n"
+		"\t%0 = ult i16 %k, %n\n"
+		"\tbrif %0, 0, x\n"
+		"l:\n"
+		"\t%1 = phi i16 [0, %k], [l, %j]\n"
+		"\t%2 = phi i32 [0, 0], [l, %s2]\n"
+		"\t%3 = phi ptr [0, %9], [l, %4]\n"
+		"\t%v = load i32 %3\n"
+		"\t%s2 = add i32 %2, %v\n"
+		"\t%j = add i16 %1, 1\n"
+		"\t%4 = ptradd ptr %3, 4\n"
+		"\t%5 = ult i16 %j, %n\n"
+		"\tbrif %5, l, x\n"
+		"x:\n"
+		"\t%6 = phi i32 [b, 0], [l, %s2]\n"
+		"\tret i32 %6\n"
+		"0:\n"
+		"\t%7 = zext i16 %k to i32\n"
+		"\t%8 = shl i32 %7, 2\n"
+		"\t%9 = ptradd ptr %p, %8\n"
+		"\tjmp l\n"
+		"}\n",
+		"function i32 @_S(ptr %p, i16 %k, i16 %n)\n"
+		"{\n"
+		"b:\n"
+		"\tjmp t\n"
+		"t:\n"
+		"\t%i = phi i16 [b, %k], [l, %j]\n"
+		"\t%s = phi i32 [b, 0], [l, %s2]\n"
+		"\t%c = ult i16 %i, %n\n"
+		"\tbrif %c, l, x\n"
+		"l:\n"
+		"\t%e = zext i16 %i to i32\n"
+		"\t%o = shl i32 %e, 2\n"
+		"\t%a = ptradd ptr %p, %o\n"
+		"\t%v = load i32 %a\n"
+		"\t%s2 = add i32 %s, %v\n"
+		"\t%j = add i16 %i, 1\n"
+		"\tjmp t\n"
+		"x:\n"
+		"\tret i32 %s\n"
+		"}\n", false, true);
+
+	//i stepping by 2 while i < n wraps from 65534 when n is 65535: it stays.
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i32 @_S(ptr %p, i16 %n)\n"
+		"{\n"
+		"b:\n"
+		"\t%0 = ult i16 0, %n\n"
+		"\tbrif %0, l, x\n"
+		"l:\n"
+		"\t%1 = phi i16 [b, 0], [l, %j]\n"
+		"\t%2 = phi i32 [b, 0], [l, %s2]\n"
+		"\t%e = zext i16 %1 to i32\n"
+		"\t%o = shl i32 %e, 2\n"
+		"\t%a = ptradd ptr %p, %o\n"
+		"\t%v = load i32 %a\n"
+		"\t%s2 = add i32 %2, %v\n"
+		"\t%j = add i16 %1, 2\n"
+		"\t%3 = ult i16 %j, %n\n"
+		"\tbrif %3, l, x\n"
+		"x:\n"
+		"\t%4 = phi i32 [b, 0], [l, %s2]\n"
+		"\tret i32 %4\n"
+		"}\n",
+		"function i32 @_S(ptr %p, i16 %n)\n"
+		"{\n"
+		"b:\n"
+		"\tjmp t\n"
+		"t:\n"
+		"\t%i = phi i16 [b, 0], [l, %j]\n"
+		"\t%s = phi i32 [b, 0], [l, %s2]\n"
+		"\t%c = ult i16 %i, %n\n"
+		"\tbrif %c, l, x\n"
+		"l:\n"
+		"\t%e = zext i16 %i to i32\n"
+		"\t%o = shl i32 %e, 2\n"
+		"\t%a = ptradd ptr %p, %o\n"
+		"\t%v = load i32 %a\n"
+		"\t%s2 = add i32 %s, %v\n"
+		"\t%j = add i16 %i, 2\n"
+		"\tjmp t\n"
+		"x:\n"
+		"\tret i32 %s\n"
+		"}\n", false, true);
+
+	//i stepping by 2 while i < 1000 doesn't wrap.
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i32 @_S(ptr %p)\n"
+		"{\n"
+		"b:\n"
+		"\tjmp l\n"
+		"l:\n"
+		"\t%0 = phi i16 [l, %j], [b, 0]\n"
+		"\t%1 = phi i32 [l, %s2], [b, 0]\n"
+		"\t%2 = phi ptr [l, %3], [b, %p]\n"
+		"\t%v = load i32 %2\n"
+		"\t%s2 = add i32 %1, %v\n"
+		"\t%j = add i16 %0, 2\n"
+		"\t%3 = ptradd ptr %2, 8\n"
+		"\t%4 = ult i16 %j, 1000\n"
+		"\tbrif %4, l, x\n"
+		"x:\n"
+		"\tret i32 %s2\n"
+		"}\n",
+		"function i32 @_S(ptr %p)\n"
+		"{\n"
+		"b:\n"
+		"\tjmp t\n"
+		"t:\n"
+		"\t%i = phi i16 [b, 0], [l, %j]\n"
+		"\t%s = phi i32 [b, 0], [l, %s2]\n"
+		"\t%c = ult i16 %i, 1000\n"
+		"\tbrif %c, l, x\n"
+		"l:\n"
+		"\t%e = zext i16 %i to i32\n"
+		"\t%o = shl i32 %e, 2\n"
+		"\t%a = ptradd ptr %p, %o\n"
+		"\t%v = load i32 %a\n"
+		"\t%s2 = add i32 %s, %v\n"
+		"\t%j = add i16 %i, 2\n"
+		"\tjmp t\n"
+		"x:\n"
+		"\tret i32 %s\n"
+		"}\n", false, true);
+
+	//i from k while i != n wraps when k > n: it stays.
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i32 @_S(ptr %p, i16 %k, i16 %n)\n"
+		"{\n"
+		"b:\n"
+		"\t%0 = ne i16 %k, %n\n"
+		"\tbrif %0, l, x\n"
+		"l:\n"
+		"\t%1 = phi i16 [b, %k], [l, %j]\n"
+		"\t%2 = phi i32 [b, 0], [l, %s2]\n"
+		"\t%e = zext i16 %1 to i32\n"
+		"\t%o = shl i32 %e, 2\n"
+		"\t%a = ptradd ptr %p, %o\n"
+		"\t%v = load i32 %a\n"
+		"\t%s2 = add i32 %2, %v\n"
+		"\t%j = add i16 %1, 1\n"
+		"\t%3 = ne i16 %j, %n\n"
+		"\tbrif %3, l, x\n"
+		"x:\n"
+		"\t%4 = phi i32 [b, 0], [l, %s2]\n"
+		"\tret i32 %4\n"
+		"}\n",
+		"function i32 @_S(ptr %p, i16 %k, i16 %n)\n"
+		"{\n"
+		"b:\n"
+		"\tjmp t\n"
+		"t:\n"
+		"\t%i = phi i16 [b, %k], [l, %j]\n"
+		"\t%s = phi i32 [b, 0], [l, %s2]\n"
+		"\t%c = ne i16 %i, %n\n"
+		"\tbrif %c, l, x\n"
+		"l:\n"
+		"\t%e = zext i16 %i to i32\n"
+		"\t%o = shl i32 %e, 2\n"
+		"\t%a = ptradd ptr %p, %o\n"
+		"\t%v = load i32 %a\n"
+		"\t%s2 = add i32 %s, %v\n"
+		"\t%j = add i16 %i, 1\n"
+		"\tjmp t\n"
+		"x:\n"
+		"\tret i32 %s\n"
+		"}\n", false, true);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // A loop counting c from 0 up to n beside x going up by 1 too tests x
 // against x0 + n instead, and c goes, when the loop is only entered when
 // 0 < n.  Unguarded (n may be 0: once round, where != would go round
@@ -2735,6 +2971,7 @@ void TestIR(void)
 	TestIROptimiserRestrictParameters();
 	TestIRImportsRestrict();
 	TestIROptimiserLoopCounters();
+	TestIROptimiserZeroExtendedCounters();
 	TestIROptimiserSinkLoads();
 	TestIROptimiserExitValues();
 	TestIROptimiserSinkAndHoist();
