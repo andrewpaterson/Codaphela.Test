@@ -52,7 +52,13 @@
     <ClCompile Include="TestCPP816.cpp">
       <Filter>Source\Parser</Filter>
     </ClCompile>
+    <ClCompile Include="TestCPP816Volatile.cpp">
+      <Filter>Source\Parser</Filter>
+    </ClCompile>
     <ClCompile Include="TestCPP65IR.cpp">
+      <Filter>Source\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCPP65LazyHeaders.cpp">
       <Filter>Source\Parser</Filter>
     </ClCompile>
     <ClCompile Include="TestCPP65Spill.cpp">

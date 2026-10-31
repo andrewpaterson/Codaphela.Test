@@ -3,6 +3,7 @@
 #include "BaseLib/Logger.h"
 #include "CppParserLib/Preprocessor.h"
 #include "CppParserLib/CppTokeniser.h"
+#include "CppParserLib/ASCIIIndex.h"
 #include "CppParserLib/CTReservedWord.h"
 #include "CppParserLib/CTIdentifier.h"
 #include "CppParserLib/CTInt.h"
@@ -137,14 +138,14 @@ void TestCppTokeniserIdentifiers(void)
 	pcSecond = (CCTIdentifier*)cTokeniser.Get(1);
 	pcThird = (CCTIdentifier*)cTokeniser.Get(2);
 	AssertTrue(pcFirst->IsIdentifier());
-	AssertLong(pcFirst->mlliIdentifier, pcThird->mlliIdentifier);
-	AssertTrue(pcFirst->mlliIdentifier != pcSecond->mlliIdentifier);
-	AssertString("Fred", cTokeniser.GetIdentifier(pcFirst->mlliIdentifier, &iLength));
+	AssertLong(pcFirst->miIdentifier, pcThird->miIdentifier);
+	AssertTrue(pcFirst->miIdentifier != pcSecond->miIdentifier);
+	AssertString("Fred", cTokeniser.GetIdentifier(pcFirst->miIdentifier, &iLength));
 	AssertInt(4, iLength);
 
 	//override is an identifier with a special meaning.  [lex.name] 2
 	AssertTrue(cTokeniser.Get(3)->IsIdentifier());
-	AssertLong(cTokeniser.mlliOverride, ((CCTIdentifier*)cTokeniser.Get(3))->mlliIdentifier);
+	AssertLong(cTokeniser.mlliOverride, ((CCTIdentifier*)cTokeniser.Get(3))->miIdentifier);
 
 	cTokeniser.Kill();
 	cFile.Kill();
@@ -302,6 +303,60 @@ void TestCppTokeniserErrors(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The identifiers' index: IDs in the order names are added, found both ways,
+// names added again refused, and still found after the table has grown.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCppTokeniserIdentifierIndex(void)
+{
+	CASCIIIndex	cIndex;
+	char		sz[32];
+	char*		szName;
+	int			iLength;
+	int			i;
+
+	cIndex.Init();
+	AssertInt(0, cIndex.NumElements());
+	AssertLong(-1, cIndex.Get("miCount", NULL, true));
+	AssertNull(cIndex.Get(0));
+
+	AssertLong(0, cIndex.Add("miCount"));
+	AssertLong(1, cIndex.Add("Count"));
+	AssertLong(2, cIndex.Add("ValueAndMore", "ValueAndMore" + 4));
+	AssertLong(-1, cIndex.Add("Count"));
+	AssertInt(3, cIndex.NumElements());
+
+	AssertLong(0, cIndex.Get("miCount", NULL, true));
+	AssertLong(1, cIndex.Get("Count", NULL, true));
+	AssertLong(1, cIndex.Get("CountMe", "CountMe" + 4, true));
+	AssertLong(-1, cIndex.Get("Coun", NULL, true));
+	szName = cIndex.Get(2, &iLength);
+	AssertString("Value", szName);
+	AssertInt(5, iLength);
+	AssertNull(cIndex.Get(3));
+	AssertNull(cIndex.Get(-1));
+
+	for (i = 3; i < 2000; i++)
+	{
+		sprintf(sz, "Name%d", i);
+		AssertLong(i, cIndex.Add(sz));
+	}
+	AssertInt(2000, cIndex.NumElements());
+	for (i = 3; i < 2000; i++)
+	{
+		sprintf(sz, "Name%d", i);
+		AssertLong(i, cIndex.Get(sz, NULL, true));
+		AssertString(sz, cIndex.Get(i));
+	}
+	AssertLong(0, cIndex.Get("miCount", NULL, true));
+	AssertString("Count", cIndex.Get(1));
+
+	cIndex.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCppTokeniser(void)
@@ -318,6 +373,7 @@ void TestCppTokeniser(void)
 	TestCppTokeniserFloatingAndCharacters();
 	TestCppTokeniserLocations();
 	TestCppTokeniserErrors();
+	TestCppTokeniserIdentifierIndex();
 
 	NumberKill();
 	TypeConverterKill();

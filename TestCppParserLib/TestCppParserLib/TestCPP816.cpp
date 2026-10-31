@@ -572,6 +572,130 @@ void TestCPP816BitTables(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Shifts by constants of 16 bits or more (whole words moved, then bits):
+// 32 and 64 bit shl, lshr and ashr, against one bit shifts repeated.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816WordShifts(void)
+{
+	AssertInt(1, TestCPP816Run(
+		"volatile int giOne = 1;\n"
+		"unsigned long ShlL(unsigned long x, int n) { while (n-- > 0) { x <<= giOne; } return x; }\n"
+		"unsigned long ShrL(unsigned long x, int n) { while (n-- > 0) { x >>= giOne; } return x; }\n"
+		"long SarL(long x, int n) { while (n-- > 0) { x >>= giOne; } return x; }\n"
+		"unsigned long long ShlQ(unsigned long long x, int n) { while (n-- > 0) { x <<= giOne; } return x; }\n"
+		"unsigned long long ShrQ(unsigned long long x, int n) { while (n-- > 0) { x >>= giOne; } return x; }\n"
+		"long long SarQ(long long x, int n) { while (n-- > 0) { x >>= giOne; } return x; }\n"
+		"int Check(unsigned long ul, unsigned long long ull)\n"
+		"{\n"
+		"\tlong\t\tl = (long)ul;\n"
+		"\tlong long\tll = (long long)ull;\n"
+		"\tif (((ul << 16) != ShlL(ul, 16)) || ((ul >> 17) != ShrL(ul, 17)) || ((l >> 24) != SarL(l, 24)) || ((ul << 31) != ShlL(ul, 31)) || ((l >> 31) != SarL(l, 31))) { return 0; }\n"
+		"\tif (((ull << 16) != ShlQ(ull, 16)) || ((ull >> 33) != ShrQ(ull, 33)) || ((ll >> 40) != SarQ(ll, 40)) || ((ull << 48) != ShlQ(ull, 48)) || ((ll >> 63) != SarQ(ll, 63)) || ((ull >> 32) != ShrQ(ull, 32))) { return 0; }\n"
+		"\treturn 1;\n"
+		"}\n"
+		"int main(void)\n"
+		"{\n"
+		"\treturn Check(0x89ABCDEFUL, 0xFEDCBA9876543210ULL) && Check(0x12345678UL, 0x0123456789ABCDEFULL) && Check(0xFFFFFFFFUL, 0x8000000000000001ULL) ? 1 : 0;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A 2 word load or store through an array index kept in Y (FoldIndices,
+// IRF_InArray) reads the index for each word, so the index can't be kept in
+// X: returning a 32 bit load loads its high word first and puts it in X
+// (tax) before the low word's txy (TrueMallocator's FindFree returned
+// mauiSecondBitmaps[iFirst] with iFirst counted in X).  Counted in loops
+// here so the index is X's, and called through pointers so not inlined.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816IndexedWords(void)
+{
+	AssertInt(1, TestCPP816Run(
+		"volatile unsigned long gulValue;\n"
+		"class CMaps\n"
+		"{\n"
+		"public:\n"
+		"\tunsigned long\tmaul[30];\n"
+		"\tvoid*\t\t\tmapv[30];\n"
+		"};\n"
+		"CMaps\tgcMaps;\n"
+		"unsigned long Get(unsigned long ulMask) { int i = 0; while (!(ulMask & 1)) { ulMask >>= 1; i++; } return gcMaps.maul[i]; }\n"
+		"void* GetPointer(unsigned long ulMask) { int i = 1; while (!(ulMask & 1)) { ulMask >>= 1; i++; } return gcMaps.mapv[i]; }\n"
+		"void Put(unsigned long ulMask, unsigned long ul) { int i = 0; while (!(ulMask & 1)) { ulMask >>= 1; i++; } gcMaps.maul[i] = ul; }\n"
+		"unsigned long (*volatile gpGet)(unsigned long) = Get;\n"
+		"void* (*volatile gpGetPointer)(unsigned long) = GetPointer;\n"
+		"void (*volatile gpPut)(unsigned long, unsigned long) = Put;\n"
+		"int main(void)\n"
+		"{\n"
+		"\tint\ti;\n"
+		"\tfor (i = 0; i < 29; i++)\n"
+		"\t{\n"
+		"\t\tgcMaps.maul[i] = 0x10001UL * (unsigned long)(i + 1);\n"
+		"\t\tgcMaps.mapv[i] = &gcMaps.maul[i];\n"
+		"\t}\n"
+		"\tfor (i = 0; i < 28; i++)\n"
+		"\t{\n"
+		"\t\tgulValue = 1UL << i;\n"
+		"\t\tif (gpGet(gulValue) != 0x10001UL * (unsigned long)(i + 1)) { return 100 + i; }\n"
+		"\t\tif (gpGetPointer(gulValue) != &gcMaps.maul[i + 1]) { return 200 + i; }\n"
+		"\t\tgpPut(gulValue, 0x20003UL * (unsigned long)i);\n"
+		"\t\tif (gcMaps.maul[i] != 0x20003UL * (unsigned long)i) { return 300 + i; }\n"
+		"\t}\n"
+		"\treturn 1;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// 32 bit unsigned divides and remainders by divisors under 65536 (R816_UDiv32
+// and R816_URem32, with the dividend's high word below the divisor and not),
+// checked as q * d + r == x with r < d for pseudo random x and d of every
+// size.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816NarrowDivisors(void)
+{
+	AssertInt(1, TestCPP816Run(
+		"volatile unsigned long gulX;\n"
+		"volatile unsigned long gulD;\n"
+		"int Check(void)\n"
+		"{\n"
+		"\tunsigned long\tx = gulX;\n"
+		"\tunsigned long\td = gulD;\n"
+		"\tunsigned long\tq = x / d;\n"
+		"\tunsigned long\tr = x % gulD;\n"
+		"\treturn (q * d + r == x) && (r < d);\n"
+		"}\n"
+		"int main(void)\n"
+		"{\n"
+		"\tunsigned long\tul;\n"
+		"\tint\t\t\ti;\n"
+		"\tul = 0x2468ACEUL;\n"
+		"\tfor (i = 0; i < 400; i++)\n"
+		"\t{\n"
+		"\t\tul = ul * 1664525UL + 1013904223UL;\n"
+		"\t\tgulX = ul;\n"
+		"\t\tgulD = (ul >> (i & 15)) & 0xFFFF;\n"
+		"\t\tif (gulD == 0) { gulD = 1; }\n"
+		"\t\tif (!Check()) { return 100 + i; }\n"
+		"\t\tgulX = ul | 0xFFFF0000UL;\n"
+		"\t\tif (!Check()) { return 1000 + i; }\n"
+		"\t}\n"
+		"\tgulX = 0xFFFFFFFFUL; gulD = 1; if (!Check()) { return 2; }\n"
+		"\tgulD = 0xFFFF; if (!Check()) { return 3; }\n"
+		"\tgulD = 0x8000; if (!Check()) { return 4; }\n"
+		"\tgulX = 0x00010000UL; gulD = 1; if (!Check()) { return 5; }\n"
+		"\treturn 1;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Statements and operators: switch, do, 16 bit multiply, divide and shifts, unsigned long, function pointers,
 // globals and a destructor.
 //
@@ -3642,6 +3766,9 @@ void TestCPP816(void)
 	TestCPP816SharedDivisions();
 	TestCPP816Divide64();
 	TestCPP816BitTables();
+	TestCPP816IndexedWords();
+	TestCPP816NarrowDivisors();
+	TestCPP816WordShifts();
 	TestCPP816Globals();
 	TestCPP816Builtins();
 	TestCPP816MemSwp();

@@ -274,7 +274,6 @@ void TestIR816BackendBasics(void)
 		"_main:\n"
 		"\t\t.width (A, X), 16\n"
 		"\t\t.relax\n"
-		"L1:\n"
 		"\t\tldx 0\n"
 		"\t\tlda 42\n"
 		"\t\trtl\n"
@@ -1482,14 +1481,14 @@ static void AssertPeepholeBranches(const char* szExpected, const char* szCode)
 void TestIR816BackendPeepholeBranches(void)
 {
 	//A bra to the label after it.
-	AssertPeepholeBranches("\t\tlda 1\nL2:\n\t\trtl\n", "\t\tlda 1\n\t\tbra L2\nL2:\n\t\trtl\n");
+	AssertPeepholeBranches("\t\tlda 1\n\t\trtl\n", "\t\tlda 1\n\t\tbra L2\nL2:\n\t\trtl\n");
 
 	//A branch to a bra goes where it goes (and the bra, reached no other way, goes).
 	AssertPeepholeBranches("\t\tbeq L3\n\t\tlda 2\n\t\trtl\nL3:\n\t\trtl\n",
 		"\t\tbeq L1\n\t\tlda 2\n\t\trtl\nL1:\n\t\tbra L3\nL3:\n\t\trtl\n");
 
 	//Bcc X, bra Y, X: is B!cc Y, X:.
-	AssertPeepholeBranches("\t\tcmp 5\n\t\tbcs L2\nL1:\n\t\tlda 1\nL2:\n\t\trtl\n",
+	AssertPeepholeBranches("\t\tcmp 5\n\t\tbcs L2\n\t\tlda 1\nL2:\n\t\trtl\n",
 		"\t\tcmp 5\n\t\tbcc L1\n\t\tbra L2\nL1:\n\t\tlda 1\nL2:\n\t\trtl\n");
 
 	//bcc X, beq X, bra Y, X: is beq X, bcs Y, X:.
@@ -1498,23 +1497,23 @@ void TestIR816BackendPeepholeBranches(void)
 
 	//Round a loop (marked ;R) is the branch taken; the mark goes.  Then L3's code, after the bra out, can't be
 	//reached, and the bra goes to the label after it.
-	AssertPeepholeBranches("L1:\n\t\tinx\n\t\tcpx 5\n\t\tbne L1\nL2:\n\t\trtl\n",
+	AssertPeepholeBranches("L1:\n\t\tinx\n\t\tcpx 5\n\t\tbne L1\n\t\trtl\n",
 		"L1:\n\t\tinx\n\t\tcpx 5\n\t\tbeq L2\n\t\tbra L1 ;R\nL3:\n\t\tlda 1\nL2:\n\t\trtl\n");
 
 	//An lda for nothing: before a bra to code that sets A first (past clc), and falling into code that does (past a
 	//label and ldx).
 	AssertPeepholeBranches("\t\tbra L1\nL2:\n\t\trtl\nL1:\n\t\tclc\n\t\tlda 4\n\t\tbra L2\n",
 		"\t\tlda [D + 3]\n\t\tbra L1\nL2:\n\t\trtl\nL1:\n\t\tclc\n\t\tlda 4\n\t\tbra L2\n");
-	AssertPeepholeBranches("L1:\n\t\tldx 2\n\t\ttxa\n\t\trtl\n", "\t\tlda [D + 3]\nL1:\n\t\tldx 2\n\t\ttxa\n\t\trtl\n");
+	AssertPeepholeBranches("\t\tldx 2\n\t\ttxa\n\t\trtl\n", "\t\tlda [D + 3]\nL1:\n\t\tldx 2\n\t\ttxa\n\t\trtl\n");
 	//...and past steps and shifts of memory, pushes and index compares (IR816LeavesA, as IR816DeadLoad).
-	AssertPeepholeBranches("L1:\n\t\tinc [D + 5]\n\t\tpei [D + 7]\n\t\tphx\n\t\tcpx 3\n\t\tlda 1\n\t\trtl\n",
+	AssertPeepholeBranches("\t\tinc [D + 5]\n\t\tpei [D + 7]\n\t\tphx\n\t\tcpx 3\n\t\tlda 1\n\t\trtl\n",
 		"\t\tlda [D + 3]\nL1:\n\t\tinc [D + 5]\n\t\tpei [D + 7]\n\t\tphx\n\t\tcpx 3\n\t\tlda 1\n\t\trtl\n");
-	AssertPeepholeBranches("\t\tlda [D + 3]\nL1:\n\t\tinc A\n\t\tlda 1\n\t\trtl\n", "\t\tlda [D + 3]\nL1:\n\t\tinc A\n\t\tlda 1\n\t\trtl\n");
-	AssertPeepholeBranches("\t\tlda [D + 3]\nL1:\n\t\tpha\n\t\tlda 1\n\t\trtl\n", "\t\tlda [D + 3]\nL1:\n\t\tpha\n\t\tlda 1\n\t\trtl\n");
+	AssertPeepholeBranches("\t\tlda [D + 3]\n\t\tinc A\n\t\tlda 1\n\t\trtl\n", "\t\tlda [D + 3]\nL1:\n\t\tinc A\n\t\tlda 1\n\t\trtl\n");
+	AssertPeepholeBranches("\t\tlda [D + 3]\n\t\tpha\n\t\tlda 1\n\t\trtl\n", "\t\tlda [D + 3]\nL1:\n\t\tpha\n\t\tlda 1\n\t\trtl\n");
 
 	//Kept: a branch reads its N and Z, the code after reads A, or it reads memory that isn't the direct page's.
-	AssertPeepholeBranches("\t\tlda [D + 3]\nL1:\n\t\tbeq L2\n\t\trtl\nL2:\n\t\trtl\n", "\t\tlda [D + 3]\nL1:\n\t\tbeq L2\n\t\trtl\nL2:\n\t\trtl\n");
-	AssertPeepholeBranches("\t\tlda [D + 3]\nL1:\n\t\tclc\n\t\tadc 4\n\t\trtl\n", "\t\tlda [D + 3]\nL1:\n\t\tclc\n\t\tadc 4\n\t\trtl\n");
+	AssertPeepholeBranches("\t\tlda [D + 3]\n\t\tbeq L2\n\t\trtl\nL2:\n\t\trtl\n", "\t\tlda [D + 3]\nL1:\n\t\tbeq L2\n\t\trtl\nL2:\n\t\trtl\n");
+	AssertPeepholeBranches("\t\tlda [D + 3]\n\t\tclc\n\t\tadc 4\n\t\trtl\n", "\t\tlda [D + 3]\nL1:\n\t\tclc\n\t\tadc 4\n\t\trtl\n");
 	AssertPeepholeBranches("\t\tlda [_gX + 0]:24\n\t\tlda 1\n\t\trtl\n", "\t\tlda [_gX + 0]:24\n\t\tlda 1\n\t\trtl\n");
 
 	//txa after tax with clc between.
@@ -1523,7 +1522,7 @@ void TestIR816BackendPeepholeBranches(void)
 	//A tax for nothing: X written again before it is read.  Kept when [D + X], a label or a call comes first.
 	AssertPeepholeBranches("\t\tclc\n\t\tadc [D + 3]\n\t\ttax\n\t\tstx [D + 5]\n\t\trtl\n", "\t\ttax\n\t\tclc\n\t\tadc [D + 3]\n\t\ttax\n\t\tstx [D + 5]\n\t\trtl\n");
 	AssertPeepholeBranches("\t\ttax\n\t\tlda [D + X]\n\t\ttax\n\t\trtl\n", "\t\ttax\n\t\tlda [D + X]\n\t\ttax\n\t\trtl\n");
-	AssertPeepholeBranches("\t\ttax\nL1:\n\t\tldx 3\n\t\trtl\n", "\t\ttax\nL1:\n\t\tldx 3\n\t\trtl\n");
+	AssertPeepholeBranches("\t\ttax\nL1:\n\t\tldx 3\n\t\tbne L1\n\t\trtl\n", "\t\ttax\nL1:\n\t\tldx 3\n\t\tbne L1\n\t\trtl\n");
 	AssertPeepholeBranches("\t\ttax\n\t\tjsl _F\n\t\tldx 3\n\t\trtl\n", "\t\ttax\n\t\tjsl _F\n\t\tldx 3\n\t\trtl\n");
 
 	//A second txy with nothing between that changes X or Y.
@@ -1532,6 +1531,12 @@ void TestIR816BackendPeepholeBranches(void)
 
 	//Code after rtl up to a label that is used.
 	AssertPeepholeBranches("\t\tbeq L6\n\t\trtl\nL6:\n\t\tlda 3\n\t\trtl\n", "\t\tbeq L6\n\t\trtl\n\t\tlda 1\nL5:\n\t\tlda 2\nL6:\n\t\tlda 3\n\t\trtl\n");
+
+	//A label nothing names goes, so a branch over a bra round a loop is one branch: beq L1, bcs L2, L3:, bra L1, L2: is beq L1,
+	//bcc L1, L2:.  One a jump table names stays.
+	AssertPeepholeBranches("L1:\n\t\tinx\n\t\tcpx [D + 25]\n\t\tbeq L1\n\t\tbcc L1\n\t\tlda 0\n\t\trtl\n",
+		"L1:\n\t\tinx\n\t\tcpx [D + 25]\nL4:\n\t\tbeq L1\n\t\tbcs L2\nL3:\n\t\tbra L1\nL2:\n\t\tlda 0\n\t\trtl\n");
+	AssertPeepholeBranches("\t\tjmp [L7 + X]\nL7:\n\t\t.word L8 & 0xFFFF\nL8:\n\t\trtl\n", "\t\tjmp [L7 + X]\nL7:\n\t\t.word L8 & 0xFFFF\nL8:\n\t\trtl\n");
 }
 
 
