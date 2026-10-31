@@ -873,6 +873,60 @@ void TestCircuitEditorMoveConnectedJunction(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The divider of Input/FlipFlopClose.xml, drawn in LogiCim with the
+// clock's output right on the flip flop's CP, no wire between them.
+// Dragged with control held, CP is routed back to the clock's output,
+// and SD and RD to the supply.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorMoveConnectedPortOnPort(void)
+{
+	SEditorTest			sTest;
+	CCircuitFonts		cFonts;
+	CCircuitView*		pcMain;
+	CComponentView*		pcClock;
+	CComponentView*		pcFlipFlop;
+	CComponentView*		pcPower;
+	SFloat64Vec2		sCentre;
+
+	sTest.Init(&cFonts);
+	LoadTestCircuitFonts(&cFonts);
+	AssertTrue(sTest.cEditor.Load("Input" _FS_ "FlipFlopClose.xml"));
+	pcMain = sTest.cEditor.GetCircuit();
+	pcClock = pcMain->GetComponent(0);
+	pcFlipFlop = pcMain->GetComponent(1);
+	pcPower = pcMain->GetComponent(2);
+	AssertTrue(pcClock->GetPortView("Output")->GetGridPosition() == pcFlipFlop->GetPortView("CP")->GetGridPosition());
+	AssertNull(pcMain->GetTraceAt(pcFlipFlop->GetPortView("CP")->GetGridPosition()));
+	AssertNotNull(GetPortTrace(&sTest, pcFlipFlop, "CP"));
+	AssertPointer(GetPortTrace(&sTest, pcClock, "Output"), GetPortTrace(&sTest, pcFlipFlop, "CP"));
+
+	sCentre = GetCentre(pcFlipFlop);
+	sTest.Click(sCentre.x, sCentre.y);
+	sTest.cEditor.SetModifiers(true, false);
+	sTest.Press(sCentre.x, sCentre.y);
+	sTest.PointAt(sCentre.x + 10, sCentre.y - 8);
+	AssertNotNull(pcMain->GetTraceAt(pcFlipFlop->GetPortView("CP")->GetGridPosition()));
+	sTest.Release(sCentre.x + 10, sCentre.y - 8);
+	sTest.cEditor.SetModifiers(false, false);
+	AssertInt(-2, pcFlipFlop->GetPosition().x);
+	AssertInt(-9, pcFlipFlop->GetPosition().y);
+
+	AssertNotNull(pcMain->GetTraceAt(pcFlipFlop->GetPortView("CP")->GetGridPosition()));
+	AssertNotNull(pcMain->GetTraceAt(pcClock->GetPortView("Output")->GetGridPosition()));
+	AssertNotNull(GetPortTrace(&sTest, pcFlipFlop, "CP"));
+	AssertPointer(GetPortTrace(&sTest, pcClock, "Output"), GetPortTrace(&sTest, pcFlipFlop, "CP"));
+	AssertPointer(GetPortTrace(&sTest, pcPower, "Power"), GetPortTrace(&sTest, pcFlipFlop, "SD"));
+	AssertPointer(GetPortTrace(&sTest, pcPower, "Power"), GetPortTrace(&sTest, pcFlipFlop, "RD"));
+	AssertPointer(GetPortTrace(&sTest, pcFlipFlop, "QB"), GetPortTrace(&sTest, pcFlipFlop, "D"));
+
+	KillTestCircuitFonts(&cFonts);
+	sTest.Kill(true);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // With shift held a press on a component that isn't selected drags a
 // selection rectangle, adding to the selection, rather than moving it.
 // Dragged right to left it takes the component it touches.
@@ -3179,6 +3233,7 @@ void TestCircuitEditor(void)
 	TestCircuitEditorMoveConnectedLoop();
 	TestCircuitEditorMoveConnectedSharedNet();
 	TestCircuitEditorMoveConnectedJunction();
+	TestCircuitEditorMoveConnectedPortOnPort();
 	TestCircuitEditorShiftPressSelects();
 	TestCircuitEditorRotateAndDelete();
 	TestCircuitEditorFlip();
