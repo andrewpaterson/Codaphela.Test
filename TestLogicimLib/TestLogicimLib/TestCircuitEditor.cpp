@@ -821,6 +821,58 @@ void TestCircuitEditorMoveConnectedSharedNet(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// An inverter's input on a junction: the ground's wire ends there and
+// another goes on from it down to a second inverter.  Dragged with control
+// held, the junction stays where it is and the input is routed back to
+// it, so both inverters are still driven by the ground.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorMoveConnectedJunction(void)
+{
+	SEditorTest			sTest;
+	CCircuitView*		pcMain;
+	CInverterView*		pcInverter;
+	CInverterView*		pcOther;
+	CGroundView*		pcGround;
+	SFloat64Vec2		sCentre;
+	SInt32Vec2			sPoint;
+
+	sTest.Init();
+	pcMain = sTest.cEditor.AddCircuit("Main");
+	pcGround = NewMalloc<CGroundView>();
+	pcGround->Init(-8, -3, ROT_North, "");
+	pcMain->Add(pcGround);
+	pcMain->AddTraces(-8, -3, -4, -2);
+	pcMain->AddTrace(-4, -2, -4, 4);
+	pcInverter = AddTestInverter(pcMain, -3, -2);
+	pcOther = AddTestInverter(pcMain, -3, 4);
+	AssertTrue(sTest.cEditor.Simulate("Main"));
+	AssertNotNull(GetPortTrace(&sTest, pcInverter, "Input"));
+	AssertPointer(GetPortTrace(&sTest, pcOther, "Input"), GetPortTrace(&sTest, pcInverter, "Input"));
+
+	sCentre = GetCentre(pcInverter);
+	sTest.cEditor.SetModifiers(true, false);
+	sTest.Press(sCentre.x, sCentre.y);
+	sTest.PointAt(sCentre.x + 6, sCentre.y - 8);
+	AssertNotNull(pcMain->GetTraceAt(pcInverter->GetPortView("Input")->GetGridPosition()));
+	sTest.Release(sCentre.x + 6, sCentre.y - 8);
+	sTest.cEditor.SetModifiers(false, false);
+	AssertInt(3, pcInverter->GetPosition().x);
+	AssertInt(-10, pcInverter->GetPosition().y);
+
+	sPoint.Init(-4, -2);
+	AssertNotNull(pcMain->GetTraceAt(sPoint));
+	sPoint.Init(-4, 1);
+	AssertNotNull(pcMain->GetTraceAt(sPoint));
+	AssertNotNull(GetPortTrace(&sTest, pcInverter, "Input"));
+	AssertPointer(GetPortTrace(&sTest, pcOther, "Input"), GetPortTrace(&sTest, pcInverter, "Input"));
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // With shift held a press on a component that isn't selected drags a
 // selection rectangle, adding to the selection, rather than moving it.
 // Dragged right to left it takes the component it touches.
@@ -3126,6 +3178,7 @@ void TestCircuitEditor(void)
 	TestCircuitEditorMoveConnectedLive();
 	TestCircuitEditorMoveConnectedLoop();
 	TestCircuitEditorMoveConnectedSharedNet();
+	TestCircuitEditorMoveConnectedJunction();
 	TestCircuitEditorShiftPressSelects();
 	TestCircuitEditorRotateAndDelete();
 	TestCircuitEditorFlip();
