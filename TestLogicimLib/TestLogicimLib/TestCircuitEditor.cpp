@@ -344,9 +344,10 @@ void TestCircuitEditorPlace(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Dragging a selected inverter away drags its wires with it: its input is
-// routed back to the ground and its output wire, which ends on nothing,
-// moves with it, so it stays wired up, and dragging it back too.
+// Dragging a selected inverter away with control held drags its wires
+// with it: its input is routed back to the ground and its output wire,
+// which ends on nothing, moves with it, so it stays wired up, and dragging
+// it back too.
 // It keeps the same component throughout (the simulation isn't remade)
 // and the circuit's traces don't pile up.
 //
@@ -375,6 +376,7 @@ void TestCircuitEditorMove(void)
 	sCentre = GetCentre(pcInverter);
 	sTest.Click(sCentre.x, sCentre.y);
 	AssertTrue(sTest.cEditor.GetSelection()->Contains(pcInverter));
+	sTest.cEditor.SetModifiers(true, false);
 	sTest.Drag(sCentre.x, sCentre.y, sCentre.x, sCentre.y + 10);
 	AssertInt(-3, pcInverter->GetPosition().x);
 	AssertInt(8, pcInverter->GetPosition().y);
@@ -393,6 +395,7 @@ void TestCircuitEditorMove(void)
 	AssertInt(TV_High, sTest.GetLevel(6, -2));
 	AssertPointer(pcComponent, pcInverter->GetComponent(sTest.cEditor.GetViewPath(), sTest.cEditor.GetSimulation()));
 	AssertSize(uiTraces, sTest.cEditor.GetSimulation()->GetCircuit()->NumTraces());
+	sTest.cEditor.SetModifiers(false, false);
 
 	sTest.Kill();
 }
@@ -401,8 +404,9 @@ void TestCircuitEditorMove(void)
 //////////////////////////////////////////////////////////////////////////
 //
 // Two inverters fed from a ground's wire, one by a branch off the middle
-// of it.  Moving that inverter routes its input back to the ground's net
-// and takes its output wire with it; the other inverter is untouched.
+// of it.  Moving that inverter with control held routes its input back to
+// the ground's net and takes its output wire with it; the other inverter
+// is untouched.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCircuitEditorMoveFromJunction(void)
@@ -432,7 +436,9 @@ void TestCircuitEditorMoveFromJunction(void)
 
 	sCentre = GetCentre(pcInverter);
 	sTest.Click(sCentre.x, sCentre.y);
+	sTest.cEditor.SetModifiers(true, false);
 	sTest.Drag(sCentre.x, sCentre.y, sCentre.x + 12, sCentre.y - 8);
+	sTest.cEditor.SetModifiers(false, false);
 	AssertInt(9, pcInverter->GetPosition().x);
 	AssertInt(-8, pcInverter->GetPosition().y);
 	sTest.Run();
@@ -446,9 +452,9 @@ void TestCircuitEditorMoveFromJunction(void)
 //////////////////////////////////////////////////////////////////////////
 //
 // A ground wired down, across and down to an inverter's input.  Dragging
-// the wire across down stretches it: while it's dragged the circuit isn't
-// changed; when it's dropped new wire joins its ends back to the wires
-// they were on, so the inverter is still driven.
+// the wire across down with control held stretches it: while it's dragged
+// the circuit isn't changed; when it's dropped new wire joins its ends
+// back to the wires they were on, so the inverter is still driven.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCircuitEditorMoveWire(void)
@@ -476,6 +482,7 @@ void TestCircuitEditorMoveWire(void)
 	sTest.Click(5, 5);
 	AssertSize(1, sTest.cEditor.GetSelection()->NumTraces());
 	uiTraces = pcMain->NumTraces();
+	sTest.cEditor.SetModifiers(true, false);
 	sTest.Press(5, 5);
 	sTest.PointAt(5, 8);
 	AssertTrue(sTest.cEditor.IsEditing());
@@ -484,6 +491,7 @@ void TestCircuitEditorMoveWire(void)
 	AssertNotNull(pcMain->GetTraceAt(sPoint));
 
 	sTest.Release(5, 8);
+	sTest.cEditor.SetModifiers(false, false);
 	AssertFalse(sTest.cEditor.IsEditing());
 	sPoint.Init(5, 5);
 	AssertNull(pcMain->GetTraceAt(sPoint));
@@ -496,6 +504,348 @@ void TestCircuitEditorMoveWire(void)
 	AssertTrue(sTest.cEditor.GetSelection()->GetTrace(0)->Contains(sPoint));
 	sTest.Run();
 	AssertInt(TV_High, sTest.GetLevel(15, 10));
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The trace a port view's first port is on, NULL if none.
+//
+//////////////////////////////////////////////////////////////////////////
+static CTrace* GetPortTrace(SEditorTest* psTest, CComponentView* pcComponent, const char* szPort)
+{
+	return pcComponent->GetPortView(szPort)->GetPort(psTest->cEditor.GetViewPath(), psTest->cEditor.GetSimulation(), 0)->GetTrace();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Pressed without being selected and dragged, an inverter is moved on its
+// own and comes off its wires, which stay where they were: its ports are
+// on no trace while it's dragged.  Dropped, it joins nothing, so its old
+// output wire is undriven; dropped back where it was it's joined again.
+// It keeps its component throughout.  A drag that ends where it started
+// changes nothing.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorMoveDetached(void)
+{
+	SEditorTest			sTest;
+	CCircuitView*		pcMain;
+	CInverterView*		pcInverter;
+	CCircuitComponent*	pcComponent;
+	SFloat64Vec2		sCentre;
+	size				uiTraces;
+	size				uiSnapshots;
+	SInt32Vec2			sOldOut;
+
+	sTest.Init();
+	sOldOut.Init(3, -2);
+	pcMain = sTest.cEditor.AddCircuit("Main");
+	AddGroundAndOutput(pcMain);
+	pcInverter = AddTestInverter(pcMain, -3, -2);
+	AssertTrue(sTest.cEditor.Simulate("Main"));
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(3, -2));
+	pcComponent = pcInverter->GetComponent(sTest.cEditor.GetViewPath(), sTest.cEditor.GetSimulation());
+	uiTraces = pcMain->NumTraces();
+	uiSnapshots = sTest.cEditor.GetUndoStack()->NumSnapshots();
+	AssertNotNull(GetPortTrace(&sTest, pcInverter, "Output"));
+
+	sCentre = GetCentre(pcInverter);
+	AssertTrue(sTest.cEditor.GetSelection()->IsEmpty());
+	sTest.Press(sCentre.x, sCentre.y);
+	sTest.PointAt(sCentre.x, sCentre.y + 10);
+	AssertTrue(sTest.cEditor.IsEditing());
+	AssertInt(8, pcInverter->GetPosition().y);
+	AssertNull(GetPortTrace(&sTest, pcInverter, "Input"));
+	AssertNull(GetPortTrace(&sTest, pcInverter, "Output"));
+	AssertSize(uiTraces, pcMain->NumTraces());
+	AssertNotNull(pcMain->GetTraceAt(sOldOut));
+
+	sTest.Release(sCentre.x, sCentre.y + 10);
+	AssertFalse(sTest.cEditor.IsEditing());
+	AssertTrue(sTest.cEditor.GetSelection()->Contains(pcInverter));
+	AssertSize(1, sTest.cEditor.GetSelection()->NumComponents());
+	AssertNotNull(pcMain->GetTraceAt(sOldOut));
+	AssertSize(uiSnapshots + 1, sTest.cEditor.GetUndoStack()->NumSnapshots());
+	sTest.Run();
+	AssertInt(TV_Unsettled, sTest.GetLevel(3, -2));
+	AssertPointer(pcComponent, pcInverter->GetComponent(sTest.cEditor.GetViewPath(), sTest.cEditor.GetSimulation()));
+
+	sTest.Drag(sCentre.x, sCentre.y + 10, sCentre.x, sCentre.y);
+	AssertInt(-2, pcInverter->GetPosition().y);
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(3, -2));
+	AssertPointer(pcComponent, pcInverter->GetComponent(sTest.cEditor.GetViewPath(), sTest.cEditor.GetSimulation()));
+	AssertSize(uiTraces, pcMain->NumTraces());
+
+	uiSnapshots = sTest.cEditor.GetUndoStack()->NumSnapshots();
+	sTest.Press(sCentre.x, sCentre.y);
+	sTest.PointAt(sCentre.x + 6, sCentre.y + 4);
+	AssertNull(GetPortTrace(&sTest, pcInverter, "Output"));
+	sTest.PointAt(sCentre.x, sCentre.y);
+	sTest.Release(sCentre.x, sCentre.y);
+	AssertSize(uiSnapshots, sTest.cEditor.GetUndoStack()->NumSnapshots());
+	AssertNotNull(GetPortTrace(&sTest, pcInverter, "Output"));
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(3, -2));
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The wire across of TestCircuitEditorMoveWire dragged down on its own:
+// while it's dragged it's on no trace (drawn as disconnected) and its old
+// neighbours stay as they were; dropped, it's on its own, and the
+// inverter is undriven; dragged back it's joined again.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorMoveDetachedWire(void)
+{
+	SEditorTest			sTest;
+	CCircuitView*		pcMain;
+	CGroundView*		pcGround;
+	SInt32Vec2			sPoint;
+	CTraceView*			pcAcross;
+
+	sTest.Init();
+	pcMain = sTest.cEditor.AddCircuit("Main");
+	pcGround = NewMalloc<CGroundView>();
+	pcGround->Init(0, -1, ROT_North, "");
+	pcMain->Add(pcGround);
+	pcMain->AddTrace(0, -1, 0, 5);
+	pcAcross = pcMain->AddTrace(0, 5, 10, 5);
+	pcMain->AddTrace(10, 5, 10, 10);
+	AddTestInverter(pcMain, 11, 10);
+	pcMain->AddTrace(13, 10, 18, 10);
+	AssertTrue(sTest.cEditor.Simulate("Main"));
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(15, 10));
+
+	sTest.Click(5, 5);
+	AssertSize(1, sTest.cEditor.GetSelection()->NumTraces());
+	sTest.Press(5, 5);
+	sTest.PointAt(5, 8);
+	AssertTrue(sTest.cEditor.IsEditing());
+	sPoint.Init(5, 8);
+	AssertTrue(pcAcross->Contains(sPoint));
+	AssertNull(pcAcross->GetTraces(sTest.cEditor.GetViewPath(), sTest.cEditor.GetSimulation()));
+	AssertInt(TV_Low, sTest.GetLevel(0, 3));
+
+	sTest.Release(5, 8);
+	sTest.Run();
+	AssertInt(TV_Unsettled, sTest.GetLevel(5, 8));
+	AssertInt(TV_Low, sTest.GetLevel(0, 3));
+	AssertFalse(sTest.GetLevel(15, 10) == TV_High);
+
+	sTest.Drag(5, 8, 5, 5);
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(15, 10));
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Dragged with control held, an inverter's input lead is routed live to
+// where its port is (a new wire, not yet simulated so drawn as
+// disconnected) and its old lead is out of the circuit.  Brought back and
+// dropped where it started, or the drag stopped, the circuit's wires are
+// as they were, in the same order, and nothing can be undone.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorMoveConnectedLive(void)
+{
+	SEditorTest			sTest;
+	CCircuitView*		pcMain;
+	CInverterView*		pcInverter;
+	SFloat64Vec2		sCentre;
+	CArrayTraceViewPtr	apcBefore;
+	CTraceView*			pcRoute;
+	size				i;
+	size				uiSnapshots;
+	SInt32Vec2			sOldLead;
+
+	sTest.Init();
+	sOldLead.Init(-4, -3);
+	pcMain = sTest.cEditor.AddCircuit("Main");
+	AddGroundAndOutput(pcMain);
+	pcInverter = AddTestInverter(pcMain, -3, -2);
+	AssertTrue(sTest.cEditor.Simulate("Main"));
+	sTest.Run();
+	apcBefore.Init();
+	for (i = 0; i < pcMain->NumTraces(); i++)
+	{
+		apcBefore.Add(pcMain->GetTrace(i));
+	}
+	AssertNotNull(pcMain->GetTraceAt(sOldLead));
+	uiSnapshots = sTest.cEditor.GetUndoStack()->NumSnapshots();
+
+	sCentre = GetCentre(pcInverter);
+	sTest.cEditor.SetModifiers(true, false);
+	sTest.Press(sCentre.x, sCentre.y);
+	sTest.PointAt(sCentre.x, sCentre.y + 10);
+	AssertInt(8, pcInverter->GetPosition().y);
+	AssertNull(pcMain->GetTraceAt(sOldLead));
+	pcRoute = pcMain->GetTraceAt(pcInverter->GetPortView("Input")->GetGridPosition());
+	AssertNotNull(pcRoute);
+	AssertTrue(apcBefore.Find(pcRoute) == ARRAY_ELEMENT_NOT_FOUND);
+	AssertNull(pcRoute->GetTraces(sTest.cEditor.GetViewPath(), sTest.cEditor.GetSimulation()));
+
+	sTest.PointAt(sCentre.x + 3, sCentre.y + 12);
+	AssertNotNull(pcMain->GetTraceAt(pcInverter->GetPortView("Input")->GetGridPosition()));
+
+	sTest.PointAt(sCentre.x, sCentre.y);
+	sTest.Release(sCentre.x, sCentre.y);
+	AssertSize(apcBefore.NumElements(), pcMain->NumTraces());
+	for (i = 0; i < pcMain->NumTraces(); i++)
+	{
+		AssertPointer(apcBefore.GetPtr(i), pcMain->GetTrace(i));
+	}
+	AssertSize(uiSnapshots, sTest.cEditor.GetUndoStack()->NumSnapshots());
+
+	sTest.Press(sCentre.x, sCentre.y);
+	sTest.PointAt(sCentre.x + 8, sCentre.y + 5);
+	AssertNull(pcMain->GetTraceAt(sOldLead));
+	sTest.cEditor.StopEdit();
+	sTest.cEditor.SetModifiers(false, false);
+	AssertInt(-2, pcInverter->GetPosition().y);
+	AssertSize(apcBefore.NumElements(), pcMain->NumTraces());
+	for (i = 0; i < pcMain->NumTraces(); i++)
+	{
+		AssertPointer(apcBefore.GetPtr(i), pcMain->GetTrace(i));
+	}
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(3, -2));
+	apcBefore.Kill();
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// An inverter whose output is wired round to its own input.  Dragged with
+// control held, the loop between its ports moves with it rather than
+// being left behind, and still joins them.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorMoveConnectedLoop(void)
+{
+	SEditorTest			sTest;
+	CCircuitView*		pcMain;
+	CInverterView*		pcInverter;
+	SFloat64Vec2		sCentre;
+	SInt32Vec2			sPoint;
+
+	sTest.Init();
+	pcMain = sTest.cEditor.AddCircuit("Main");
+	pcInverter = AddTestInverter(pcMain, -3, -2);
+	pcMain->AddTrace(-1, -2, -1, 2);
+	pcMain->AddTrace(-1, 2, -4, 2);
+	pcMain->AddTrace(-4, 2, -4, -2);
+	AssertTrue(sTest.cEditor.Simulate("Main"));
+	AssertPointer(GetPortTrace(&sTest, pcInverter, "Input"), GetPortTrace(&sTest, pcInverter, "Output"));
+
+	sCentre = GetCentre(pcInverter);
+	sTest.cEditor.SetModifiers(true, false);
+	sTest.Drag(sCentre.x, sCentre.y, sCentre.x + 5, sCentre.y + 10);
+	sTest.cEditor.SetModifiers(false, false);
+	AssertInt(2, pcInverter->GetPosition().x);
+	AssertInt(8, pcInverter->GetPosition().y);
+	sPoint.Init(-1, 2);
+	AssertNull(pcMain->GetTraceAt(sPoint));
+	sPoint.Init(4, 12);
+	AssertNotNull(pcMain->GetTraceAt(sPoint));
+	AssertNotNull(GetPortTrace(&sTest, pcInverter, "Input"));
+	AssertPointer(GetPortTrace(&sTest, pcInverter, "Input"), GetPortTrace(&sTest, pcInverter, "Output"));
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The divider drawn and saved in LogiCim (Input/FlipFlopDivider.xml): a
+// clock wired to a D flip flop's CP, a 3.3V supply wired to a junction
+// that feeds both SD and RD, and QB wired round under the flip flop back
+// to D.  Dragged with control held, SD's and RD's leads both go back to
+// the supply's net; they're routed on that one net, so the flip flop is
+// still held, clocked and dividing.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorMoveConnectedSharedNet(void)
+{
+	SEditorTest			sTest;
+	CCircuitFonts		cFonts;
+	CCircuitView*		pcMain;
+	CComponentView*		pcFlipFlop;
+	CComponentView*		pcPower;
+	SFloat64Vec2		sCentre;
+
+	sTest.Init(&cFonts);
+	LoadTestCircuitFonts(&cFonts);
+	AssertTrue(sTest.cEditor.Load("Input" _FS_ "FlipFlopDivider.xml"));
+	pcMain = sTest.cEditor.GetCircuit();
+	pcFlipFlop = pcMain->GetComponent(1);
+	pcPower = pcMain->GetComponent(2);
+	AssertString("D Flip Flop", pcFlipFlop->GetType());
+	AssertInt(-7, pcFlipFlop->GetPosition().x);
+	AssertInt(2, pcFlipFlop->GetPosition().y);
+	AssertPointer(GetPortTrace(&sTest, pcPower, "Power"), GetPortTrace(&sTest, pcFlipFlop, "SD"));
+	AssertPointer(GetPortTrace(&sTest, pcPower, "Power"), GetPortTrace(&sTest, pcFlipFlop, "RD"));
+
+	sCentre = GetCentre(pcFlipFlop);
+	sTest.Click(sCentre.x, sCentre.y);
+	sTest.cEditor.SetModifiers(true, false);
+	sTest.Drag(sCentre.x, sCentre.y, sCentre.x + 10, sCentre.y - 8);
+	sTest.cEditor.SetModifiers(false, false);
+	AssertInt(3, pcFlipFlop->GetPosition().x);
+	AssertInt(-6, pcFlipFlop->GetPosition().y);
+	AssertNotNull(GetPortTrace(&sTest, pcFlipFlop, "SD"));
+	AssertPointer(GetPortTrace(&sTest, pcPower, "Power"), GetPortTrace(&sTest, pcFlipFlop, "SD"));
+	AssertPointer(GetPortTrace(&sTest, pcPower, "Power"), GetPortTrace(&sTest, pcFlipFlop, "RD"));
+	AssertPointer(GetPortTrace(&sTest, pcFlipFlop, "QB"), GetPortTrace(&sTest, pcFlipFlop, "D"));
+	AssertNotNull(GetPortTrace(&sTest, pcFlipFlop, "CP"));
+
+	KillTestCircuitFonts(&cFonts);
+	sTest.Kill(true);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// With shift held a press on a component that isn't selected drags a
+// selection rectangle, adding to the selection, rather than moving it.
+// Dragged right to left it takes the component it touches.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorShiftPressSelects(void)
+{
+	SEditorTest			sTest;
+	CCircuitView*		pcMain;
+	CInverterView*		pcInverter;
+	SFloat64Vec2		sCentre;
+
+	sTest.Init();
+	pcMain = sTest.cEditor.AddCircuit("Main");
+	AddGroundAndOutput(pcMain);
+	pcInverter = AddTestInverter(pcMain, -3, -2);
+	AssertTrue(sTest.cEditor.Simulate("Main"));
+
+	sCentre = GetCentre(pcInverter);
+	sTest.cEditor.SetModifiers(false, true);
+	sTest.Drag(sCentre.x, sCentre.y, sCentre.x - 10, sCentre.y - 10);
+	sTest.cEditor.SetModifiers(false, false);
+	AssertInt(-3, pcInverter->GetPosition().x);
+	AssertInt(-2, pcInverter->GetPosition().y);
+	AssertTrue(sTest.cEditor.GetSelection()->Contains(pcInverter));
 
 	sTest.Kill();
 }
@@ -2234,7 +2584,9 @@ void TestCircuitEditorUndoMove(void)
 	sTest.Click(sCentre.x, sCentre.y);
 	AssertSize(2, pcUndo->NumSnapshots());
 
+	pcEditor->SetModifiers(true, false);
 	sTest.Drag(sCentre.x, sCentre.y, sCentre.x, sCentre.y + 10);
+	pcEditor->SetModifiers(false, false);
 	AssertInt(8, pcEditor->GetCircuit()->GetComponent(1)->GetPosition().y);
 	AssertSize(3, pcUndo->NumSnapshots());
 	AssertFalse(pcUndo->IsSelectionOnly(2));
@@ -2769,6 +3121,12 @@ void TestCircuitEditor(void)
 	TestCircuitEditorMove();
 	TestCircuitEditorMoveFromJunction();
 	TestCircuitEditorMoveWire();
+	TestCircuitEditorMoveDetached();
+	TestCircuitEditorMoveDetachedWire();
+	TestCircuitEditorMoveConnectedLive();
+	TestCircuitEditorMoveConnectedLoop();
+	TestCircuitEditorMoveConnectedSharedNet();
+	TestCircuitEditorShiftPressSelects();
 	TestCircuitEditorRotateAndDelete();
 	TestCircuitEditorFlip();
 	TestCircuitEditorSaveLoad();

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Logicim version="2">
+  <Editor circuit="Main" rotation="East">
+    <Selected component="1"/>
+  </Editor>
+  <Circuits>
+    <Circuit type="Main">
+      <Clock name="" x="-16" y="-4" rotation="East" family="LVC" explicitPowerPorts="false" frequency="25000000" inverseOut="false"/>
+      <DTypeFlipFlop name="" x="-7" y="2" rotation="East" family="LVC" explicitPowerPorts="false"/>
+      <PositivePower name="" x="-19" y="5" rotation="East" voltage="3.29999995"/>
+      <Trace x0="-13" y0="-4" x1="-15" y1="-4"/>
+      <Trace x0="-13" y0="-1" x1="-13" y1="-4"/>
+      <Trace x0="-10" y0="-1" x1="-13" y1="-1"/>
+      <Trace x0="-18" y0="5" x1="-16" y1="5"/>
+      <Trace x0="-16" y0="1" x1="-16" y1="5"/>
+      <Trace x0="-16" y0="1" x1="-11" y1="1"/>
+      <Trace x0="-16" y0="5" x1="-11" y1="5"/>
+      <Trace x0="-1" y0="3" x1="-3" y1="3"/>
+      <Trace x0="-1" y0="7" x1="-1" y1="3"/>
+      <Trace x0="-14" y0="7" x1="-1" y1="7"/>
+      <Trace x0="-14" y0="3" x1="-14" y1="7"/>
+      <Trace x0="-10" y0="3" x1="-14" y1="3"/>
+    </Circuit>
+  </Circuits>
+  <Simulation name="Main" circuit="Main" time="70947840" previousEventTime="70942207" eventTime="70942821">
+    <Component index="0">
+      <ClockOscillatorState high="false" fullTicks="1698"/>
+      <TickEvent time="70958848" id="22087"/>
+      <Port name="Output">
+        <Output type="Drive" time="70942821" voltage="0.200000003"/>
+      </Port>
+    </Component>
+    <Component index="1">
+      <DTypeFlipFlopState state="true"/>
+      <Port name="Q">
+        <Output type="Drive" time="70925668" voltage="3.0999999"/>
+      </Port>
+      <Port name="QB">
+        <Output type="Drive" time="70925668" voltage="0.200000003"/>
+      </Port>
+    </Component>
+    <Component index="2"/>
+  </Simulation>
+</Logicim>
