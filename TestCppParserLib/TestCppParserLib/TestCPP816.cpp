@@ -526,6 +526,52 @@ void TestCPP816Divide64(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// 1 << n looked up in R816_Bits16 and R816_Bits32 (CIR816Backend::
+// BitShift), and __builtin_clz and ctz narrowed to a byte and looked up
+// (CCPP65IRFrontEnd::CountTable), against loops, for every count and bit.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816BitTables(void)
+{
+	AssertInt(1, TestCPP816Run(
+		"volatile int giCount;\n"
+		"int Clz32(unsigned long x) { int n = 0; if (x == 0) { return 32; } while (!(x & 0x80000000UL)) { x <<= 1; n++; } return n; }\n"
+		"int Ctz32(unsigned long x) { int n = 0; if (x == 0) { return 32; } while (!(x & 1)) { x >>= 1; n++; } return n; }\n"
+		"int Clz16(unsigned int x) { int n = 0; if (x == 0) { return 16; } while (!(x & 0x8000)) { x <<= 1; n++; } return n; }\n"
+		"int main(void)\n"
+		"{\n"
+		"\tint\t\t\ti;\n"
+		"\tint\t\t\tj;\n"
+		"\tint\t\t\tn;\n"
+		"\tunsigned long\tul;\n"
+		"\tunsigned long\tulBit;\n"
+		"\tunsigned int\tuBit;\n"
+		"\tunsigned long\tulX;\n"
+		"\tfor (i = 0; i < 32; i++)\n"
+		"\t{\n"
+		"\t\tgiCount = i;\n"
+		"\t\tn = giCount;\n"
+		"\t\tul = 1;\n"
+		"\t\tfor (j = 0; j < i; j++) { ul *= 2; }\n"
+		"\t\tulBit = (unsigned long)1 << n;\n"
+		"\t\tif (ulBit != ul) { return 100 + i; }\n"
+		"\t\tif (i < 16) { uBit = 1u << n; if (uBit != (unsigned int)ul) { return 200 + i; } }\n"
+		"\t\tfor (j = 0; j < 4; j++)\n"
+		"\t\t{\n"
+		"\t\t\tulX = (ul | (ul >> (j + 1))) & ~((j == 3) ? ul : 0);\n"
+		"\t\t\tif (__builtin_clzl(ulX) != Clz32(ulX)) { return 300 + i; }\n"
+		"\t\t\tif (__builtin_ctzl(ulX) != Ctz32(ulX)) { return 400 + i; }\n"
+		"\t\t\tif (__builtin_clz((unsigned int)ulX) != Clz16((unsigned int)ulX)) { return 500 + i; }\n"
+		"\t\t}\n"
+		"\t}\n"
+		"\tif ((__builtin_clzl(0) != 32) || (__builtin_ctzl(0) != 32) || (__builtin_clz(0) != 16) || (__builtin_ctz(0) != 16)) { return 2; }\n"
+		"\treturn 1;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Statements and operators: switch, do, 16 bit multiply, divide and shifts, unsigned long, function pointers,
 // globals and a destructor.
 //
@@ -3595,6 +3641,7 @@ void TestCPP816(void)
 	TestCPP816NarrowSubscripts();
 	TestCPP816SharedDivisions();
 	TestCPP816Divide64();
+	TestCPP816BitTables();
 	TestCPP816Globals();
 	TestCPP816Builtins();
 	TestCPP816MemSwp();

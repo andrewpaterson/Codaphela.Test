@@ -1567,6 +1567,35 @@ static void AssertIR816Pass(const char* szExpected, const char* szCode, TestIR81
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A store to a direct page word nothing in the function reads goes
+// (RemoveUnreadStores), even past a frame's exit (tdc to tcs).  Kept when
+// any byte of it is read (an overlapping word, a pointer through it), when
+// a runtime routine may read it (the scratch bytes), and in a function
+// that takes the frame's address or indexes the direct page.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendRemoveUnreadStores(void)
+{
+	TestIR816TextPass	fPass;
+
+	fPass = CIR816Backend::RemoveUnreadStores;
+	AssertIR816Pass("\t\tlda 1\n\t\tsta [D + 7]\n\t\tlda [D + 7]\n\t\ttay\n\t\ttdc\n\t\tclc\n\t\tadc 20\n\t\ttcs\n\t\ttya\n\t\tpld\n\t\trtl\n",
+		"\t\tlda 1\n\t\tsta [D + 35]\n\t\tsta [D + 7]\n\t\tlda [D + 7]\n\t\ttay\n\t\ttdc\n\t\tclc\n\t\tadc 20\n\t\ttcs\n\t\ttya\n\t\tpld\n\t\trtl\n", fPass);
+
+	//Read: an overlapping word, a pointer through it, a runtime routine's scratch bytes.
+	AssertIR816Pass("\t\tlda 1\n\t\tsta [D + 35]\n\t\tlda [D + 36]\n\t\trtl\n", "\t\tlda 1\n\t\tsta [D + 35]\n\t\tlda [D + 36]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda 1\n\t\tsta [D + 36]\n\t\tlda [[D + 34]:24]\n\t\trtl\n", "\t\tlda 1\n\t\tsta [D + 36]\n\t\tlda [[D + 34]:24]\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda 1\n\t\tsta [D + 19]\n\t\tjsl R816_Mul16\n\t\trtl\n", "\t\tlda 1\n\t\tsta [D + 19]\n\t\tjsl R816_Mul16\n\t\trtl\n", fPass);
+
+	//The frame's address taken, or the direct page indexed: nothing goes.
+	AssertIR816Pass("\t\tlda 1\n\t\tsta [D + 35]\n\t\tpea 0\n\t\ttdc\n\t\tclc\n\t\tadc 35\n\t\tpha\n\t\tjsl _F\n\t\trtl\n",
+		"\t\tlda 1\n\t\tsta [D + 35]\n\t\tpea 0\n\t\ttdc\n\t\tclc\n\t\tadc 35\n\t\tpha\n\t\tjsl _F\n\t\trtl\n", fPass);
+	AssertIR816Pass("\t\tlda 1\n\t\tsta [D + 35]\n\t\tldx 35\n\t\tlda [D + X]\n\t\trtl\n", "\t\tlda 1\n\t\tsta [D + 35]\n\t\tldx 35\n\t\tlda [D + X]\n\t\trtl\n", fPass);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Peephole: in straight line code, a value stored by a store marked " ;A"
 // stays in A for its one lda or pei (IR816KeepsInA: not when N or Z of the
 // lda is read) or as the first operand of a commutative instruction after
@@ -1851,6 +1880,7 @@ void TestIR816Backend(void)
 	TestIR816BackendBranches();
 	TestIR816BackendPeepholeBranches();
 	TestIR816BackendPeepholeRegisters();
+	TestIR816BackendRemoveUnreadStores();
 	TestIR816BackendPeephole();
 	TestIR816BackendRemoveDeadStores();
 	TestIR816BackendPeepholeMasks();
