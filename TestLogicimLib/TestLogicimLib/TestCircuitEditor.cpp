@@ -927,6 +927,121 @@ void TestCircuitEditorMoveConnectedPortOnPort(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Input/FlipFlopClose.xml with the flip flop and the wire to the right of
+// it (on QB's loop round to D) selected and dragged with control held.
+// The rest of the loop runs from QB and D into the moved wire, so it moves
+// with them rather than being left behind, and the moved wire isn't
+// stretched back to it: QB still drives D.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorMoveConnectedWithWire(void)
+{
+	SEditorTest			sTest;
+	CCircuitFonts		cFonts;
+	CCircuitView*		pcMain;
+	CComponentView*		pcClock;
+	CComponentView*		pcFlipFlop;
+	CComponentView*		pcPower;
+	SFloat64Vec2		sCentre;
+	SInt32Vec2			sPoint;
+	size				uiTraces;
+
+	sTest.Init(&cFonts);
+	LoadTestCircuitFonts(&cFonts);
+	AssertTrue(sTest.cEditor.Load("Input" _FS_ "FlipFlopClose.xml"));
+	pcMain = sTest.cEditor.GetCircuit();
+	pcClock = pcMain->GetComponent(0);
+	pcFlipFlop = pcMain->GetComponent(1);
+	pcPower = pcMain->GetComponent(2);
+	AssertPointer(GetPortTrace(&sTest, pcFlipFlop, "QB"), GetPortTrace(&sTest, pcFlipFlop, "D"));
+	uiTraces = pcMain->NumTraces();
+
+	sCentre = GetCentre(pcFlipFlop);
+	sTest.Click(sCentre.x, sCentre.y);
+	sTest.cEditor.SetModifiers(false, true);
+	sTest.Click(-6, 2);
+	sTest.cEditor.SetModifiers(false, false);
+	AssertSize(1, sTest.cEditor.GetSelection()->NumComponents());
+	AssertSize(1, sTest.cEditor.GetSelection()->NumTraces());
+
+	sTest.cEditor.SetModifiers(true, false);
+	sTest.Drag(sCentre.x, sCentre.y, sCentre.x + 10, sCentre.y - 8);
+	sTest.cEditor.SetModifiers(false, false);
+	AssertInt(-2, pcFlipFlop->GetPosition().x);
+	AssertInt(-9, pcFlipFlop->GetPosition().y);
+
+	sPoint.Init(-6, 2);
+	AssertNull(pcMain->GetTraceAt(sPoint));
+	sPoint.Init(-18, 2);
+	AssertNull(pcMain->GetTraceAt(sPoint));
+	sPoint.Init(4, -6);
+	AssertNotNull(pcMain->GetTraceAt(sPoint));
+	sPoint.Init(-8, -6);
+	AssertNotNull(pcMain->GetTraceAt(sPoint));
+	AssertNotNull(GetPortTrace(&sTest, pcFlipFlop, "D"));
+	AssertPointer(GetPortTrace(&sTest, pcFlipFlop, "QB"), GetPortTrace(&sTest, pcFlipFlop, "D"));
+	AssertPointer(GetPortTrace(&sTest, pcClock, "Output"), GetPortTrace(&sTest, pcFlipFlop, "CP"));
+	AssertPointer(GetPortTrace(&sTest, pcPower, "Power"), GetPortTrace(&sTest, pcFlipFlop, "SD"));
+	AssertPointer(GetPortTrace(&sTest, pcPower, "Power"), GetPortTrace(&sTest, pcFlipFlop, "RD"));
+
+	KillTestCircuitFonts(&cFonts);
+	sTest.Kill(true);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Input/DanglingWire.xml: a supply wired across and up a vertical wire to
+// a wire that goes off to the right and ends on nothing.  The vertical
+// wire dragged with control held takes the dangling wire with it, rather
+// than leaving it where it was and stretching back to its corner: the
+// corner just moves, and no wire is made from where it was.  Only its
+// bottom end stretches back, to the supply's wire, so it's all still on
+// the supply's net.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorMoveConnectedDanglingWire(void)
+{
+	SEditorTest			sTest;
+	CCircuitFonts		cFonts;
+	CCircuitView*		pcMain;
+	CComponentView*		pcPower;
+	SInt32Vec2			sPoint;
+	CTraceView*			pcMoved;
+
+	sTest.Init(&cFonts);
+	LoadTestCircuitFonts(&cFonts);
+	AssertTrue(sTest.cEditor.Load("Input" _FS_ "DanglingWire.xml"));
+	pcMain = sTest.cEditor.GetCircuit();
+	pcPower = pcMain->GetComponent(0);
+
+	sTest.Click(-17, 3);
+	AssertSize(1, sTest.cEditor.GetSelection()->NumTraces());
+	sTest.cEditor.SetModifiers(true, false);
+	sTest.Drag(-17, 3, -11, -1);
+	sTest.cEditor.SetModifiers(false, false);
+
+	sPoint.Init(-15, 2);
+	AssertNull(pcMain->GetTraceAt(sPoint));
+	sPoint.Init(-17, -1);
+	AssertNull(pcMain->GetTraceAt(sPoint));
+	sPoint.Init(-11, 0);
+	AssertNotNull(pcMain->GetTraceAt(sPoint));
+	sPoint.Init(-9, -2);
+	pcMoved = pcMain->GetTraceAt(sPoint);
+	AssertNotNull(pcMoved);
+	sPoint.Init(-17, 3);
+	AssertNotNull(pcMain->GetTraceAt(sPoint));
+	AssertNotNull(GetPortTrace(&sTest, pcPower, "Power"));
+	AssertPointer(GetPortTrace(&sTest, pcPower, "Power"), pcMoved->GetTrace(sTest.cEditor.GetViewPath(), sTest.cEditor.GetSimulation(), 0));
+
+	KillTestCircuitFonts(&cFonts);
+	sTest.Kill(true);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // With shift held a press on a component that isn't selected drags a
 // selection rectangle, adding to the selection, rather than moving it.
 // Dragged right to left it takes the component it touches.
@@ -3234,6 +3349,8 @@ void TestCircuitEditor(void)
 	TestCircuitEditorMoveConnectedSharedNet();
 	TestCircuitEditorMoveConnectedJunction();
 	TestCircuitEditorMoveConnectedPortOnPort();
+	TestCircuitEditorMoveConnectedWithWire();
+	TestCircuitEditorMoveConnectedDanglingWire();
 	TestCircuitEditorShiftPressSelects();
 	TestCircuitEditorRotateAndDelete();
 	TestCircuitEditorFlip();

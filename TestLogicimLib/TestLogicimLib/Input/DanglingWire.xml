@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Logicim version="2">
+  <Editor circuit="Main" rotation="East"/>
+  <Circuits>
+    <Circuit type="Main">
+      <PositivePower name="" x="-19" y="5" rotation="East" voltage="3.29999995"/>
+      <Trace x0="-13" y0="2" x1="-17" y1="2"/>
+      <Trace x0="-17" y0="2" x1="-17" y1="5"/>
+      <Trace x0="-18" y0="5" x1="-17" y1="5"/>
+    </Circuit>
+  </Circuits>
+  <Simulation name="Main" circuit="Main" time="93577216" previousEventTime="91952332" eventTime="91955301">
+    <Component index="0"/>
+  </Simulation>
+</Logicim>
