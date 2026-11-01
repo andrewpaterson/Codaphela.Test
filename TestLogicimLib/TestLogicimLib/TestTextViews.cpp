@@ -16,6 +16,7 @@
 #include "LogicimLib/CircuitView.h"
 #include "LogicimLib/CircuitFile.h"
 #include "LogicimLib/LabelView.h"
+#include "LogicimLib/TunnelView.h"
 #include "LogicimLib/CircuitTextMarkupParser.h"
 #include "TestLib/Assert.h"
 #include "TestLogicimRender.h"
@@ -589,6 +590,56 @@ void TestMarkupLabelsRender(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Tunnels measured to their names on neighbouring grid lines, across and
+// turned, single and double sided: their bodies don't touch and their
+// names (in markup too) fit inside them.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTunnelsRender(void)
+{
+	CCircuitView	cCircuit;
+	CCircuitColours	cColours;
+	CCircuitFonts	cFonts;
+	CTunnelView*	pcTunnel;
+	SFloat64Vec2	sMinimum;
+	SFloat64Vec2	sMaximum;
+	const char*		aszNames[] = { "high", "~{RESET}", "D_{0}", "Bus", "Clock out" };
+	size			i;
+
+	ObjectsInit();
+	LoadTestCircuitFonts(&cFonts);
+	cCircuit.Init();
+	cColours.InitLogicim();
+
+	CTunnelView::MeasureBox(&cFonts, "high", false, &sMinimum, &sMaximum);
+	AssertDouble(-0.4, sMinimum.y, 9);
+	AssertDouble(0.4, sMaximum.y, 9);
+
+	for (i = 0; i < 5; i++)
+	{
+		pcTunnel = NewMalloc<CTunnelView>();
+		pcTunnel->Init(-14, -2 + (int32)i, ROT_East, aszNames[i], false, &cFonts);
+		cCircuit.Add(pcTunnel);
+		pcTunnel = NewMalloc<CTunnelView>();
+		pcTunnel->Init(-5, -2 + (int32)i, ROT_East, aszNames[i], true, &cFonts);
+		cCircuit.Add(pcTunnel);
+		pcTunnel = NewMalloc<CTunnelView>();
+		pcTunnel->Init(6 + (int32)i, 4, ROT_North, aszNames[i], false, &cFonts);
+		cCircuit.Add(pcTunnel);
+	}
+
+	AssertRenderedCircuit(&cCircuit, &cColours, 1050, 450, 3, NULL, NULL, true, "Tunnels", &cFonts);
+
+	cCircuit.Kill();
+	cColours.Kill();
+	KillTestCircuitFonts(&cFonts);
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // D flip flops facing East, North, South and West, and below them the
 // same mirrored: their clock and reset swap ends, the notch and bubbles go
 // with them, and their labels still read and point in.
@@ -651,6 +702,7 @@ void TestTextViews(void)
 	TestCircuitTextMarkupParser();
 	TestCircuitFontsMeasureMarkup();
 	TestMarkupLabelsRender();
+	TestTunnelsRender();
 
 	DataMemoryKill();
 	DataIOKill();
