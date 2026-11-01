@@ -2432,7 +2432,7 @@ void TestCircuitEditorPropertiesListed(void)
 
 	cProperties.Init();
 	sTest.cEditor.GetProperties(pcMain->GetComponent(0), &cProperties);
-	AssertSize(5, cProperties.NumProperties());
+	AssertSize(6, cProperties.NumProperties());
 	psProperty = cProperties.Get((size)0);
 	AssertString("name", psProperty->szName.Text());
 	AssertString("Name", psProperty->szLabel.Text());
@@ -2448,10 +2448,14 @@ void TestCircuitEditorPropertiesListed(void)
 	AssertInt(CPT_Boolean, psProperty->eType);
 	AssertString("false", psProperty->szValue.Text());
 	psProperty = cProperties.Get(3);
+	AssertString("impliedVCC", psProperty->szName.Text());
+	AssertString("Implied VCC", psProperty->szLabel.Text());
+	AssertInt(CPT_Float, psProperty->eType);
+	psProperty = cProperties.Get(4);
 	AssertString("Input count", psProperty->szLabel.Text());
 	AssertInt(CPT_Integer, psProperty->eType);
 	AssertString("1", psProperty->szValue.Text());
-	AssertString("Input width", cProperties.Get(4)->szLabel.Text());
+	AssertString("Input width", cProperties.Get(5)->szLabel.Text());
 	cProperties.Kill();
 
 	cProperties.Init();
@@ -2594,6 +2598,21 @@ void TestCircuitEditorPropertiesEdited(void)
 	AssertInt(ROT_South, pcNew->GetRotation());
 	AssertInt(-3, pcNew->GetPosition().x);
 	AssertInt(-2, pcNew->GetPosition().y);
+
+	//The implied VCC is set as a property and kept when other properties are.
+	cProperties.Init();
+	sTest.cEditor.GetProperties(pcNew, &cProperties);
+	AssertTrue(cProperties.SetValue("impliedVCC", "3.3"));
+	pcNew = sTest.cEditor.SetProperties(pcNew, &cProperties, ROT_South, false);
+	cProperties.Kill();
+	AssertFloat(3.3f, pcNew->GetIntegratedCircuitView()->GetImpliedVcc(), 3);
+	cProperties.Init();
+	sTest.cEditor.GetProperties(pcNew, &cProperties);
+	AssertTrue(cProperties.SetValue("name", "U2"));
+	pcNew = sTest.cEditor.SetProperties(pcNew, &cProperties, ROT_South, false);
+	cProperties.Kill();
+	AssertString("U2", pcNew->GetName());
+	AssertFloat(3.3f, pcNew->GetIntegratedCircuitView()->GetImpliedVcc(), 3);
 
 	sTest.Kill();
 }

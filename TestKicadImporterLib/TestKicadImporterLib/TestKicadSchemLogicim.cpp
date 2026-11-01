@@ -644,7 +644,7 @@ void TestKicadSchemLogicimConvert(void)
 	AssertKicadSchemLogicimElements("Regulator Test", "Ground", 0);
 	AssertKicadSchemLogicimElements("Regulator Test", "Tunnel", 0);
 	AssertKicadSchemLogicimElements("Regulator Test", "Trace", 0);
-	AssertKicadSchemLogicimAttributes("Regulator Test", "impliedVcc=\"5", 1);
+	AssertKicadSchemLogicimAttributes("Regulator Test", "impliedVCC=\"5", 1);
 }
 
 

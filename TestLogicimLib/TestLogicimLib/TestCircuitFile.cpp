@@ -332,6 +332,55 @@ bool LoadCircuitText(CCircuitView* pcCircuit, const char* szText)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// An IC's implied VCC is loaded after its view is made (its Init sets it
+// to none) and saved only when it has one.  It must be a voltage.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitFileImpliedVCC(void)
+{
+	CCircuitView		cCircuit;
+	CIntegratedCircuitView*	pcInverter;
+	CXMLWriter			cWriter;
+	SLogConfig			sLogConfig;
+	char				szHeader[] = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+	CChars				sz;
+
+	cCircuit.Init();
+	sz.Init(szHeader);
+	sz.Append("<Logicim version=\"2\"><Circuit><Inverter x=\"1\" y=\"2\" rotation=\"East\" family=\"LVC\" explicitPowerPorts=\"false\" impliedVCC=\"3.3\" inputCount=\"1\" inputWidth=\"1\"/>");
+	sz.Append("<Inverter x=\"1\" y=\"6\" rotation=\"East\" family=\"LVC\" explicitPowerPorts=\"false\" inputCount=\"1\" inputWidth=\"1\"/></Circuit></Logicim>\n");
+	AssertTrue(LoadCircuitText(&cCircuit, sz.Text()));
+	sz.Kill();
+	AssertSize(2, cCircuit.NumComponents());
+	pcInverter = cCircuit.GetComponent(0)->GetIntegratedCircuitView();
+	AssertNotNull(pcInverter);
+	AssertFloat(3.3f, pcInverter->GetImpliedVcc(), 3);
+	AssertFloat(0.0f, cCircuit.GetComponent(1)->GetIntegratedCircuitView()->GetImpliedVcc(), 3);
+
+	cWriter.Init();
+	cCircuit.GetComponent(0)->SaveXML(&cWriter);
+	AssertTrue(strstr(cWriter.GetText(), "impliedVCC=\"3.") != NULL);  //Float32s are saved in full: "3.29999995".
+	cWriter.Kill();
+	cWriter.Init();
+	cCircuit.GetComponent(1)->SaveXML(&cWriter);
+	AssertTrue(strstr(cWriter.GetText(), "impliedVCC") == NULL);
+	cWriter.Kill();
+	cCircuit.Kill();
+
+	gcLogger.GetConfig(&sLogConfig);
+	gcLogger.SetSilent();
+	cCircuit.Init();
+	sz.Init(szHeader);
+	sz.Append("<Logicim version=\"2\"><Circuit><Inverter x=\"1\" y=\"2\" rotation=\"East\" family=\"LVC\" explicitPowerPorts=\"false\" impliedVCC=\"lots\" inputCount=\"1\" inputWidth=\"1\"/></Circuit></Logicim>\n");
+	AssertFalse(LoadCircuitText(&cCircuit, sz.Text()));
+	sz.Kill();
+	cCircuit.Kill();
+	gcLogger.SetConfig(&sLogConfig);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Files that can't be read fail and leave what was read before the
 // problem.
 //
@@ -430,6 +479,7 @@ void TestCircuitFile(void)
 	TestCircuitFileFactory();
 	TestCircuitFileRoundTrip();
 	TestCircuitFileErrors();
+	TestCircuitFileImpliedVCC();
 
 	DataMemoryKill();
 	DataIOKill();
