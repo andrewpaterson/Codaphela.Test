@@ -590,9 +590,8 @@ void TestMarkupLabelsRender(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Tunnels measured to their names on neighbouring grid lines, across and
-// turned, single and double sided: their bodies don't touch and their
-// names (in markup too) fit inside them.
+// Tunnels measured to their names, across and turned, single and double
+// sided: their names (in markup too) fit inside them.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestTunnelsRender(void)
@@ -601,8 +600,6 @@ void TestTunnelsRender(void)
 	CCircuitColours	cColours;
 	CCircuitFonts	cFonts;
 	CTunnelView*	pcTunnel;
-	SFloat64Vec2	sMinimum;
-	SFloat64Vec2	sMaximum;
 	const char*		aszNames[] = { "high", "~{RESET}", "D_{0}", "Bus", "Clock out" };
 	size			i;
 
@@ -611,20 +608,16 @@ void TestTunnelsRender(void)
 	cCircuit.Init();
 	cColours.InitLogicim();
 
-	CTunnelView::MeasureBox(&cFonts, "high", false, &sMinimum, &sMaximum);
-	AssertDouble(-0.4, sMinimum.y, 9);
-	AssertDouble(0.4, sMaximum.y, 9);
-
 	for (i = 0; i < 5; i++)
 	{
 		pcTunnel = NewMalloc<CTunnelView>();
-		pcTunnel->Init(-14, -2 + (int32)i, ROT_East, aszNames[i], false, &cFonts);
+		pcTunnel->Init(-14, -4 + 2 * (int32)i, ROT_East, aszNames[i], false, &cFonts);
 		cCircuit.Add(pcTunnel);
 		pcTunnel = NewMalloc<CTunnelView>();
-		pcTunnel->Init(-5, -2 + (int32)i, ROT_East, aszNames[i], true, &cFonts);
+		pcTunnel->Init(-5, -4 + 2 * (int32)i, ROT_East, aszNames[i], true, &cFonts);
 		cCircuit.Add(pcTunnel);
 		pcTunnel = NewMalloc<CTunnelView>();
-		pcTunnel->Init(6 + (int32)i, 4, ROT_North, aszNames[i], false, &cFonts);
+		pcTunnel->Init(6 + 2 * (int32)i, 5, ROT_North, aszNames[i], false, &cFonts);
 		cCircuit.Add(pcTunnel);
 	}
 

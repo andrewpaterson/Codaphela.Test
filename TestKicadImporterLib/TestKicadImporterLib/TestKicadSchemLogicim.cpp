@@ -513,6 +513,34 @@ void AssertKicadSchemLogicimConverts(char* szName, size uiMinimumGates, size uiM
 
 //////////////////////////////////////////////////////////////////////////
 //
+// How many times szText is in the saved circuit.
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertKicadSchemLogicimAttributes(char* szName, char* szText, int iExpected)
+{
+	CTextFile	cFile;
+	CChars		szPath;
+	int			iCount;
+	char*		sz;
+
+	szPath.Init("Output" _FS_);
+	szPath.Append(szName);
+	szPath.Append(".xml");
+	cFile.Init();
+	AssertTrue(cFile.Read(szPath.Text()));
+	iCount = 0;
+	for (sz = strstr(cFile.Text(), szText); sz != NULL; sz = strstr(sz + 1, szText))
+	{
+		iCount++;
+	}
+	AssertInt(iExpected, iCount);
+	cFile.Kill();
+	szPath.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // How many of the element the converted Output/name.xml has.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -544,25 +572,59 @@ void AssertKicadSchemLogicimElements(char* szName, char* szElement, int iExpecte
 }
 
 
+//A 5V regulator whose output is labelled VCC, so it reaches the hidden VCC pin of a 74LVC1G04, with a ground on only the
+//regulator's ground pin.
+char gszKicadSchemRegulatorTestFile[] =
+	"(kicad_sch (version 20250114) (generator \"eeschema\") (uuid \"root\") (paper \"A4\")\n"
+	"	(lib_symbols\n"
+	"		(symbol \"Regulator_Linear:Test5V\" (property \"Reference\" \"U\") (property \"Value\" \"Test5V\")\n"
+	"			(symbol \"Test5V_1_1\"\n"
+	"				(pin power_in line (at -7.62 0 0) (length 2.54) (name \"VIn\") (number \"1\"))\n"
+	"				(pin power_out line (at 7.62 0 180) (length 2.54) (name \"5VOut\") (number \"3\"))\n"
+	"				(pin power_in line (at 0 -7.62 90) (length 2.54) (name \"GND\") (number \"2\"))))\n"
+	"		(symbol \"Nexperia:74LVC1G04\" (property \"Reference\" \"U\") (property \"Value\" \"74LVC1G04\")\n"
+	"			(symbol \"74LVC1G04_1_1\"\n"
+	"				(pin input line (at -5.08 0 0) (length 2.54) (name \"A\") (number \"2\"))\n"
+	"				(pin output line (at 5.08 0 180) (length 2.54) (name \"Y\") (number \"4\"))\n"
+	"				(pin power_in line (at 0 5.08 270) (length 2.54) (hide yes) (name \"VCC\") (number \"5\"))\n"
+	"				(pin power_in line (at 0 -5.08 90) (length 2.54) (hide yes) (name \"GND\") (number \"3\"))))\n"
+	"		(symbol \"power:GND\" (power) (property \"Reference\" \"#PWR\") (property \"Value\" \"GND\")\n"
+	"			(symbol \"GND_1_1\" (pin power_in line (at 0 0 270) (length 0) (hide yes) (name \"GND\") (number \"1\")))))\n"
+	"	(symbol (lib_id \"Regulator_Linear:Test5V\") (at 50.8 50.8 0) (unit 1) (uuid \"u1\") (property \"Reference\" \"U1\") (property \"Value\" \"Test5V\"))\n"
+	"	(symbol (lib_id \"Nexperia:74LVC1G04\") (at 101.6 50.8 0) (unit 1) (uuid \"u2\") (property \"Reference\" \"U2\") (property \"Value\" \"74LVC1G04\"))\n"
+	"	(symbol (lib_id \"power:GND\") (at 50.8 58.42 0) (unit 1) (uuid \"p1\") (property \"Reference\" \"#PWR01\") (property \"Value\" \"GND\"))\n"
+	"	(wire (pts (xy 58.42 50.8) (xy 66.04 50.8)) (uuid \"w1\"))\n"
+	"	(label \"VCC\" (at 66.04 50.8 0) (uuid \"l1\"))\n"
+	")\n";
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
 void TestKicadSchemLogicimConvert(void)
 {
-	AssertKicadSchemLogicimConverts("Importer Test", 2, 0, "U1", gszKicadSchemTestFile, 1);
-	AssertKicadSchemLogicimConverts("Netlist Test", 0, 1, NULL, gszKicadSchemNetlistTestFile, 1);
+	//Its ground is on no wire, only the hidden power pins of the 74HC00 (which has implied power), so it isn't made.
+	AssertKicadSchemLogicimConverts("Importer Test", 2, 0, "U1", gszKicadSchemTestFile, 0);
+	//Its VCC symbol is on no wire, only U1's hidden VCC pin, so it isn't made.
+	AssertKicadSchemLogicimConverts("Netlist Test", 0, 1, NULL, gszKicadSchemNetlistTestFile, 0);
 	AssertKicadSchemLogicimConverts("Bus Test", 0, 2, NULL, gszKicadSchemBusTestFile, 0, 3);
 	AssertKicadSchemLogicimConverts("Clock Oscillator", 0, 1, NULL, NULL, 0, 0, 4);
 	AssertKicadSchemLogicimConverts("Clock Hold V1 to V2", 0, 2, NULL, NULL, 0, 1, 25);
 	AssertKicadSchemLogicimConverts("LSF0204", 0, 1, NULL);
 	AssertKicadSchemLogicimConverts("LED Display", 0, 2, NULL);
-	AssertKicadSchemLogicimConverts("LCD Dual 7 Segment Tester", 0, 1, NULL, NULL, 1, 0, 9);
-	AssertKicadSchemLogicimConverts("Power and Reset", 0, 1, NULL, NULL, 3, 0, 32);
-	AssertKicadSchemLogicimConverts("HCP65 MPU NMI", 10, 0, "IC8", NULL, 1, 0, 25);
-	AssertKicadSchemLogicimConverts("Triple MPU Clock Generator", 8, 1, NULL, NULL, 1, 0, 53);
-	AssertKicadSchemLogicimConverts("Flags Enable Interrupt", 0, 0, NULL, NULL, 1, 4, 26);
-	AssertKicadSchemLogicimConverts("UART Board", 0, 1, NULL, NULL, 1, 10, 90);
+	//Its L7805 isn't drawn (a regulator gives its voltage to the ICs it powers).
+	AssertKicadSchemLogicimConverts("LCD Dual 7 Segment Tester", 0, 1, NULL, NULL, 0, 0, 9);
+	//Its three regulators aren't drawn.
+	AssertKicadSchemLogicimConverts("Power and Reset", 0, 1, NULL, NULL, 0, 0, 32);
+	//Its AP7365 isn't drawn.
+	AssertKicadSchemLogicimConverts("HCP65 MPU NMI", 10, 0, "IC8", NULL, 0, 0, 25);
+	//Its AP7365 isn't drawn.
+	AssertKicadSchemLogicimConverts("Triple MPU Clock Generator", 8, 1, NULL, NULL, 0, 0, 53);
+	//Its AP7365 isn't drawn.
+	AssertKicadSchemLogicimConverts("Flags Enable Interrupt", 0, 0, NULL, NULL, 0, 4, 26);
+	//Its LD1117S50C isn't drawn.
+	AssertKicadSchemLogicimConverts("UART Board", 0, 1, NULL, NULL, 0, 10, 90);
 
 	//A 74 series part drawn as units is units, and drawn whole is a package.
 	AssertKicadSchemLogicimElements("HCP65 MPU NMI", "Logic74Unit", 15);
@@ -572,8 +634,17 @@ void TestKicadSchemLogicimConvert(void)
 	AssertKicadSchemLogicimElements("Triple MPU Clock Generator", "Logic74Package", 3);
 	AssertKicadSchemLogicimElements("Triple MPU Clock Generator", "Logic74Unit", 14);
 
-	//A voltage regulator is the supply its output is: an LD1117S33C, an LD1117S50C and an L7812.
-	AssertKicadSchemLogicimElements("Power and Reset", "PositivePower", 3);
+	//Voltage regulators (an LD1117S33C, an LD1117S50C and an L7812) aren't drawn.
+	AssertKicadSchemLogicimElements("Power and Reset", "PositivePower", 0);
+
+	//A regulator isn't drawn: the IC its output powers gets its voltage as its implied Vcc.  The ground on only the
+	//regulator's pin, and the VCC label's tunnel on a wire to nothing drawn, aren't made, so neither is the wire.
+	AssertKicadSchemLogicimConverts("Regulator Test", 1, 0, NULL, gszKicadSchemRegulatorTestFile, 0);
+	AssertKicadSchemLogicimElements("Regulator Test", "PositivePower", 0);
+	AssertKicadSchemLogicimElements("Regulator Test", "Ground", 0);
+	AssertKicadSchemLogicimElements("Regulator Test", "Tunnel", 0);
+	AssertKicadSchemLogicimElements("Regulator Test", "Trace", 0);
+	AssertKicadSchemLogicimAttributes("Regulator Test", "impliedVcc=\"5", 1);
 }
 
 
