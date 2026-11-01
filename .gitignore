@@ -11,7 +11,6 @@
 /TestInputLib/TestInputLib/Log.txt
 /TestCoreLib/TestCoreLib/Output
 /TestGerberLib/TestGerberLib/Output/*
-/TestAssembler65Lib/TestAssembler65Lib/Output/*
 *.VC.db
 *.suo
 *.sdf
@@ -30,11 +29,7 @@
 
 /TestMicroprocessorLib/Log.txt
 
-/TestAssembler65Lib/TestAssembler65Lib/Log.txt
-/TestAssembler65Lib/TestAssembler65Lib/Output/*
 
-/TestLibc65/TestLibc65/Log.txt
-/TestLibc65/TestLibc65/Post/*
 /TestBaseLib65/TestBaseLib65/Post/*
 /TestBaseLib65/TestBaseLib65/Output/*
 

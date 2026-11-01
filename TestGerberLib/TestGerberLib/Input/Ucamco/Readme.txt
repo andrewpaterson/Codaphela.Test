@@ -1,1 +1,0 @@
-Examples from the Gerber File Format Specification document are prefixed with their paragraph number
