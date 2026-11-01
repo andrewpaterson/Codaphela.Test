@@ -15,6 +15,8 @@
 #include "LogicimLib/CounterView.h"
 #include "LogicimLib/CircuitView.h"
 #include "LogicimLib/CircuitFile.h"
+#include "LogicimLib/LabelView.h"
+#include "LogicimLib/CircuitTextMarkupParser.h"
 #include "TestLib/Assert.h"
 #include "TestLogicimRender.h"
 
@@ -450,6 +452,143 @@ void TestTextViewsRender(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// KiCad's overbar, subscript and superscript, nested, and the marks that
+// are plain text.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitTextMarkupParser(void)
+{
+	CCircuitTextMarkupParser	cParser;
+	CChars						szText;
+	CArrayTextStyleRun			asRuns;
+	STextStyle					sStyle;
+
+	cParser.Init();
+	szText.Init();
+	asRuns.Init();
+
+	AssertTrue(cParser.Parse("1~{OE}", &szText, &asRuns));
+	AssertString("1OE", szText.Text());
+	AssertSize(2, asRuns.NumElements());
+	AssertSize(0, asRuns.Get(0)->uiStart);
+	AssertSize(1, asRuns.Get(0)->uiLength);
+	AssertInt(0, asRuns.Get(0)->sOverride.uiSet);
+	AssertSize(1, asRuns.Get(1)->uiStart);
+	AssertSize(2, asRuns.Get(1)->uiLength);
+	AssertInt(TSO_Overline, asRuns.Get(1)->sOverride.uiSet);
+
+	szText.ReInit();
+	asRuns.ReInit();
+	AssertTrue(cParser.Parse("~{A_{0}}x^{2}", &szText, &asRuns));
+	AssertString("A0x2", szText.Text());
+	AssertSize(4, asRuns.NumElements());
+	AssertInt(TSO_Overline, asRuns.Get(0)->sOverride.uiSet);
+	AssertInt(TSO_Overline | TSO_Position, asRuns.Get(1)->sOverride.uiSet);
+	sStyle.Init();
+	asRuns.Get(1)->sOverride.ApplyTo(&sStyle);
+	AssertTrue(sStyle.bOverline);
+	AssertInt(TP_Subscript, sStyle.ePosition);
+	AssertInt(0, asRuns.Get(2)->sOverride.uiSet);
+	sStyle.Init();
+	asRuns.Get(3)->sOverride.ApplyTo(&sStyle);
+	AssertFalse(sStyle.bOverline);
+	AssertInt(TP_Superscript, sStyle.ePosition);
+
+	szText.ReInit();
+	asRuns.ReInit();
+	AssertTrue(cParser.Parse("~A_B^C}{D", &szText, &asRuns));
+	AssertString("~A_B^C}{D", szText.Text());
+	AssertSize(1, asRuns.NumElements());
+
+	szText.ReInit();
+	asRuns.ReInit();
+	AssertFalse(cParser.Parse("~{RESET", &szText, &asRuns));
+	AssertString("RESET", szText.Text());
+	AssertSize(1, asRuns.NumElements());
+	AssertInt(TSO_Overline, asRuns.Get(0)->sOverride.uiSet);
+
+	asRuns.Kill();
+	szText.Kill();
+	cParser.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Markup is measured as it's drawn: overbars take no width and subscript
+// and superscript are narrower.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitFontsMeasureMarkup(void)
+{
+	CCircuitFonts		cFonts;
+	SCircuitTextSize	sPlain;
+	SCircuitTextSize	sSize;
+
+	ObjectsInit();
+	LoadTestCircuitFonts(&cFonts);
+
+	sPlain = cFonts.Measure(CF_SansSerif, 10, "1OE");
+	sSize = cFonts.Measure(CF_SansSerif, 10, "1~{OE}");
+	AssertDouble(sPlain.fWidth, sSize.fWidth, 9);
+	AssertDouble(sPlain.fHeight, sSize.fHeight, 9);
+
+	sPlain = cFonts.Measure(CF_SansSerif, 10, "A00");
+	sSize = cFonts.Measure(CF_SansSerif, 10, "A_{00}");
+	AssertTrue(sSize.fWidth < sPlain.fWidth);
+	AssertTrue(sSize.fWidth > cFonts.Measure(CF_SansSerif, 10, "A").fWidth);
+	AssertDouble(sPlain.fHeight, sSize.fHeight, 9);
+	AssertDouble(sSize.fWidth, cFonts.Measure(CF_SansSerif, 10, "A^{00}").fWidth, 9);
+
+	KillTestCircuitFonts(&cFonts);
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Labels in KiCad markup across and turned: overbars over the letters
+// (one straight line over "~{A_{0}}"), subscripts below and superscripts
+// above the baseline, and the label boxes measured to fit them.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMarkupLabelsRender(void)
+{
+	CCircuitView	cCircuit;
+	CCircuitColours	cColours;
+	CCircuitFonts	cFonts;
+	CLabelView*		pcLabel;
+	const char*		aszTexts[] = { "1~{OE}", "~{A_{0}}", "D_{7}", "x^{2}+y^{2}", "~{RD}/~{WR}" };
+	size			i;
+
+	ObjectsInit();
+	LoadTestCircuitFonts(&cFonts);
+	cCircuit.Init();
+	cColours.InitLogicim();
+
+	for (i = 0; i < 5; i++)
+	{
+		pcLabel = NewMalloc<CLabelView>();
+		pcLabel->Init(-18, -8 + (int32)i * 4, ROT_East, aszTexts[i], TA_Left, i == 4, false, true, &cFonts);
+		cCircuit.Add(pcLabel);
+		pcLabel = NewMalloc<CLabelView>();
+		pcLabel->Init(2 + (int32)i * 4, 6, ROT_North, aszTexts[i], TA_Left, false, false, false, &cFonts);
+		cCircuit.Add(pcLabel);
+	}
+
+	AssertRenderedCircuit(&cCircuit, &cColours, 1200, 600, 3, NULL, NULL, true, "MarkupLabels", &cFonts);
+
+	cCircuit.Kill();
+	cColours.Kill();
+	KillTestCircuitFonts(&cFonts);
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // D flip flops facing East, North, South and West, and below them the
 // same mirrored: their clock and reset swap ends, the notch and bubbles go
 // with them, and their labels still read and point in.
@@ -509,6 +648,9 @@ void TestTextViews(void)
 	TestClockNotch();
 	TestTextViewsRender();
 	TestMirroredViewsRender();
+	TestCircuitTextMarkupParser();
+	TestCircuitFontsMeasureMarkup();
+	TestMarkupLabelsRender();
 
 	DataMemoryKill();
 	DataIOKill();

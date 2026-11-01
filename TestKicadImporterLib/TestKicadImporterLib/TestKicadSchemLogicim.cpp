@@ -408,7 +408,7 @@ CComponentView* FindKicadSchemLogicimComponent(CCircuitView* pcCircuit, const ch
 // Output/name.xml, which must load back.
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertKicadSchemLogicimConverts(char* szName, size uiMinimumGates, size uiMinimumPlaceholders, const char* szFirstGate, char* szText = NULL, size uiPowers = 0, size uiSplitters = 0)
+void AssertKicadSchemLogicimConverts(char* szName, size uiMinimumGates, size uiMinimumPlaceholders, const char* szFirstGate, char* szText = NULL, size uiPowers = 0, size uiSplitters = 0, size uiBoardPins = 0)
 {
 	CKicadSchemFile					cFile;
 	CKicadSchemNetlist				cNetlist;
@@ -451,6 +451,7 @@ void AssertKicadSchemLogicimConverts(char* szName, size uiMinimumGates, size uiM
 	AssertTrue(cConverter.Convert(szName));
 	AssertTrue(cConverter.NumGates() >= uiMinimumGates);
 	AssertTrue(cConverter.NumPlaceholders() >= uiMinimumPlaceholders);
+	AssertSize(uiBoardPins, cConverter.NumBoardPins());
 	if (szText == NULL)
 	{
 		AssertTrue(cConverter.NumConnections() > 0);
@@ -552,16 +553,16 @@ void TestKicadSchemLogicimConvert(void)
 	AssertKicadSchemLogicimConverts("Importer Test", 2, 0, "U1", gszKicadSchemTestFile, 1);
 	AssertKicadSchemLogicimConverts("Netlist Test", 0, 1, NULL, gszKicadSchemNetlistTestFile, 1);
 	AssertKicadSchemLogicimConverts("Bus Test", 0, 2, NULL, gszKicadSchemBusTestFile, 0, 3);
-	AssertKicadSchemLogicimConverts("Clock Oscillator", 0, 3, NULL);
-	AssertKicadSchemLogicimConverts("Clock Hold V1 to V2", 0, 2, NULL, NULL, 0, 1);
+	AssertKicadSchemLogicimConverts("Clock Oscillator", 0, 1, NULL, NULL, 0, 0, 4);
+	AssertKicadSchemLogicimConverts("Clock Hold V1 to V2", 0, 2, NULL, NULL, 0, 1, 25);
 	AssertKicadSchemLogicimConverts("LSF0204", 0, 1, NULL);
 	AssertKicadSchemLogicimConverts("LED Display", 0, 2, NULL);
-	AssertKicadSchemLogicimConverts("LCD Dual 7 Segment Tester", 0, 1, NULL);
-	AssertKicadSchemLogicimConverts("Power and Reset", 0, 1, NULL);
-	AssertKicadSchemLogicimConverts("HCP65 MPU NMI", 10, 1, "IC8");
-	AssertKicadSchemLogicimConverts("Triple MPU Clock Generator", 8, 1, NULL);
-	AssertKicadSchemLogicimConverts("Flags Enable Interrupt", 0, 1, NULL, NULL, 0, 4);
-	AssertKicadSchemLogicimConverts("UART Board", 0, 1, NULL, NULL, 0, 10);
+	AssertKicadSchemLogicimConverts("LCD Dual 7 Segment Tester", 0, 1, NULL, NULL, 1, 0, 9);
+	AssertKicadSchemLogicimConverts("Power and Reset", 0, 1, NULL, NULL, 3, 0, 32);
+	AssertKicadSchemLogicimConverts("HCP65 MPU NMI", 10, 0, "IC8", NULL, 1, 0, 25);
+	AssertKicadSchemLogicimConverts("Triple MPU Clock Generator", 8, 1, NULL, NULL, 1, 0, 53);
+	AssertKicadSchemLogicimConverts("Flags Enable Interrupt", 0, 0, NULL, NULL, 1, 4, 26);
+	AssertKicadSchemLogicimConverts("UART Board", 0, 1, NULL, NULL, 1, 10, 90);
 
 	//A 74 series part drawn as units is units, and drawn whole is a package.
 	AssertKicadSchemLogicimElements("HCP65 MPU NMI", "Logic74Unit", 15);
@@ -570,6 +571,9 @@ void TestKicadSchemLogicimConvert(void)
 	AssertKicadSchemLogicimElements("Flags Enable Interrupt", "Logic74Package", 3);
 	AssertKicadSchemLogicimElements("Triple MPU Clock Generator", "Logic74Package", 3);
 	AssertKicadSchemLogicimElements("Triple MPU Clock Generator", "Logic74Unit", 14);
+
+	//A voltage regulator is the supply its output is: an LD1117S33C, an LD1117S50C and an L7812.
+	AssertKicadSchemLogicimElements("Power and Reset", "PositivePower", 3);
 }
 
 

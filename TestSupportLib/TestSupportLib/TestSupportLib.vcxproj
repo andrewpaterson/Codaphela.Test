@@ -289,6 +289,7 @@
     <ClCompile Include="TestTriangleShape.cpp" />
     <ClCompile Include="TestTrueTypeFont.cpp" />
     <ClCompile Include="TestFontFamily.cpp" />
+    <ClCompile Include="TestTextMarkupParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssertImage.h" />
